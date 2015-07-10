@@ -1,2 +1,2 @@
-# lti_base_php
-A base package for LTI tools
+# LTI Base Boilerplate
+A base package for LTI tools built on edX, simple to write and deploy.  
