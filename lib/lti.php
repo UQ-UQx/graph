@@ -12,7 +12,10 @@ class Lti {
 	protected $valid = false;
 	protected $errors = '';
 	
-	function __construct($config, $options = null, $initialize = true, $error_messages = null) {
+	function __construct($config, $display_errors=false) {
+		if($display_errors) {
+			$this->display_errors();
+		}
 		$this->config = $config;
 		if(!empty($_POST)) {
 			$this->ltivars = $_POST;
@@ -46,6 +49,12 @@ class Lti {
 				$this->errors = 'Invalid consumer key';
 			}
 		}
+	}
+	
+	function display_errors() {
+		ini_set('display_errors',1);
+		ini_set('display_startup_errors',1);
+		error_reporting(-1);
 	}
 	
 	function get_errors() {
@@ -140,12 +149,6 @@ class TrivialOAuthDataStore extends OAuthDataStore {
     function new_access_token($token, $consumer) {
         return NULL;
     }
-}
-
-function display_errors() {
-	ini_set('display_errors',1);
-	ini_set('display_startup_errors',1);
-	error_reporting(-1);
 }
 
 ?>

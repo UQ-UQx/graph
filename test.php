@@ -6,8 +6,7 @@
 <?php
 	require_once('config.php');
 	require_once('lib/lti.php');
-	display_errors();
-	$lti = new Lti($config);
+	$lti = new Lti($config,true);
 ?>
 </head>
 <body>
