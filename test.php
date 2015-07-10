@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-	<script type='textjavascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
-<?php
-	require_once('config.php');
-	require_once('lib/lti.php');
-	$lti = new Lti($config,true);
-?>
+<?php require_once('inc/header.php');?>
 </head>
 <body>
 <h1>LTI Status</h1>

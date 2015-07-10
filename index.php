@@ -1,5 +1,7 @@
-<?php
-	require_once('config.php');
-	require_once('lib/lti.php');
-	$lti = new Lti($config,true);
-?>
+<?php require_once('inc/header.php'); ?>
+
+</head>
+<body>
+	
+</body>
+</html>
