@@ -2,6 +2,7 @@
 /**
  * Db
  * PHP 5.3+
+ * https://github.com/adriengibrat/Simple-Database-PHP-Class/blob/master/Db.php
  */
 class Db {
 	/* Configuration */

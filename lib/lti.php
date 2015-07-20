@@ -43,7 +43,7 @@ class Lti {
     	        	$server->verify_request($request);
 					$this->valid = true;
 				} catch (Exception $e) {
-					$this->errors = 'Bad LTi Validation - '.$e->getMessage();
+					$this->errors = 'Bad LTi Validation (possible incorrect secret) - '.$e->getMessage();
 				}
 			} else {
 				$this->errors = 'Invalid consumer key';
