@@ -1,6 +1,34 @@
 # LTI Base Boilerplate
 A base package for LTI tools built on edX, simple to write and deploy.  
 
+# Installation 
+
+### Files
+
+* config.php
+
+once cloned, create a file called "config.php" and add the following with your details in place of the placeholder values
+
+```php
+<?php
+	//Configuration File
+	//key=>secret
+	$config = array(
+		'lti_keys'=>array(
+			'YOUR_CLIENT_KEY'=>'YOUR_CLIENT_SECRET'
+		),
+		'use_db'=>true,
+		'db'=>array(
+			'driver'=>'mysql',
+			'hostname'=>'localhost',
+			'username'=>'YOUR_DB_USERNAME',
+			'password'=>'YOUR_DB_PASSWORD',
+			'dbname'=>'YOUR_DB_NAME',
+		)
+	);
+?>
+```
+
 # Setup
 1. Edit config.php with your respective LTI keys and optional database details
 2. Host on a https server (LTI with edX requires HTTPS)
