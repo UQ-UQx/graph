@@ -28,3 +28,13 @@
 	<script type="text/javascript" src="www/js/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="www/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="www/js/twbs-pagination/jquery.twbsPagination.min.js"></script>
+	
+	<?php
+	echo '<p>Dev Version - DO NOT USE IN COURSES - contact UQx Technical Team</p>';
+	if($lti->is_valid()) {
+		echo '<p>LTI Valid</p>';
+	} else {
+		echo '<p>LTI Invalid - contact UQx Technical Team</p>';
+		die();
+	}
+	?>
