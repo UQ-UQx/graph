@@ -16,7 +16,6 @@ class Lti {
 		if($display_errors) {
 			$this->display_errors();
 		}
-
 		$this->config = $config;
 		if(!empty($_POST)) {
 			$this->ltivars = $_POST;
@@ -52,19 +51,8 @@ class Lti {
 		}
 	}
 	
-	
-	
 	function setltivars($vars) {
 		$this->ltivars = $vars;
-	}
-	
-	function resource_id(){
-				
-		if(isset($this->ltivars["resource_link_id"])) {
-			return $this->ltivars["resource_link_id"];
-		}
-		return 'Unknown resource_link_id';
-
 	}
 	
 	function display_errors() {
@@ -86,29 +74,6 @@ class Lti {
 			return $this->ltivars['user_id'];
 		}
 		return 'Unknown user';
-	}
-	
-	function user_roles() {
-		if(isset($this->ltivars['roles'])) {
-			return $this->ltivars['roles'];
-		}
-		return 'Unknown roles';
-	}
-	
-	function grade_url(){
-		if(isset($this->ltivars["lis_outcome_service_url"])) {
-			return $this->ltivars["lis_outcome_service_url"];
-		}
-		return 'No Grade URL';
-
-	}
-	
-	function result_sourcedid(){
-		if(isset($this->ltivars["lis_result_sourcedid"])) {
-			return $this->ltivars["lis_result_sourcedid"];
-		}
-		return 'No Result SourcedID';
-
 	}
 	
 	function lti_id() {

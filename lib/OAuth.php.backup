@@ -267,13 +267,10 @@ class OAuthRequest {
 
     // Parse the query-string to find and add GET parameters
     $parts = parse_url($http_url);
-//        return isset($parts['query']);
-
-	    if ( isset($parts['query'])) {
-	      $qparms = OAuthUtil::parse_parameters($parts['query']);
-	      $parameters = array_merge($qparms, $parameters);
-	    }
-    
+    if ( $parts['query'] ) {
+      $qparms = OAuthUtil::parse_parameters($parts['query']);
+      $parameters = array_merge($qparms, $parameters);
+    }
      
 
     return new OAuthRequest($http_method, $http_url, $parameters);
@@ -355,15 +352,12 @@ class OAuthRequest {
    */
   public function get_normalized_http_url() {
     $parts = parse_url($this->http_url);
-    
-    if(isset($parts['scheme']) && isset($parts['host'])){
-	    
+
     $port = @$parts['port'];
     $scheme = $parts['scheme'];
     $host = $parts['host'];
     $path = @$parts['path'];
-	
-	
+
     $port or $port = ($scheme == 'https') ? '443' : '80';
 
     if (($scheme == 'https' && $port != '443')
@@ -371,9 +365,6 @@ class OAuthRequest {
       $host = "$host:$port";
     }
     return "$scheme://$host$path";
-    }
-    return "://";
-
   }
 
   /**
