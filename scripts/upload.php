@@ -10,7 +10,7 @@
 
 
 
-$allowed = array('csv');
+$allowed = array('csv','tsv');
 
 if(isset($_FILES['upl']) && $_FILES['upl']['error'] == 0){
 
