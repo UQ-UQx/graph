@@ -22,8 +22,6 @@
 		//die();
 	}
 	?>
-	<script src="www/js/bundle.js" type="text/javascript"></script>
-
 	<link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="www/css/style.css">
 

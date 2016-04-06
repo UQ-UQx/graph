@@ -22,18 +22,38 @@ $(function(){
         progress: function(e, data){
             // Calculate the completion percentage of the upload
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            console.log(progress);
-
+            console.log(data.files[0].name);
         },
         fail:function(e, data){
             // Something has gone wrong!
         }
+    }).bind('fileuploaddone', function(e, data){
+
+        var filenames = [];
+        $.each(data.files, function(ind, obj){
+
+            filenames.push(obj.name);
+        });
+        update_datasets(filenames);
+
     });
     // Prevent the default action when a file is dropped on the window
     $(document).on('drop dragover', function (e) {
         e.preventDefault();
     });
     // Helper function that formats the file sizes
+    // 
+    function update_datasets(uploaded_files){
+
+      console.log(uploaded_files);
+
+      $.each(uploaded_files, function(ind, obj){
+
+        $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+obj+'">'+obj+'</li>');
+
+      });
+      
+    }
     function formatFileSize(bytes) {
         if (typeof bytes !== 'number') {
             return '';

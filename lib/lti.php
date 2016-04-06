@@ -5,7 +5,7 @@ require_once('OAuth.php');
 
 class Lti {
 
-	protected $testing = false;
+	protected $testing = true;
 	protected $config = array();
 	
 	protected $ltivars = array();
@@ -64,6 +64,15 @@ class Lti {
 			return $this->ltivars["resource_link_id"];
 		}
 		return 'Unknown resource_link_id';
+
+	}
+
+	function context_id(){
+
+	if(isset($this->ltivars["context_id"])) {
+			return $this->ltivars["context_id"];
+		}
+		return 'Unknown context_id';
 
 	}
 	
@@ -135,12 +144,12 @@ class Lti {
 		$this->ltivars = array(
 		    'launch_presentation_return_url'=>'',
 		    'lti_version'=>'LTI-1p0',
-		    'user_id'=>'student',
+		    'user_id'=>'a4780b196c009891daa9f371417f5c4a',
 		    'roles'=>'Instructor',
 		    'oauth_nonce'=>'60581087546369126111399262942',
 		    'oauth_timestamp'=>'1399262942',
 		    'lis_result_sourcedid'=>'UQx/ceit1001/2014_1:-i4x-UQx-ceit1001-lti-35fd269993224010adbacd8cd05f0043:student',
-		    'context_id'=>'UQx/ceit1001/2014_1',
+		    'context_id'=>'course-v1:UQx+UQx002+2015August',
 		    'oauth_consumer_key'=>'test',
 		    'resource_link_id'=>'-i4x-UQx-ceit1001-lti-35fd269993224010adbacd8cd05f0043',
 		    'oauth_signature_method'=>'HMAC-SHA1',

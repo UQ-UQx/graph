@@ -21465,6 +21465,14 @@ require("./graph.js");
 
 
 
+function update_datasets(){
+
+
+    console.log("UPDAT ME");
+
+}
+
+
 
 
 
@@ -21477,7 +21485,7 @@ $(function(){
 
 
 
-var margin = {top: 40, right: 40, bottom: 40, left: 25},
+var margin = {top: 40, right: 40, bottom: 55, left: 55},
     dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
     width = dim - margin.left - margin.right,
     height = dim - margin.top - margin.bottom;
@@ -21509,30 +21517,22 @@ var svg = d3.select("#chart")
 
 var dollarFormatter = d3.format(",.0f")
 
-// var tip = d3.tip()
-//     .attr('class', 'd3-tip')
-//     .offset([-10, 0])
-//     .html(function(d) {
-//       return "<div><span>Category:</span> <span style='color:white'>" + d.Category + "</span></div>" +
-//               "<div><span>Sub-Category:</span> <span style='color:white'>" + d.SubCategory + "</span></div>" +
-//              "<div><span>Total Cost:</span> <span style='color:white'>" + "$"+ dollarFormatter(d.TotalValue) + "</span></div>";
-//     })
-
-// svg.call(tip);
 
 d3.csv("data/giniDummy.csv", function(error, data) {
   if (error) throw error;
 
-  var subset = data.filter(function(el){return el.Metric === 'Cost'});
+  var subset = data.filter(function(el){return el.Metric === 'Sales'});
 
   subset.forEach(function(d) {
-    d.ProductConcentration = +d.ProductConcentration;
+    d.ProductConcentration = +d.TotalValue;
     d.CustomerConcentration = +d.CustomerConcentration;
     d.TotalValue = +d.TotalValue;
   });
 
-  x.domain([0, 1]);
-  y.domain([0, 1]);
+  console.log();
+
+  x.domain([0, 1000000]);
+  y.domain([0, 5]);
   r.domain(d3.extent (subset, function (d)  {return d.TotalValue;}));
 
   svg.append("g")
@@ -21541,8 +21541,8 @@ d3.csv("data/giniDummy.csv", function(error, data) {
       .call(xAxis)
     .append("text")
       .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
+      .attr("x", width/2+40)
+      .attr("y", 40)
       .style("text-anchor", "end")
       .text("Product Concentration");
 
@@ -21552,7 +21552,8 @@ d3.csv("data/giniDummy.csv", function(error, data) {
     .append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-      .attr("y", 6)
+      .attr("y", -50)
+      .attr("x", -height/2+40)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("Customer Concentration")
@@ -21570,6 +21571,11 @@ d3.csv("data/giniDummy.csv", function(error, data) {
 
 });
 
+
+resize();
+
+setTimeout(resize,1);
+
 function resize() {
 
   var dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
@@ -21579,7 +21585,6 @@ function resize() {
   console.log(dim);
 
   $("#graph").css({
-
       "width":width+margin.left+margin.right,
       "height":height+margin.top+margin.bottom
   });
@@ -21594,7 +21599,9 @@ function resize() {
     .call(xAxis);
 
   svg.select('.x.axis').select('.label')
-      .attr("x",width);
+      .attr("x",width/2+40);
+  svg.select('.y.axis').select('.label')
+      .attr("x",-height/2+40);
 
   svg.select('.y.axis')
     .call(yAxis);
@@ -21614,7 +21621,6 @@ function resize() {
 
 d3.select(window).on('resize', resize);
 
-resize();
 
 });
 
@@ -21643,18 +21649,38 @@ $(function(){
         progress: function(e, data){
             // Calculate the completion percentage of the upload
             var progress = parseInt(data.loaded / data.total * 100, 10);
-            console.log(progress);
-
+            console.log(data.files[0].name);
         },
         fail:function(e, data){
             // Something has gone wrong!
         }
+    }).bind('fileuploaddone', function(e, data){
+
+        var filenames = [];
+        $.each(data.files, function(ind, obj){
+
+            filenames.push(obj.name);
+        });
+        update_datasets(filenames);
+
     });
     // Prevent the default action when a file is dropped on the window
     $(document).on('drop dragover', function (e) {
         e.preventDefault();
     });
     // Helper function that formats the file sizes
+    // 
+    function update_datasets(uploaded_files){
+
+      console.log(uploaded_files);
+
+      $.each(uploaded_files, function(ind, obj){
+
+        $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+obj+'">'+obj+'</li>');
+
+      });
+      
+    }
     function formatFileSize(bytes) {
         if (typeof bytes !== 'number') {
             return '';
