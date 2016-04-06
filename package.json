@@ -1,0 +1,31 @@
+{
+  "name": "graph",
+  "version": "0.0.1",
+  "description": "Simple graphing tool for UQx Courses. First used in QUERY101x.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UQ-UQx/graph.git"
+  },
+  "scripts": {
+    "build": "browserify www/js/app.js -o www/js/bundle.js",
+    "watch": "watchify www/js/app.js -o www/js/bundle.js"
+  },
+  "author": "Ankith Konda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UQ-UQx/graph/issues"
+  },
+  "homepage": "https://github.com/UQ-UQx/graph#readme",
+  "private": true,
+  "dependencies": {
+    "blueimp-file-upload": "^9.12.1",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.2",
+    "jquery-knob": "^1.2.11",
+    "jquery-ui": "^1.10.5"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "watchify": "^3.7.0"
+  }
+}

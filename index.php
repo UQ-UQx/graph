@@ -1,12 +1,17 @@
+
 <?php require_once('inc/header.php'); ?>
 
 </head>
 <body>
-<?php
-	$lti->requirevalid();
-?>
-<h1>Welcome to the LTI base module</h1>
 
+	<form id="upload" method="post" action="scripts/upload.php" enctype="multipart/form-data">
+		<div id="drop">
+			Drop Here
+
+			<a>Browse</a>
+			<input type="file" name="upl" multiple/>
+		</div>
+	</form>
 
 
 </body>
