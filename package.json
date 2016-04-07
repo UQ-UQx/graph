@@ -25,7 +25,8 @@
     "font-awesome": "^4.5.0",
     "jquery": "^2.2.2",
     "jquery-knob": "^1.2.11",
-    "jquery-ui": "^1.10.5"
+    "jquery-ui": "^1.10.5",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "browserify": "^13.0.0",

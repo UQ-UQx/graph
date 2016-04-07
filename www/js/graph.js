@@ -1,7 +1,3 @@
-$(function(){
-
-
-
 var margin = {top: 40, right: 40, bottom: 55, left: 55},
     dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
     width = dim - margin.left - margin.right,
@@ -13,8 +9,9 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([height, 0]);
 
+var radius = 0.5;
 var r = d3.scale.linear()
-    .range([7, 18]);
+    .range([radius, radius]);
 
 var color = d3.scale.category10();
 
@@ -32,25 +29,46 @@ var svg = d3.select("#chart")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var dollarFormatter = d3.format(",.0f")
+
+module.exports = {
+  init: function(red){
+
+      loadGraph(red);
 
 
-d3.csv("data/giniDummy.csv", function(error, data) {
+  },
+  setPlotSize: function(size){
+
+    svg.selectAll('.dot') 
+    .transition()
+    .duration(1000)
+    .delay(100)
+    .attr("r", function(d) {return size})
+
+  }
+}
+
+
+function loadGraph(red){
+
+
+
+  console.log(red+" Loading!!! "+radius);
+
+}
+
+d3.csv("data/"+$lti_id+"/"+$user_id+"/"+"Sun_Yang.csv", function(error, data) {
   if (error) throw error;
 
-  var subset = data.filter(function(el){return el.Metric === 'Sales'});
+  //var data = data.filter(function(el){return el.Metric === 'Sales'});
 
-  subset.forEach(function(d) {
-    d.ProductConcentration = +d.TotalValue;
-    d.CustomerConcentration = +d.CustomerConcentration;
-    d.TotalValue = +d.TotalValue;
+  data.forEach(function(d) {
+    d.Time = +d.Time;
+    d.Distance = +d.Distance;
   });
 
-  console.log();
-
-  x.domain([0, 1000000]);
-  y.domain([0, 5]);
-  r.domain(d3.extent (subset, function (d)  {return d.TotalValue;}));
+  x.domain([0, d3.max(data, function(d){return d.Time})]).nice();
+  y.domain([0, d3.max(data, function(d){return d.Distance})]).nice();
 
   svg.append("g")
       .attr("class", "x axis")
@@ -61,7 +79,7 @@ d3.csv("data/giniDummy.csv", function(error, data) {
       .attr("x", width/2+40)
       .attr("y", 40)
       .style("text-anchor", "end")
-      .text("Product Concentration");
+      .text($x_axis_name);
 
   svg.append("g")
       .attr("class", "y axis")
@@ -73,17 +91,17 @@ d3.csv("data/giniDummy.csv", function(error, data) {
       .attr("x", -height/2+40)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Customer Concentration")
+      .text($y_axis_name);
 
   svg.selectAll(".dot")
-      .data(subset)
+      .data(data)
     .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", function(d) {return r(d.TotalValue)})
-      .attr("cx", function(d) { return x(d.ProductConcentration); })
-      .attr("cy", function(d) { return y(d.CustomerConcentration); })
-      .style("fill", function(d) { return color(d.Category); })
-       .on('mouseover', function(d){console.log(d.TotalValue)})
+      .attr("r", function(d) {return r(radius)})
+      .attr("cx", function(d) { return x(d.Time); })
+      .attr("cy", function(d) { return y(d.Distance); })
+      .style("fill", function(d) { return color(1); })
+       //.on('mouseover', function(d){console.log(d.Category)})
       // .on('mouseout', tip.hide);
 
 });
@@ -128,15 +146,13 @@ function resize() {
   yAxis.ticks(dim / 75);
 
   // Update the circles
-  r.range([dim / 90, dim / 35])
+  r.range([(dim*radius)/100, (dim*radius)/100])
 
   svg.selectAll('.dot')
-    .attr("r", function(d) {return r(d.TotalValue)})
-    .attr("cx", function(d) { return x(d.ProductConcentration); })
-    .attr("cy", function(d) { return y(d.CustomerConcentration); })
+    .attr("r", function(d) {return r(radius)})
+    .attr("cx", function(d) { return x(d.Time); })
+    .attr("cy", function(d) { return y(d.Distance); })
 }
 
 d3.select(window).on('resize', resize);
 
-
-});

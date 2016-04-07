@@ -24,6 +24,14 @@ require_once('inc/header.php');
 
 ?>
 
+<script type="text/javascript">
+
+ $x_axis_name = "<?php echo $x_axis_name; ?>";
+ $y_axis_name = "<?php echo $y_axis_name; ?>";
+ $user_id = '<?php echo $user_id; ?>';
+ $lti_id = '<?php echo $lti_id; ?>';
+
+</script>
 </head>
 <body>
 
@@ -33,7 +41,13 @@ require_once('inc/header.php');
 		<svg id="chart"></svg>
 	</div>
 
+
+
 <div id="datasets">
+<div id="option">
+    <input id="updateButton" name="updateButton" type="button" value="Update"/>
+</div>
+
 
 	<ul>
 
@@ -41,7 +55,7 @@ require_once('inc/header.php');
 
 			foreach ($data_sets as $ind => $value) {
 			echo "<li>";
-				echo '<input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'"> '.$value;
+			echo '<input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'"> '.$value;
 			echo "</li>";
 
 			}

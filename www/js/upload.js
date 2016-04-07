@@ -28,14 +28,24 @@ $(function(){
             // Something has gone wrong!
         }
     }).bind('fileuploaddone', function(e, data){
-
-        var filenames = [];
-        $.each(data.files, function(ind, obj){
-
-            filenames.push(obj.name);
+        var user_id = $(e.target).find("input[name='user_id']").val();
+        var lti_id = $(e.target).find("input[name='lti_id']").val();
+        var data = {'data':{}};
+        data['user_id'] = user_id;
+        data['lti_id'] = lti_id;
+        $.ajax({
+          type: "POST",
+          url: "scripts/getAvailableFilenames.php",
+          data: data,
+          success: function(response) {
+            //response is an array of file names
+            
+            update_datasets(response);
+          },
+          error: function(error){
+              console.log(error);
+          }
         });
-        update_datasets(filenames);
-
     });
     // Prevent the default action when a file is dropped on the window
     $(document).on('drop dragover', function (e) {
@@ -46,10 +56,13 @@ $(function(){
     function update_datasets(uploaded_files){
 
       console.log(uploaded_files);
+      //run ajax call to get current list of files
+      //push that list out
+      $("#datasets ul").empty();
 
       $.each(uploaded_files, function(ind, obj){
 
-        $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+obj+'">'+obj+'</li>');
+        $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+obj+'"> '+obj+'</li>');
 
       });
       
