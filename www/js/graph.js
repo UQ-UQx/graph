@@ -57,7 +57,7 @@ function loadGraph(red){
 
 }
 
-d3.csv("data/"+$lti_id+"/"+$user_id+"/"+"Sun_Yang.csv", function(error, data) {
+d3.csv("data/"+$lti_id+"/"+$user_id+"/"+$user_id+".csv", function(error, data) {
   if (error) throw error;
 
   //var data = data.filter(function(el){return el.Metric === 'Sales'});

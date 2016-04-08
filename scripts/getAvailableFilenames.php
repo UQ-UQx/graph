@@ -1,4 +1,5 @@
 <?php 
 	header('Content-Type: application/json');
-	$files = array_slice(scandir('../data/'.$_POST['lti_id']."/".$_POST['user_id']."/"), 2);
+	require_once('available_files.php'); 
+	$files = getAvailableFiles($_POST['lti_id'],$_POST['user_id']);
 	echo json_encode($files);

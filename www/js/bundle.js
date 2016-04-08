@@ -23095,7 +23095,7 @@ function loadGraph(red){
 
 }
 
-d3.csv("data/"+$lti_id+"/"+$user_id+"/"+"Sun_Yang.csv", function(error, data) {
+d3.csv("data/"+$lti_id+"/"+$user_id+"/"+$user_id+".csv", function(error, data) {
   if (error) throw error;
 
   //var data = data.filter(function(el){return el.Metric === 'Sales'});
@@ -23231,9 +23231,10 @@ $(function(){
         var data = {'data':{}};
         data['user_id'] = user_id;
         data['lti_id'] = lti_id;
+        data['func'] = "get_filesnames";
         $.ajax({
           type: "POST",
-          url: "scripts/getAvailableFilenames.php",
+          url: "scripts/available_files.php",
           data: data,
           success: function(response) {
             //response is an array of file names

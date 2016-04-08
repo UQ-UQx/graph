@@ -33,9 +33,10 @@ $(function(){
         var data = {'data':{}};
         data['user_id'] = user_id;
         data['lti_id'] = lti_id;
+        data['func'] = "get_filesnames";
         $.ajax({
           type: "POST",
-          url: "scripts/getAvailableFilenames.php",
+          url: "scripts/available_files.php",
           data: data,
           success: function(response) {
             //response is an array of file names
