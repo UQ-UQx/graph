@@ -8,23 +8,28 @@ require("./upload.js"); // Upload files through AJAX
 var graph = require("./graph.js");
 
 
-
-$("#updateButton").click(function(){
-
-
-
-	graph.loadData($pre_load);
-
-   // graph.loadData("Sun_Yang.csv");
-   // graph.loadData("Hacket_2004.csv");
-  // graph.loadData("Hacket_2006.csv");
-
-
-
-
-
-
+$("document").ready(function(){
+	var check_loaded = setInterval(function(){
+		console.log("checking...");
+		if($pre_load.length > 0){
+			clearInterval(check_loaded);
+			graph.init($pre_load);
+		}
+	},500);
 });
+
+
+
+// $("#updateButton").click(function(){
+
+
+
+// 	graph.loadData($pre_load);
+
+
+
+
+// });
 
 
 

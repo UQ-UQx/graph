@@ -5,8 +5,6 @@ require_once('inc/header.php');
 require_once('scripts/available_files.php');
 require_once('scripts/download_csv.php'); 
 
-
-
  $x_axis = "Time";
  $y_axis = "Distance";
  $x_axis_display_text = "Time (seconds)";
@@ -18,16 +16,31 @@ require_once('scripts/download_csv.php');
 
 $ltivars = $lti->calldata();
 
-if(isset($ltivars{'custom_pre_load'})){
+$oldmask = umask(0);
+if (!file_exists('data/'.$lti_id)) {
+	mkdir('data/'.$lti_id, 0777, true);
+	error_log("Creating folder for LTI",0);
+}
+if (!file_exists('data/'.$lti_id."/".$user_id)) {
+	mkdir('data/'.$lti_id."/".$user_id, 0777, true);
+	error_log("Creating folder for LTI User",0);
+}
+if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
+	$myfile = fopen('data/'.$lti_id."/".$user_id."/".$user_id.".csv", "w");
+	error_log("Creating main CSV file for User",0);
+}
+umask($oldmask);
 
+
+
+
+
+if(isset($ltivars{'custom_pre_load'})){
 	$links = str_getcsv($ltivars{'custom_pre_load'});
 	$pre_load = array();
-
 	foreach ($links as $key => $link) {
 		array_push($pre_load,download_csv_edx_weblink($link, $lti_id, $user_id));
 	}
-
-	echo json_encode($pre_load);
 }
 
 
@@ -37,20 +50,6 @@ if(isset($ltivars{'custom_pre_load'})){
  echo $lti_id;
  echo "<br>".$user_id;
 
-	$oldmask = umask(0);
-	if (!file_exists('data/'.$lti_id)) {
-		mkdir('data/'.$lti_id, 0777, true);
-		error_log("Creating folder for LTI",0);
-	}
-	if (!file_exists('data/'.$lti_id."/".$user_id)) {
-		mkdir('data/'.$lti_id."/".$user_id, 0777, true);
-		error_log("Creating folder for LTI User",0);
-	}
-	if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
-		$myfile = fopen('data/'.$lti_id."/".$user_id."/".$user_id.".csv", "w");
-		error_log("Creating main CSV file for User",0);
-	}
-	umask($oldmask);
 
 
  $data_sets = getAvailableFiles($lti_id,$user_id);
@@ -68,6 +67,8 @@ if(isset($ltivars{'custom_pre_load'})){
  $user_id = '<?php echo $user_id; ?>';
  $lti_id = '<?php echo $lti_id; ?>';
  $pre_load = '<?php echo json_encode($pre_load); ?>';
+
+
 
 </script>
 </head>
