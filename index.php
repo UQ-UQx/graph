@@ -2,16 +2,36 @@
 <?php 
 
 require_once('inc/header.php');
-require_once('scripts/available_files.php'); 
+require_once('scripts/available_files.php');
+require_once('scripts/download_csv.php'); 
 
 
- $x_axis_name = "Time (seconds)";
- $y_axis_name = "Distance (meters)";
- $addable = true;
+
+ $x_axis = "Time";
+ $y_axis = "Distance";
+ $x_axis_display_text = "Time (seconds)";
+ $y_axis_display_text = "Distance (meters)";
+ $editable = true;
  $lti_id = $lti->context_id();
  $user_id = $lti->user_id();
+ $pre_load = array("edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv", "edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv", "edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv");
 
-  $data_sets = array("Please Upload CSV files with 'Distance' and 'Time'");
+$ltivars = $lti->calldata();
+
+if(isset($ltivars{'custom_pre_load'})){
+
+	$links = str_getcsv($ltivars{'custom_pre_load'});
+	$pre_load = array();
+
+	foreach ($links as $key => $link) {
+		array_push($pre_load,download_csv_edx_weblink($link, $lti_id, $user_id));
+	}
+
+	echo json_encode($pre_load);
+}
+
+
+ $data_sets = array("Please Upload CSV files with 'Distance' and 'Time'");
 
 
  echo $lti_id;
@@ -41,10 +61,13 @@ require_once('scripts/available_files.php');
 
 <script type="text/javascript">
 
- $x_axis_name = "<?php echo $x_axis_name; ?>";
- $y_axis_name = "<?php echo $y_axis_name; ?>";
+ $x_axis = "<?php echo $x_axis; ?>";
+ $y_axis = "<?php echo $y_axis; ?>";
+ $x_axis_display_text = "<?php echo $x_axis_display_text; ?>";
+ $y_axis_display_text = "<?php echo $y_axis_display_text; ?>";
  $user_id = '<?php echo $user_id; ?>';
  $lti_id = '<?php echo $lti_id; ?>';
+ $pre_load = '<?php echo json_encode($pre_load); ?>';
 
 </script>
 </head>

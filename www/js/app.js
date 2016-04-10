@@ -13,9 +13,12 @@ $("#updateButton").click(function(){
 
 
 
-    var radius = _.random(0.1,50);
-    console.log(radius);
-    graph.setPlotSize(radius);
+	graph.loadData($pre_load);
+
+   // graph.loadData("Sun_Yang.csv");
+   // graph.loadData("Hacket_2004.csv");
+  // graph.loadData("Hacket_2006.csv");
+
 
 
 
