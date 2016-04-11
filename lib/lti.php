@@ -151,12 +151,14 @@ class Lti {
 		    'lis_result_sourcedid'=>'UQx/ceit1001/2014_1:-i4x-UQx-ceit1001-lti-35fd269993224010adbacd8cd05f0043:student',
 		    'context_id'=>'course-v1:UQx+UQx002+2015August',
 		    'oauth_consumer_key'=>'test',
-		    'resource_link_id'=>'-i4x-UQx-ceit1001-lti-35fd269993224010adbacd8cd05f0043',
+		    'resource_link_id'=>'edge.edx.org-a0a209fa908e4285b405e5f0a0d046bd',
 		    'oauth_signature_method'=>'HMAC-SHA1',
 		    'oauth_version'=>'1.0',
 		    'oauth_signature'=>'dSffHcwBbfyR01HQloYJIQRu9T0',
 		    'lti_message_type'=>'basic-lti-launch-request',
 		    'oauth_callback'=>'about:blank',
+		    'custom_pre_load'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv'
+
 		);
 	}
 	

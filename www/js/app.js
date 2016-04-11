@@ -8,6 +8,8 @@ require("./upload.js"); // Upload files through AJAX
 var graph = require("./graph.js");
 
 
+
+
 $("document").ready(function(){
 	var check_loaded = setInterval(function(){
 		console.log("checking...");
@@ -16,22 +18,20 @@ $("document").ready(function(){
 			graph.init($pre_load);
 		}
 	},500);
+
+
+	$(document).on("change",'.data_to_load', function() {
+	    var values = $(this).map(function() {
+	    	if(this.checked){
+        		return {"call":"add", "val":this.value};
+        	}
+        	return {"call":"remove", "val":this.value};
+    	}).get();
+    	console.log(values);
+	});
+
+
 });
-
-
-
-// $("#updateButton").click(function(){
-
-
-
-// 	graph.loadData($pre_load);
-
-
-
-
-// });
-
-
 
 
 

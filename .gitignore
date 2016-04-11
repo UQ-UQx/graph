@@ -1,4 +1,4 @@
 config.php
 node_modules
 logs/*.log
-data/*
+data/

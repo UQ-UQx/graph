@@ -10,7 +10,7 @@ require_once('scripts/download_csv.php');
  $x_axis_display_text = "Time (seconds)";
  $y_axis_display_text = "Distance (meters)";
  $editable = true;
- $lti_id = $lti->context_id();
+ $lti_id = $lti->context_id()."_".$lti->resource_id();
  $user_id = $lti->user_id();
  $pre_load = array("edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv", "edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv", "edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv");
 
@@ -66,8 +66,7 @@ if(isset($ltivars{'custom_pre_load'})){
  $y_axis_display_text = "<?php echo $y_axis_display_text; ?>";
  $user_id = '<?php echo $user_id; ?>';
  $lti_id = '<?php echo $lti_id; ?>';
- $pre_load = '<?php echo json_encode($pre_load); ?>';
-
+ $pre_load = JSON.parse('<?php echo json_encode($pre_load); ?>');
 
 
 </script>
@@ -89,17 +88,20 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 	<ul>
-
 		<?php 
 
 			foreach ($data_sets as $ind => $value) {
+			$value = substr($value,0,-4);
+			$display_value = str_replace("_"," ", $value);
+			$checked = '';
+			if(in_array($value.".csv", $pre_load)){
+				$checked = "checked";
+			}
 			echo "<li>";
-			echo '<input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'"> '.$value;
+			echo '<input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'> '.$display_value;
 			echo "</li>";
 
 			}
-
-
 		?>
 	</ul>
 

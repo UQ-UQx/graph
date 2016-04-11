@@ -28,25 +28,12 @@ $(function(){
             // Something has gone wrong!
         }
     }).bind('fileuploaddone', function(e, data){
-        var user_id = $(e.target).find("input[name='user_id']").val();
-        var lti_id = $(e.target).find("input[name='lti_id']").val();
-        var data = {'data':{}};
-        data['user_id'] = user_id;
-        data['lti_id'] = lti_id;
-        data['func'] = "get_filesnames";
-        $.ajax({
-          type: "POST",
-          url: "scripts/available_files.php",
-          data: data,
-          success: function(response) {
-            //response is an array of file names
-            
-            update_datasets(response);
-          },
-          error: function(error){
-              console.log(error);
-          }
-        });
+
+        var uploaded_files = [];
+        $.each(data.files, function(ind, file){
+            uploaded_files.push((file.name).substring(0,(file.name).length - 4));
+        })
+        update_datasets(uploaded_files);
     });
     // Prevent the default action when a file is dropped on the window
     $(document).on('drop dragover', function (e) {
@@ -54,19 +41,17 @@ $(function(){
     });
     // Helper function that formats the file sizes
     // 
-    function update_datasets(uploaded_files){
+    function update_datasets(new_files){
 
-      console.log(uploaded_files);
-      //run ajax call to get current list of files
-      //push that list out
-      $("#datasets ul").empty();
+        console.log(new_files);
 
-      $.each(uploaded_files, function(ind, obj){
+        $.each(new_files, function(ind, file){
+            if($(".data_to_load[value='"+file+"']").length == 0){
+                display_name = file.replace(/\_/g,' ');
+                $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+file+'"> '+display_name+'</li>');
+            }
+        });
 
-        $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+obj+'"> '+obj+'</li>');
-
-      });
-      
     }
     function formatFileSize(bytes) {
         if (typeof bytes !== 'number') {
