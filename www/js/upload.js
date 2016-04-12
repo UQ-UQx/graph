@@ -1,3 +1,4 @@
+var graph = require("./graph.js");
 /**
  *
  * 	Basic file upload feature

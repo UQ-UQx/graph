@@ -8,7 +8,7 @@ if(isset($_POST['func'])){
 	}
 } 
 function getAvailableFiles($lti_id, $user_id){
-	$files = array_slice(scandir($_SERVER['DOCUMENT_ROOT'].'/query101x/graph/data/'.$lti_id.'/'.$user_id.'/'), 2);
+	$files = array_slice(scandir($_SERVER['DOCUMENT_ROOT'].$_SERVER["REQUEST_URI"].'data/'.$lti_id.'/'.$user_id.'/'), 2);
 	$files = array_diff($files, array($user_id.".csv"));
 	return $files;
 }

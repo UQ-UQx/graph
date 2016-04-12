@@ -5,6 +5,7 @@ require_once('inc/header.php');
 require_once('scripts/available_files.php');
 require_once('scripts/download_csv.php'); 
 
+
  $x_axis = "Time";
  $y_axis = "Distance";
  $x_axis_display_text = "Time (seconds)";
@@ -12,7 +13,7 @@ require_once('scripts/download_csv.php');
  $editable = true;
  $lti_id = $lti->context_id()."_".$lti->resource_id();
  $user_id = $lti->user_id();
- $pre_load = array("edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv", "edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv", "edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv");
+ $pre_load = array();
 
 $ltivars = $lti->calldata();
 
@@ -32,15 +33,20 @@ if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
 umask($oldmask);
 
 
-
+if(isset($ltivars{'custom_upload'})){
+	$links = str_getcsv($ltivars{'custom_upload'});
+	foreach ($links as $key => $link) {
+		download_csv_edx_weblink($link, $lti_id, $user_id);
+	}
+}
 
 
 if(isset($ltivars{'custom_pre_load'})){
-	$links = str_getcsv($ltivars{'custom_pre_load'});
+	// $links = str_getcsv($ltivars{'custom_pre_load'});
 	$pre_load = array();
-	foreach ($links as $key => $link) {
-		array_push($pre_load,download_csv_edx_weblink($link, $lti_id, $user_id));
-	}
+	$pre_load = str_getcsv($ltivars{'custom_pre_load'});
+
+	echo $pre_load;
 }
 
 
@@ -67,7 +73,7 @@ if(isset($ltivars{'custom_pre_load'})){
  $user_id = '<?php echo $user_id; ?>';
  $lti_id = '<?php echo $lti_id; ?>';
  $pre_load = JSON.parse('<?php echo json_encode($pre_load); ?>');
-
+ $init_available_data_sets = JSON.parse('<?php echo json_encode($data_sets); ?>');
 
 </script>
 </head>

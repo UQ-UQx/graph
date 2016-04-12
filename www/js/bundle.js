@@ -23041,7 +23041,6 @@ $("document").ready(function(){
 
 
 
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./graph.js":8,"./upload.js":9,"blueimp-file-upload":1,"d3":3,"jquery":5,"jquery-knob":4,"underscore":6}],8:[function(require,module,exports){
 var _data_sets = [];
@@ -23399,8 +23398,8 @@ function renderGraphWithDataName(name, data){
 
 
 
-
 },{}],9:[function(require,module,exports){
+var graph = require("./graph.js");
 /**
  *
  * 	Basic file upload feature
@@ -23469,4 +23468,4 @@ $(function(){
         return (bytes / 1000).toFixed(2) + ' KB';
     }
 });
-},{}]},{},[7]);
+},{"./graph.js":8}]},{},[7]);
