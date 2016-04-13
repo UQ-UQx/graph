@@ -2,6 +2,7 @@ body {
   font: 10px sans-serif;
 }
 
+
 .axis path,
 .axis line {
   fill: none;
@@ -14,7 +15,7 @@ body {
 }
 
 #chart {
-  width: 80%;
+  width: 100%;
   height: auto;
   min-width: 300px;
   min-height: 300px;
@@ -50,8 +51,33 @@ body {
   left: 0;
 }
 
-#graph{
 
-	width:80%;
-	height:500px;
+#table{
+  width:26%;
+  height:500px;
+  background-color:red;
+  float: left;
+}
+
+.axis path,
+  .axis line{
+    fill: none;
+    stroke: black;
+  }
+
+
+
+
+  .tick line{
+    opacity: 0.2;
+  }
+
+  .zero{
+    opacity: 1;
+  }
+
+  .graph_back {
+  fill: #9A9A9C;
+  opacity: 0.1;
+  shape-rendering: crispEdges;
 }

@@ -23049,10 +23049,13 @@ var _parsed_csv_files = {};
 var _data_base_path = "data/"+$lti_id+"/"+$user_id+"/";
 var _current_x_axis_max = 0;
 var _current_y_axis_max = 0;
+var _current_x_axis_min = 0;
+var _current_y_axis_min = 0;
+var _dateFormat = d3.time.format("%b %Y");
 
 
 var margin = {top: 40, right: 40, bottom: 55, left: 55},
-    dim = Math.max(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
+    dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
     width = dim - margin.left - margin.right,
     height = dim - margin.top - margin.bottom;
 
@@ -23067,16 +23070,45 @@ var r = d3.scale.linear()
     .range([radius, radius]);
 
 var color = d3.scale.category10();
+var num_of_ticks = 10;
 
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
-    .ticks(5);
+              .ticks(num_of_ticks)
+              .innerTickSize(-width)
+              .outerTickSize(0)
+              .tickPadding(10);
 
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-        .ticks(5);
+              .ticks(num_of_ticks)
+              .innerTickSize(-height)
+              .outerTickSize(0)
+              .tickPadding(10);
+
+var parseDate = d3.time.format("%Y").parse;
+
+
+if($x_axis_format == "date_year"){
+  var x = d3.time.scale().range([0, width]);
+
+ xAxis.scale(x);
+ xAxis.tickFormat(d3.time.format("%Y"));
+
+
+}
+
+if($y_axis_format == "date_year"){
+  var y = d3.time.scale().range([0, width]);
+  yAxis.scale(y);
+
+
+  yAxis.tickFormat(d3.time.format("%Y"));
+
+}
+
 
 
 var svg = d3.select("#chart")
@@ -23108,10 +23140,30 @@ var svg = d3.select("#chart")
       .style("text-anchor", "end")
       .text($y_axis_display_text);
 
+svg.append("rect")
+      .attr("class", "graph_back")
+      .attr("width", width)
+      .attr("height", height);
+
+
 resize();
+
+setInterval(function(){
+
+
+    xAxis.ticks(dim / 50).innerTickSize(-width)
+              .outerTickSize(0)
+              .tickPadding(10);
+
+    yAxis.ticks(dim / 50).innerTickSize(-height)
+              .outerTickSize(0)
+              .tickPadding(10);
+
+},100);
+
 function resize() {
 
-  var dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
+  dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
   width = dim - margin.left - margin.right,
   height = dim - margin.top - margin.bottom;
 
@@ -23131,6 +23183,10 @@ function resize() {
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
 
+    svg.select('.graph_back')
+      .attr("width", width)
+      .attr("height", height);
+
   svg.select('.x.axis').select('.label')
       .attr("x",width/2+40);
   svg.select('.y.axis').select('.label')
@@ -23139,19 +23195,46 @@ function resize() {
   svg.select('.y.axis')
     .call(yAxis);
 
+
+
   // Update the tick marks
-  xAxis.ticks(dim / 75);
-  yAxis.ticks(dim / 75);
+  xAxis.ticks(dim / 50);
+  yAxis.ticks(dim / 50);
 
   // Update the circles
   r.range([(dim*radius)/100, (dim*radius)/100])
 
 
 
+    // Update the tick marks
+    xAxis.ticks(dim / 50).innerTickSize(-width)
+              .outerTickSize(0)
+              .tickPadding(10);
+
+    yAxis.ticks(dim / 50).innerTickSize(-height)
+              .outerTickSize(0)
+              .tickPadding(10);
+
   svg.selectAll('.dot')
     .attr("r", function(d) {return r(radius)})
     .attr("cx", function(d) { return x(d[$x_axis]); })
     .attr("cy", function(d) { return y(d[$y_axis]); })
+
+
+          setBoldGridLines(0);
+
+}
+
+function setBoldGridLines(grid_number){
+
+  d3.selectAll('.tick')
+    .filter(function(d){ 
+        return d==grid_number;
+      })
+    .select('line')
+    .style('stroke-width', 2)
+    .style('opacity', 1);
+
 }
 
 d3.select(window).on('resize', resize);
@@ -23256,8 +23339,14 @@ function load_and_render_data(){
       d3.csv(_data_base_path+filename, function(error,data){
         if (error) throw error;
         data.forEach(function(d){
-          d[$x_axis] = +d[$x_axis];
-          d[$y_axis] = +d[$y_axis];
+          if($x_axis_format == "date_year"){
+            d[$x_axis] = parseDate(d[$x_axis]);
+
+        }else{
+           d[$x_axis] = +d[$x_axis];
+
+             }
+        d[$y_axis] = +d[$y_axis];
         });
 
         var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
@@ -23269,6 +23358,17 @@ function load_and_render_data(){
         if(y_max > _current_y_axis_max){
           _current_y_axis_max = y_max;
         }
+
+         var x_min = Math.min(d3.min(data, function(d){return d[$x_axis] || Infinity;}),_current_x_axis_min);
+      var y_min = Math.min(d3.min(data, function(d){return d[$y_axis] || Infinity;}),_current_y_axis_min);
+
+      if(x_min < _current_x_axis_min){
+        _current_x_axis_min = x_min;
+      }
+      if(y_max > _current_y_axis_max){
+        _current_y_axis_min = y_min;
+      }
+
         if (!--remaining) renderGraph();
       });
     });
@@ -23293,7 +23393,12 @@ function renderGraphWithDataName(name, data){
 
 
       data.forEach(function(d){
-        d[$x_axis] = +d[$x_axis];
+        if($x_axis_format == "date_year"){
+            d[$x_axis] = parseDate(d[$x_axis]);
+
+        }else{
+            d[$x_axis] = +d[$x_axis];
+        }
         d[$y_axis] = +d[$y_axis];
         d["set"] = name;
       });
@@ -23310,11 +23415,23 @@ function renderGraphWithDataName(name, data){
         _current_y_axis_max = y_max;
       }
 
-      //console.log(x_max);
-      //console.log(y_max);
 
-      x.domain([0, x_max]).nice();
-      y.domain([0, y_max]).nice();
+      var x_min = d3.min(data, function(d){return d[$x_axis] || Infinity;});
+      var y_min = d3.min(data, function(d){return d[$y_axis] || Infinity;});
+
+      
+      if(x_min < _current_x_axis_min){
+        _current_x_axis_min = x_min;
+      }
+      if(y_max < _current_y_axis_max){
+        _current_y_axis_min = y_min;
+      }
+
+      console.log(x_min);
+      console.log(y_min);
+
+      x.domain([x_min, x_max]).nice();
+      y.domain([y_min, y_max]).nice();
 
 
   svg.selectAll(".axis").remove();
@@ -23391,8 +23508,60 @@ function renderGraphWithDataName(name, data){
 
 
   //})
+  //
+  //  //
+     d3.selectAll('.tick')
+  .filter(function(d){ 
+      return d==0;
+    })
+   //only ticks that returned true for the filter will be included
+   //in the rest of the method calls:
+  .select('line') //grab the tick line
+  //.attr("opacity","1");
+//  .attr('class', 'quadrantBorder') //style with a custom class and CSS
+  .style('stroke-width', 2) //or style directly with attributes or inline styles
+  .style('opacity', 1);        
+
+      var zoomBeh = d3.behavior.zoom()
+      .x(x)
+      .y(y)
+      .on("zoom", zoom);
+
+
+
+      svg.call(zoomBeh);
+
 
 }
+
+function zoom() {
+    svg.select(".x.axis").call(xAxis);
+    svg.select(".y.axis").call(yAxis);
+
+    
+
+
+    svg.selectAll(".dot")
+        .attr("cx", function(d){ return x(d[$x_axis]);})
+        .attr("cy", function(d){ return y(d[$y_axis]);})
+        .attr("r", function(d) {return r(radius)})
+
+
+    d3.selectAll('.tick')
+  .filter(function(d){ 
+      return d==0;
+    })
+   //only ticks that returned true for the filter will be included
+   //in the rest of the method calls:
+  .select('line') //grab the tick line
+  //.attr("opacity","1");
+//  .attr('class', 'quadrantBorder') //style with a custom class and CSS
+  .style('stroke-width', 2) //or style directly with attributes or inline styles
+  .style('opacity', 1);
+
+  }
+
+
 
 
 

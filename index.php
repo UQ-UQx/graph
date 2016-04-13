@@ -10,10 +10,15 @@ require_once('scripts/download_csv.php');
  $y_axis = "Distance";
  $x_axis_display_text = "Time (seconds)";
  $y_axis_display_text = "Distance (meters)";
+ $x_axis_format = "none";
+ $y_axis_format = "none";
+
  $editable = true;
  $lti_id = $lti->context_id()."_".$lti->resource_id();
  $user_id = $lti->user_id();
  $pre_load = array();
+
+
 
 $ltivars = $lti->calldata();
 
@@ -31,6 +36,35 @@ if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
 	error_log("Creating main CSV file for User",0);
 }
 umask($oldmask);
+
+
+
+if(isset($ltivars{'custom_x_axis_display_text'})){
+	$x_axis_display_text = $ltivars{'custom_x_axis_display_text'};
+}
+
+if(isset($ltivars{'custom_y_axis_display_text'})){
+	$y_axis_display_text = $ltivars{'custom_y_axis_display_text'};
+}
+
+
+if(isset($ltivars{'custom_x_axis'})){
+	$x_axis = $ltivars{'custom_x_axis'};
+}
+
+if(isset($ltivars{'custom_y_axis'})){
+	$y_axis = $ltivars{'custom_y_axis'};
+}
+
+
+if(isset($ltivars{'custom_x_axis_format'})){
+	$x_axis_format = $ltivars{'custom_x_axis_format'};
+}
+
+if(isset($ltivars{'custom_y_axis_format'})){
+	$y_axis_format = $ltivars{'custom_y_axis_format'};
+}
+
 
 
 if(isset($ltivars{'custom_upload'})){
@@ -70,6 +104,9 @@ if(isset($ltivars{'custom_pre_load'})){
  $y_axis = "<?php echo $y_axis; ?>";
  $x_axis_display_text = "<?php echo $x_axis_display_text; ?>";
  $y_axis_display_text = "<?php echo $y_axis_display_text; ?>";
+
+ $x_axis_format = "<?php echo $x_axis_format; ?>";
+ $y_axis_format = "<?php echo $y_axis_format; ?>";
  $user_id = '<?php echo $user_id; ?>';
  $lti_id = '<?php echo $lti_id; ?>';
  $pre_load = JSON.parse('<?php echo json_encode($pre_load); ?>');
@@ -81,15 +118,15 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 
-	<div id="graph">
-		<svg id="chart"></svg>
-	</div>
+		<div id="graph">
+			<svg id="chart"></svg>
+		</div>
 
 
 
 <div id="datasets">
 <div id="option">
-    <input id="updateButton" name="updateButton" type="button" value="Update"/>
+ <!--   <input id="updateButton" name="updateButton" type="button" value="Update"/> -->
 </div>
 
 
