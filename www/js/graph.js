@@ -117,11 +117,9 @@ setInterval(function(){
 },100);
 
 function resize() {
-
-  dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
-  width = dim - margin.left - margin.right,
+  dim = parseInt(d3.select("#chart").style("width")),
+      width = dim - margin.left - margin.right,
   height = dim - margin.top - margin.bottom;
-
   //console.log(dim);
 
   $("#graph").css({
@@ -342,11 +340,11 @@ function renderGraph() {
 
 function renderGraphWithDataName(name, data){
   resize();
-    var dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
-  width = dim - margin.left - margin.right,
+  dim = parseInt(d3.select("#chart").style("width")),
+      width = dim - margin.left - margin.right,
   height = dim - margin.top - margin.bottom;
 
-
+$("#datasets").append(d3.select("#chart").style("width"));
       data.forEach(function(d){
         if($x_axis_format == "date_year"){
             d[$x_axis] = parseDate(d[$x_axis]);
