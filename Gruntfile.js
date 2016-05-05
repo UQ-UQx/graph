@@ -2,13 +2,18 @@ module.exports = function(grunt){
 
     grunt.initConfig({
         concurrent:{
-            app:["watch:dev_reload", "watch:js_ugly", "watch:css_ugly", "browserify", "watch:scss_bundle", "sass:dist"],
+            app:["watch:dev_reload","browserify:run", "watch:js_ugly", "watch:scss_bundle"],
             options: {
                 logConcurrentOutput: true
             }
         },
         browserify: {
-            dist: {
+            init:{
+                files: {
+                  'build/js/app.js': ['www/js/app.js']
+                }
+            },
+            run: {
                 files: {
                   'build/js/app.js': ['www/js/app.js']
                 },
@@ -26,11 +31,7 @@ module.exports = function(grunt){
             },
             js_ugly:{
                 files:["build/js/app.js"],
-                tasks:["uglify"]
-            },
-            css_ugly:{
-                files:["build/css/app.css"],
-                tasks:["cssmin"]
+                tasks:["uglify:js"]
             },
             dev_reload:{
                 files:["build/js/app.js", "build/css/app.css", "*.php", "**/*.php"],
@@ -48,21 +49,13 @@ module.exports = function(grunt){
               }
             }
         },
-        cssmin: {
-            target: {
-                files: [{
-                    expand: true,
-                    cwd: 'build/css',
-                    src: ['*.css', '!*.min.css'],
-                    dest: 'build/css',
-                    ext: '.min.css'
-                }]
-            }
-        },
         sass: {
+            options:{
+                outputStyle:"compressed"
+            },
             dist: {
                 files: {
-                    'build/css/app.css': 'www/sass/main.scss',
+                    'build/css/app.min.css': 'www/sass/main.scss',
                 }
             }
         }
@@ -70,11 +63,9 @@ module.exports = function(grunt){
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-sass');
 
-
-    grunt.registerTask('run', ["concurrent:app"]);
+    grunt.registerTask('run', ["browserify:init","sass:dist","concurrent:app"]);
 }
