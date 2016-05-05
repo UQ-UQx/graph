@@ -16,7 +16,7 @@
 ?>
 <head>
 
-	<link rel="stylesheet" type="text/css" href="build/css/app.css"></link>
+	<link rel="stylesheet" type="text/css" href="build/css/app.min.css"></link>
 	<script type="text/javascript" src="build/js/app.js"></script>
 
 
