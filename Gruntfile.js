@@ -2,7 +2,7 @@ module.exports = function(grunt){
 
     grunt.initConfig({
         concurrent:{
-            app:["watch:dev_reload", "watch:ugly", "browserify", "watch:scss_bundle", "sass:dist"],
+            app:["watch:dev_reload", "watch:js_ugly", "watch:css_ugly", "browserify", "watch:scss_bundle", "sass:dist"],
             options: {
                 logConcurrentOutput: true
             }
@@ -24,17 +24,19 @@ module.exports = function(grunt){
                 files:["www/sass/**/*.scss"],
                 tasks:["sass"]
             },
-            ugly:{
-                files:["build/js/app.js", "build/css/app.css"],
+            js_ugly:{
+                files:["build/js/app.js"],
                 tasks:["uglify"]
+            },
+            css_ugly:{
+                files:["build/css/app.css"],
+                tasks:["cssmin"]
             },
             dev_reload:{
                 files:["build/js/app.js", "build/css/app.css", "*.php", "**/*.php"],
                 options: {
                   livereload: {
-
                     host: 'localhost',
-
                   }
                 }
             },
@@ -44,11 +46,17 @@ module.exports = function(grunt){
               files: {
                 'build/js/app.min.js': ['build/js/app.js']
               }
-            },
-            css: {
-                files: {
-                    'build/css/app.min.css': ['build/css/app.css']
-                }
+            }
+        },
+        cssmin: {
+            target: {
+                files: [{
+                    expand: true,
+                    cwd: 'build/css',
+                    src: ['*.css', '!*.min.css'],
+                    dest: 'build/css',
+                    ext: '.min.css'
+                }]
             }
         },
         sass: {
@@ -62,6 +70,7 @@ module.exports = function(grunt){
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-sass');
