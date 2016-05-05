@@ -1,0 +1,45 @@
+{
+  "name": "lti_base_php",
+  "version": "0.0.1",
+  "description": "LTI Baseplate (PHP). For use in the edX platform",
+  "scripts": {
+    "start": "npm install && grunt run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UQ-UQx/lti_base_php.git"
+  },
+  "keywords": [
+    "LTI",
+    "Boiler",
+    "Plate"
+  ],
+  "author": "Ankith Konda, Andrew Dekker",
+  "license": "MIT",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/UQ-UQx/lti_base_php/issues"
+  },
+  "homepage": "https://github.com/UQ-UQx/lti_base_php#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "font-awesome": "^4.6.1",
+    "jquery": "^2.2.3",
+    "jquery-ui": "^1.10.5",
+    "twbs-pagination": "^1.3.1",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "grunt": "~0.4.5",
+    "grunt-browserify": "^5.0.0",
+    "grunt-concurrent": "^2.3.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-insert": "^0.1.0",
+    "grunt-sass": "^1.1.0",
+    "watchify": "^3.7.0"
+  }
+}

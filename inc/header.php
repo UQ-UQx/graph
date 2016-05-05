@@ -13,28 +13,34 @@
 		Db::config( 'password', $config['db']['password'] );
 	}
 	
-	
-
-
 ?>
 <head>
-	<link rel="stylesheet" type="text/css" href="www/css/bootstrap.min.css"></link>
-	<link rel="stylesheet" type="text/css" href="www/css/bootstrap-theme.min.css"></link>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="www/css/font-awesome.min.css"></link>
-	<link rel="stylesheet" type="text/css" href="www/css/jquery-ui.min.css"></link>
+
+	<link rel="stylesheet" type="text/css" href="build/css/app.css"></link>
+	<script type="text/javascript" src="build/js/app.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" 
+	href="node_modules/bootstrap/dist/css/bootstrap.min.css"></link>
+
+	<link rel="stylesheet" type="text/css" 
+	href="node_modules/font-awesome/css/font-awesome.min.css"></link>
+
 	
-	<script type="text/javascript" src="www/js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="www/js/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="www/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="www/js/twbs-pagination/jquery.twbsPagination.min.js"></script>
-	
-	<?php
-	echo '<p>Dev Version - DO NOT USE IN COURSES - contact UQx Technical Team</p>';
+<?php
+	$dev_message = '<p class="uqx-danger text-center">Dev Version - 
+					  DO NOT USE IN COURSES - contact UQx Technical Team</p>';
+
+	$valid_message = '<p class="uqx-valid text-center">LTI Valid</p>';
+
+	$invalid_message = '<p class="uqx-invalid text-center">LTI Invalid 
+						- contact UQx Technical Team</p>';
+
+	echo $dev_message;
 	if($lti->is_valid()) {
-		echo '<p>LTI Valid</p>';
+		echo $valid_message;
 	} else {
-		echo '<p>LTI Invalid - contact UQx Technical Team</p>';
-		die();
+		echo $invalid_message;
+		//die();
 	}
-	?>
+?>
