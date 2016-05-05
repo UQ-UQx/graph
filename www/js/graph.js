@@ -513,9 +513,3 @@ function zoom() {
   .style('opacity', 1);
 
   }
-
-
-
-
-
-

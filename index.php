@@ -117,7 +117,6 @@ if(isset($ltivars{'custom_pre_load'})){
 <body>
 
 
-
 		<div id="graph">
 			<svg id="chart"></svg>
 		</div>
@@ -167,6 +166,15 @@ if(isset($ltivars{'custom_pre_load'})){
 	</div>
 
 
-<script src="www/js/bundle.js" type="text/javascript"></script>
+<dl>
+  <dt>LTI Call Data</dt><dd><pre><?php print_r($lti->calldata());?></pre></dd>
+</dl>
+
+
+<script type="text/javascript" src="build/js/app.js"></script>
+
+<!-- Remove this livereload line on production -->
+<script src="//localhost:35729/livereload.js"></script>
+<!-- Remove this livereload line on production -->
 </body>
 </html>

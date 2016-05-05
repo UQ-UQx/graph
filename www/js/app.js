@@ -1,13 +1,12 @@
 global.$ = global.jQuery = require("jquery");
 global.d3 = require("d3");
 global._ = require("underscore");
-
+require('bootstrap');
+require('twbs-pagination');
 require("blueimp-file-upload");
 require("jquery-knob"); 
 require("./upload.js"); // Upload files through AJAX
 var graph = require("./graph.js");
-
-
 
 
 $("document").ready(function(){
@@ -32,5 +31,4 @@ $("document").ready(function(){
 
 
 });
-
 

@@ -12,16 +12,33 @@
 		Db::config( 'user',     $config['db']['username'] );
 		Db::config( 'password', $config['db']['password'] );
 	}
+	
 ?>
-<head>	
-	<?php
+<head>
+
+	<link rel="stylesheet" type="text/css" href="build/css/app.min.css"></link>
+
+	<link rel="stylesheet" type="text/css" 
+	href="node_modules/bootstrap/dist/css/bootstrap.min.css"></link>
+
+	<link rel="stylesheet" type="text/css" 
+	href="node_modules/font-awesome/css/font-awesome.min.css"></link>
+
+	
+<?php
+	$dev_message = '<p class="uqx-danger text-center">Dev Version - 
+					  DO NOT USE IN COURSES - contact UQx Technical Team</p>';
+
+	$valid_message = '<p class="uqx-valid text-center">LTI Valid</p>';
+
+	$invalid_message = '<p class="uqx-invalid text-center">LTI Invalid 
+						- contact UQx Technical Team</p>';
+
+	echo $dev_message;
 	if($lti->is_valid()) {
-		echo '<p><span style="color:green">LTI Valid</span> - Dev Version - <span style="color:red">DO NOT USE IN COURSES</span> - contact UQx Technical Team</p>';
+		echo $valid_message;
 	} else {
-		echo '<p>LTI Invalid - contact UQx</p>';
+		echo $invalid_message;
 		//die();
 	}
-	?>
-	<link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="www/css/style.css">
-
+?>

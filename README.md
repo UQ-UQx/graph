@@ -2,12 +2,12 @@
 
 # Installation 
 
-### Files
+1. Open terminal to the project directory
+2. Run the following command -
+ > npm run start
 
-* config.php
-
-once cloned, create a file called "config.php" and add the following with your details in place of the placeholder values
-
+3. wait until npm installs all the packages and starts grunt
+4. create a new file named "config.php" and copy the config code below into the new created file
 ```php
 <?php
 	//Configuration File
@@ -27,6 +27,8 @@ once cloned, create a file called "config.php" and add the following with your d
 	);
 ?>
 ```
+
+That's it! you're done with the setup :)
 
 # Setup
 1. Edit config.php with your respective LTI keys and optional database details
