@@ -8,11 +8,7 @@ A base package for LTI tools built on edX, simple to write and deploy.
  > npm run start
 
 3. wait until npm installs all the packages and starts grunt
-4. Run the following command -
- > touch config.php
-
-copy the config code below into the new created config.php file
-
+4. create a new file named "config.php" and copy the config code below into the new created file
 ```php
 <?php
 	//Configuration File
@@ -33,8 +29,7 @@ copy the config code below into the new created config.php file
 ?>
 ```
 
-4. Open localhost/path/to/directory/ in your browser, you should now see the main page. If there is no color or styling, then you may need to quit the grunt tasks running and type "Grunt run" into your terminal again to restart.
-
+That's it! you're done with the setup :)
 
 # Setup
 1. Edit config.php with your respective LTI keys and optional database details
