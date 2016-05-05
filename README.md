@@ -5,13 +5,11 @@ A base package for LTI tools built on edX, simple to write and deploy.
 
 1. Open terminal to the project directory
 2. Run the following command -
-
-> npm run start
+ > npm run start
 
 3. wait until npm installs all the packages and starts grunt
 4. Run the following command -
-
-> touch config.php
+ > touch config.php
 
 copy the config code below into the new created config.php file
 
