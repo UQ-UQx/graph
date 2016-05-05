@@ -2,7 +2,7 @@ module.exports = function(grunt){
 
     grunt.initConfig({
         concurrent:{
-            app:["watch:dev_reload", "watch:js_ugly", "browserify", "watch:scss_bundle", "sass:dist"],
+            app:["watch:dev_reload", "watch:ugly", "browserify", "watch:scss_bundle", "sass:dist"],
             options: {
                 logConcurrentOutput: true
             }
