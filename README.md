@@ -3,6 +3,12 @@ A base package for LTI tools built on edX, simple to write and deploy.
 
 # Installation 
 
+1) Open terminal to the project directory
+2) Run the following command - 
+> npm run start
+3) wait until npm installs all the packages and starts grunt
+4) Open localhost/path/to/directory/ in your browser, you should now see the main page. If there is no color or styling, then you may need to quit the grunt tasks running and type "Grunt run" into your terminal again to restart.
+
 ### Files
 
 * config.php
