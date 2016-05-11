@@ -14,7 +14,9 @@ $("document").ready(function(){
 		console.log("checking...");
 		if($pre_load.length > 0){
 			clearInterval(check_loaded);
-			graph.init($pre_load);
+
+            $init_available_data_sets = $.map($init_available_data_sets, function(el){return el;});
+			graph.init($init_available_data_sets, $pre_load);
 		}
 	},500);
 
@@ -28,6 +30,10 @@ $("document").ready(function(){
     	}).get();
     	console.log(values);
 	});
+
+    $("#updateButton").click(function(e){
+        console.log(graph.show_data(["Hacket_2006"]));
+    });
 
 
 });

@@ -69,9 +69,12 @@ if(isset($ltivars{'custom_y_axis_format'})){
 
 if(isset($ltivars{'custom_upload'})){
 	$links = str_getcsv($ltivars{'custom_upload'});
+	echo "<b>Upload: </b> ";
 	foreach ($links as $key => $link) {
 		download_csv_edx_weblink($link, $lti_id, $user_id);
+		echo $link."<br/>";
 	}
+	echo "<br/>";
 }
 
 
@@ -80,15 +83,15 @@ if(isset($ltivars{'custom_pre_load'})){
 	$pre_load = array();
 	$pre_load = str_getcsv($ltivars{'custom_pre_load'});
 
-	echo $pre_load;
+	echo "<b>Pre Load:</b> ".json_encode($pre_load)."<br/>";
 }
 
 
  $data_sets = array("Please Upload CSV files with 'Distance' and 'Time'");
 
 
- echo $lti_id;
- echo "<br>".$user_id;
+ echo "<br/><b>LTI ID:</b> ".$lti_id;
+ echo "<br/><b>USER ID:</b> ".$user_id;
 
 
 
@@ -112,39 +115,41 @@ if(isset($ltivars{'custom_pre_load'})){
  $pre_load = JSON.parse('<?php echo json_encode($pre_load); ?>');
  $init_available_data_sets = JSON.parse('<?php echo json_encode($data_sets); ?>');
 
+
+
 </script>
 </head>
 <body>
+   <input id="updateButton" name="updateButton" type="button" value="Update"/>
 
 
-		<div id="graph">
-			<svg id="chart"></svg>
-		</div>
+		<div id="graph_container">
+<!-- 			<svg id="chart"></svg>
+ -->		</div>
 
 
-
+<!-- 
 <div id="datasets">
-<div id="option">
- <!--   <input id="updateButton" name="updateButton" type="button" value="Update"/> -->
-</div>
+	<div id="option">
+	</div>
 
 
 	<ul>
-		<?php 
+	<?php 
 
-			foreach ($data_sets as $ind => $value) {
-			$value = substr($value,0,-4);
-			$display_value = str_replace("_"," ", $value);
-			$checked = '';
-			if(in_array($value.".csv", $pre_load)){
-				$checked = "checked";
-			}
-			echo "<li>";
-			echo '<input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'> '.$display_value;
-			echo "</li>";
+		foreach ($data_sets as $ind => $value) {
+		$value = substr($value,0,-4);
+		$display_value = str_replace("_"," ", $value);
+		$checked = '';
+		if(in_array($value.".csv", $pre_load)){
+			$checked = "checked";
+		}
+		echo "<li>";
+		echo '<input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'> '.$display_value;
+		echo "</li>";
 
-			}
-		?>
+		}
+	?>
 	</ul>
 
 
@@ -154,27 +159,23 @@ if(isset($ltivars{'custom_pre_load'})){
 		<input type="hidden" name="user_id" value="<?php echo $user_id; ?>"/>
 		<input type="hidden" name="lti_id" value="<?php echo $lti_id; ?>"/>
 
+		<a><span class="fa fa-upload"></span> Browse</a>
+		<input type="file" name="upl" multiple/>
 		<div id="drop">
-				<span class="fa fa-upload"></span>
+			
 
-			Drop Here
 
-			<a>Browse</a>
-			<input type="file" name="upl" multiple/>
 		</div>
 	</form>
-	</div>
+</div>
 
 
 <dl>
   <dt>LTI Call Data</dt><dd><pre><?php print_r($lti->calldata());?></pre></dd>
 </dl>
-
+ -->
 
 <script type="text/javascript" src="build/js/app.js"></script>
 
-<!-- Remove this livereload line on production -->
-<script src="//localhost:35729/livereload.js"></script>
-<!-- Remove this livereload line on production -->
 </body>
 </html>

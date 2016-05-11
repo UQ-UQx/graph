@@ -23,6 +23,8 @@ $(function(){
         progress: function(e, data){
             // Calculate the completion percentage of the upload
             var progress = parseInt(data.loaded / data.total * 100, 10);
+                        console.log(progress);
+
             console.log(data.files[0].name);
         },
         fail:function(e, data){
