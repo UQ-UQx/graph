@@ -32,7 +32,11 @@ $("document").ready(function(){
 	});
 
     $("#updateButton").click(function(e){
-        console.log(graph.show_data(["Hacket_2006"]));
+        console.log(graph.show_data(["Sun_Yang"]));
+    });
+
+    $("#updateButton_trend").click(function(e){
+        console.log(graph.add_line(["Sun_Yang"]));
     });
 
 

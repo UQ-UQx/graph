@@ -54,7 +54,7 @@ module.exports = {
   },
   add_line: function(selected_data_set){
 
-
+    add_trendline_for_data(selected_data_set);
 
   },
   remove_line: function(selected_data_set){
@@ -311,24 +311,7 @@ var zoomBeh = d3.behavior.zoom()
 
 svg.call(zoomBeh);
 
-function zoom() {
-    svg.select(".x.axis").call(xAxis);
-    svg.select(".y.axis").call(yAxis);
 
-    svg.selectAll(".dot")
-        .attr("cx", function(d){ return x(d[$x_axis]);})
-        .attr("cy", function(d){ return y(d[$y_axis]);})
-        .attr("r", function(d) {return r(radius)})
-
-
-    d3.selectAll('.tick')
-      .filter(function(d){ 
-        return d==0
-      })
-      .select('line') //grab the tick line
-      .style('stroke-width', 2) //or style directly with attributes or inline styles
-      .style('opacity', 1);
-}
 
 
 /**
@@ -449,7 +432,7 @@ function add_data_to_graph(data_to_add, callback){
     .attr("refY",8)
     .attr("markerWidth", 13)
     .attr("markerHeight",13)
-    .attr("orient", "right")
+    .attr("orient", "0")
     .append("path")
     .attr("d", "M2,2 L2,13 L8,7 L2,2")
     .append("text")
@@ -555,31 +538,47 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
 }
 
+/**
+ * 
+ * @param {[array]}   data_to_add [description]
+ * @param {Function} callback    [description]
+ */
+function add_trendline_for_data(data_to_add, callback){
+  data_to_add = convertFilenamesToDatanames(data_to_add);
 
-function setScales(data){
+    console.log(_cached_data);
 
-  var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
-  var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
+    var data = _cached_data["Sun_Yang"];
 
-  if(x_max > _current_x_axis_max){
-    _current_x_axis_max = x_max;
-  }
-  if(y_max > _current_y_axis_max){
-    _current_y_axis_max = y_max;
-  }
+    var xSeries = data.map(function(d) { return d[$x_axis]; })
+    var ySeries = data.map(function(d) { return d[$y_axis]; });
+    
+    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+    console.log(leastSquaresCoeff);
+    
+    // apply the reults of the least squares regression
+    var x1 = 0;
+    var y1 = leastSquaresCoeff[1];
+    var x2 = xSeries[xSeries.length - 1]+500;
+    var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+500) + leastSquaresCoeff[1];
+    var trendData = [[x1,y1,x2,y2,leastSquaresCoeff]];
 
-  var x_min = Math.min(d3.min(data, function(d){return d[$x_axis] || Infinity;}),_current_x_axis_min);
-  var y_min = Math.min(d3.min(data, function(d){return d[$y_axis] || Infinity;}),_current_y_axis_min);
-
-  if(x_min < _current_x_axis_min){
-    _current_x_axis_min = x_min;
-  }
-  if(y_max > _current_y_axis_max){
-    _current_y_axis_min = y_min;
-  }
+    console.log(trendData);
+    
+    var trendline = graph_svg.selectAll(".trendline")
+      .data(trendData);
+      
+    trendline.enter()
+      .append("line")
+      .attr("class", "trendline")
+      .attr("x1", function(d) { return x(d[0]); })
+      .attr("y1", function(d) { return y(d[1]); })
+      .attr("x2", function(d) { return x(d[2]); })
+      .attr("y2", function(d) { return y(d[3]); })
+      .attr("stroke", "red")
+      .attr("stroke-width", 3);
 
 }
-
 
 
 function remove_data_from_cache(){
@@ -609,6 +608,12 @@ function remove_data_from_graph(data_to_remove){
 }
 
 
+function remove_trendline_for_data(){
+
+  
+
+}
+
 /*
  
  HELPER FUNCTIONS
@@ -628,10 +633,85 @@ function convertFilenamesToDatanames(filenames){
   return datanames;
 }
 
+function setScales(data){
+
+  var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
+  var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
+
+  if(x_max > _current_x_axis_max){
+    _current_x_axis_max = x_max;
+  }
+  if(y_max > _current_y_axis_max){
+    _current_y_axis_max = y_max;
+  }
+
+  var x_min = Math.min(d3.min(data, function(d){return d[$x_axis] || Infinity;}),_current_x_axis_min);
+  var y_min = Math.min(d3.min(data, function(d){return d[$y_axis] || Infinity;}),_current_y_axis_min);
+
+  if(x_min < _current_x_axis_min){
+    _current_x_axis_min = x_min;
+  }
+  if(y_max > _current_y_axis_max){
+    _current_y_axis_min = y_min;
+  }
+
+}
+
+function zoom() {
+    svg.select(".x.axis").call(xAxis);
+    svg.select(".y.axis").call(yAxis);
+
+    svg.selectAll(".dot")
+        .attr("cx", function(d){ return x(d[$x_axis]);})
+        .attr("cy", function(d){ return y(d[$y_axis]);})
+        .attr("r", function(d) {return r(radius)})
+
+    svg.selectAll(".trendline")
+      .attr("x1", function(d) { return x(d[0]); })
+      .attr("y1", function(d) { return y(d[1]); })
+      .attr("x2", function(d) { return x(d[2]); })
+      .attr("y2", function(d) { return y(d[3]); })
+
+
+
+
+
+
+    d3.selectAll('.tick')
+      .filter(function(d){ 
+        return d==0
+      })
+      .select('line') //grab the tick line
+      .style('stroke-width', 2) //or style directly with attributes or inline styles
+      .style('opacity', 1);
+}
+
+// returns slope, intercept and r-square of the line
+function leastSquares(xSeries, ySeries) {
+  var reduceSumFunc = function(prev, cur) { return prev + cur; };
+  
+  var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+  var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+
+  var ssXX = xSeries.map(function(d) { return Math.pow(d - xBar, 2); })
+    .reduce(reduceSumFunc);
+  
+  var ssYY = ySeries.map(function(d) { return Math.pow(d - yBar, 2); })
+    .reduce(reduceSumFunc);
+    
+  var ssXY = xSeries.map(function(d, i) { return (d - xBar) * (ySeries[i] - yBar); })
+    .reduce(reduceSumFunc);
+    
+  var slope = ssXY / ssXX;
+  var intercept = yBar - (xBar * slope);
+  var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+  
+  return [slope, intercept, rSquare];
+}
+
 
 d3.selectAll("button[data-zoom]")
     .on("click", clicked);
-
 
 function clicked() {
   console.log()

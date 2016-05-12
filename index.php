@@ -121,6 +121,8 @@ if(isset($ltivars{'custom_pre_load'})){
 </head>
 <body>
    <input id="updateButton" name="updateButton" type="button" value="Update"/>
+      <input id="updateButton_trend" name="updateButton_trend" type="button" value="Trend"/>
+
 <div class="buttons">
   <button data-zoom="+1">Zoom In</button>
   <button data-zoom="-1">Zoom Out</button>
