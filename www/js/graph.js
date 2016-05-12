@@ -195,6 +195,8 @@ var svg = d3.select("#graph_container")
 var graph_svg = d3.select(".graph");
 
 
+
+
 resize();
 
 setInterval(function(){
@@ -302,6 +304,9 @@ d3.select(window).on('resize', resize);
 var zoomBeh = d3.behavior.zoom()
                 .x(x)
                 .y(y)
+                .scaleExtent([0, 2000])
+                .center([width / 2, height / 2])
+                .size([width, height])
                 .on("zoom", zoom);
 
 svg.call(zoomBeh);
@@ -433,10 +438,20 @@ function add_data_to_graph(data_to_add, callback){
   svg.selectAll(".axis").remove();
 
 
-  svg.append("g")
+ svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
+      .style("dominant-baseline", "central")
       .call(xAxis)
+      .append("defs").append("marker")
+    .attr("id", "arrowhead_x")
+    .attr("refX",2)
+    .attr("refY",8)
+    .attr("markerWidth", 13)
+    .attr("markerHeight",13)
+    .attr("orient", "right")
+    .append("path")
+    .attr("d", "M2,2 L2,13 L8,7 L2,2")
     .append("text")
       .attr("class", "label")
       .attr("x", width/2+40)
@@ -446,7 +461,17 @@ function add_data_to_graph(data_to_add, callback){
 
   svg.append("g")
       .attr("class", "y axis")
+            .style("dominant-baseline", "central")
       .call(yAxis)
+    .append("defs").append("marker")
+    .attr("id", "arrowhead_y")
+    .attr("refX",2)
+    .attr("refY",8)
+    .attr("markerWidth", 13)
+    .attr("markerHeight",13)
+    .attr("orient", "270")
+    .append("path")
+    .attr("d", "M2,2 L2,13 L8,7 L2,2")
     .append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
@@ -455,6 +480,12 @@ function add_data_to_graph(data_to_add, callback){
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text($y_axis_display_text);
+
+
+
+d3.select(".x path").attr("marker-end","url(#arrowhead_x)");
+d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
+
 
   graph_svg.selectAll(".dot")
     .attr("cx", function(d){ return x(d[$x_axis]);})
@@ -511,12 +542,17 @@ function add_data_to_graph(data_to_add, callback){
               })
   });
 
-  var zoomBeh = d3.behavior.zoom()
-                  .x(x)
-                  .y(y)
-                  .on("zoom", zoom);
+  zoomBeh = d3.behavior.zoom()
+                .x(x)
+                .y(y)
+                .scaleExtent([0, 2000])
+                .center([width / 2, height / 2])
+                .size([width, height])
+                .on("zoom", zoom);
 
   svg.call(zoomBeh);
+
+
 }
 
 
@@ -590,4 +626,34 @@ function convertFilenamesToDatanames(filenames){
     
   });
   return datanames;
+}
+
+
+d3.selectAll("button[data-zoom]")
+    .on("click", clicked);
+
+
+function clicked() {
+  console.log()
+  svg.call(zoomBeh.event); // https://github.com/mbostock/d3/issues/2387
+
+  // Record the coordinates (in data space) of the center (in screen space).
+  var center0 = zoomBeh.center(), translate0 = zoomBeh.translate(), coordinates0 = coordinates(center0);
+  zoomBeh.scale(zoomBeh.scale() * Math.pow(2, +this.getAttribute("data-zoom")));
+
+  // Translate back to the center.
+  var center1 = point(coordinates0);
+  zoomBeh.translate([translate0[0] + center0[0] - center1[0], translate0[1] + center0[1] - center1[1]]);
+
+  svg.transition().call(zoomBeh.event);
+}
+
+function coordinates(point) {
+  var scale = zoomBeh.scale(), translate = zoomBeh.translate();
+  return [(point[0] - translate[0]) / scale, (point[1] - translate[1]) / scale];
+}
+
+function point(coordinates) {
+  var scale = zoomBeh.scale(), translate = zoomBeh.translate();
+  return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
 }

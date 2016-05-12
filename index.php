@@ -121,7 +121,10 @@ if(isset($ltivars{'custom_pre_load'})){
 </head>
 <body>
    <input id="updateButton" name="updateButton" type="button" value="Update"/>
-
+<div class="buttons">
+  <button data-zoom="+1">Zoom In</button>
+  <button data-zoom="-1">Zoom Out</button>
+</div>
 
 		<div id="graph_container">
 <!-- 			<svg id="chart"></svg>
