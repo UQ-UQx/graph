@@ -64,14 +64,14 @@ module.exports = {
   },
   show_data: function(selected_data_set){
 
-
+   
     add_data_to_graph(selected_data_set);
-
+    
   },
   hide_data: function(selected_data_set){
 
     remove_data_from_graph(selected_data_set);
-
+    GoToArea([20, 400],[300,500]);
   },
   update: function(selected_data_set){
 
@@ -167,7 +167,7 @@ var svg = d3.select("#graph_container")
             .append("rect")
               .attr("class", "graph_back")
               .attr("width", width)
-              .attr("height", height);
+              .attr("height", height).on("mousemove", mousemove);
 
           svg.append("g")
               .attr("class", "x axis")
@@ -201,11 +201,11 @@ resize();
 
 setInterval(function(){
 
-    xAxis.ticks(dim / 50).innerTickSize(-width)
+    xAxis.ticks(dim / 80).innerTickSize(-width)
           .outerTickSize(0)
           .tickPadding(10);
 
-    yAxis.ticks(dim / 50).innerTickSize(-height)
+    yAxis.ticks(dim / 80).innerTickSize(-height)
           .outerTickSize(0)
           .tickPadding(10);
 
@@ -259,9 +259,9 @@ function resize() {
 
 
 
-  // Update the tick marks
-  xAxis.ticks(dim / 50);
-  yAxis.ticks(dim / 50);
+  // // Update the tick marks
+  // xAxis.ticks(dim / 10);
+  // yAxis.ticks(dim / 10);
 
   // Update the circles
   r.range([(dim*radius)/100, (dim*radius)/100])
@@ -269,11 +269,11 @@ function resize() {
 
 
     // Update the tick marks
-    xAxis.ticks(dim / 50).innerTickSize(-width)
+    xAxis.ticks(dim / 10).innerTickSize(-width)
               .outerTickSize(0)
               .tickPadding(10);
 
-    yAxis.ticks(dim / 50).innerTickSize(-height)
+    yAxis.ticks(dim / 10).innerTickSize(-height)
               .outerTickSize(0)
               .tickPadding(10);
 
@@ -284,6 +284,50 @@ function resize() {
 
 
     setBoldGridLines(0);
+
+}
+
+  var bisectDate = d3.bisector(function(d) { return d[0]; }).left;
+
+var x_cross =  graph_svg.append("line")
+      .attr("class", "crosshair_x crosshairline")      
+      .attr("stroke", "red")
+      .attr("stroke-width", 2);
+
+var y_cross =  graph_svg.append("line")
+      .attr("class", "crosshair_y crosshairline")      
+      .attr("stroke", "red")
+      .attr("stroke-width", 2);
+
+var trend = [];
+
+function mousemove(){
+  
+  var mouse = d3.mouse(this);
+  var x_graph_val = x.invert(mouse[0]);
+  var y_graph_val = y.invert(mouse[1]);
+
+  console.log(trend);
+
+  // //svg.selectAll(".crosshairline").remove();
+  // 
+  
+  var y_trend_val = trend[0]*x_graph_val+trend[1];
+
+
+   svg.select(".crosshair_x")
+      .attr("x1", mouse[0])
+      .attr("y1", 0)
+      .attr("x2", mouse[0])
+      .attr("y2",height)      
+
+  svg.select(".crosshair_y")
+      .attr("x1", 0)
+      .attr("y1", y(y_trend_val))
+      .attr("x2", width)
+      .attr("y2",y(y_trend_val))  
+
+
 
 }
 
@@ -435,7 +479,8 @@ function add_data_to_graph(data_to_add, callback){
     .attr("orient", "0")
     .append("path")
     .attr("d", "M2,2 L2,13 L8,7 L2,2")
-    .append("text")
+    
+    d3.select(".x").append("text")
       .attr("class", "label")
       .attr("x", width/2+40)
       .attr("y", 70)
@@ -444,7 +489,7 @@ function add_data_to_graph(data_to_add, callback){
 
   svg.append("g")
       .attr("class", "y axis")
-            .style("dominant-baseline", "central")
+      .style("dominant-baseline", "central")
       .call(yAxis)
     .append("defs").append("marker")
     .attr("id", "arrowhead_y")
@@ -455,7 +500,8 @@ function add_data_to_graph(data_to_add, callback){
     .attr("orient", "270")
     .append("path")
     .attr("d", "M2,2 L2,13 L8,7 L2,2")
-    .append("text")
+
+    d3.select(".y").append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
       .attr("y", -70)
@@ -525,6 +571,8 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
               })
   });
 
+  zoom();
+
   zoomBeh = d3.behavior.zoom()
                 .x(x)
                 .y(y)
@@ -546,9 +594,10 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 function add_trendline_for_data(data_to_add, callback){
   data_to_add = convertFilenamesToDatanames(data_to_add);
 
-    console.log(_cached_data);
+   $.each(data_to_add, function(ind, data_name){
 
-    var data = _cached_data["Sun_Yang"];
+
+    var data = _cached_data[data_name];
 
     var xSeries = data.map(function(d) { return d[$x_axis]; })
     var ySeries = data.map(function(d) { return d[$y_axis]; });
@@ -557,29 +606,46 @@ function add_trendline_for_data(data_to_add, callback){
     console.log(leastSquaresCoeff);
     
     // apply the reults of the least squares regression
-    var x1 = 0;
-    var y1 = leastSquaresCoeff[1];
-    var x2 = xSeries[xSeries.length - 1]+500;
-    var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+500) + leastSquaresCoeff[1];
-    var trendData = [[x1,y1,x2,y2,leastSquaresCoeff]];
+    var x1 = -20000;
+    var y1 = leastSquaresCoeff[0] * -20000 + leastSquaresCoeff[1];
+    var x2 = xSeries[xSeries.length - 1]+20000;
+    var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+20000) + leastSquaresCoeff[1];
+    var trendData = [[x1,y1,x2,y2,leastSquaresCoeff,data]];
+    trend = leastSquaresCoeff;
 
     console.log(trendData);
+
+    graph_svg.selectAll(data_name+"_trendlines").remove();
     
-    var trendline = graph_svg.selectAll(".trendline")
+    var trendline = graph_svg.selectAll(data_name+"_trendlines")
       .data(trendData);
       
     trendline.enter()
       .append("line")
-      .attr("class", "trendline")
+      .attr("id", data_name+"_trend")
+      .attr("class", data_name+"_trendlines trendline")
       .attr("x1", function(d) { return x(d[0]); })
       .attr("y1", function(d) { return y(d[1]); })
       .attr("x2", function(d) { return x(d[2]); })
       .attr("y2", function(d) { return y(d[3]); })
-      .attr("stroke", "red")
+      .on("mouseover", function(d) {
+         d3.select(this).attr("stroke", "red").attr("stroke-width", 10);
+      })
+      .on("mouseout", function(d) {
+         d3.select(this).attr("stroke", color(data_name)).attr("stroke-width", 3);
+
+      })
+      .attr("stroke", color(data_name))
       .attr("stroke-width", 3);
 
+   });
 }
 
+function add_cross(data_name, callback){
+
+
+
+}
 
 function remove_data_from_cache(){
 
@@ -610,7 +676,7 @@ function remove_data_from_graph(data_to_remove){
 
 function remove_trendline_for_data(){
 
-  
+
 
 }
 
@@ -658,6 +724,7 @@ function setScales(data){
 }
 
 function zoom() {
+  console.log("BRAAAAHHH!!");
     svg.select(".x.axis").call(xAxis);
     svg.select(".y.axis").call(yAxis);
 
@@ -671,9 +738,6 @@ function zoom() {
       .attr("y1", function(d) { return y(d[1]); })
       .attr("x2", function(d) { return x(d[2]); })
       .attr("y2", function(d) { return y(d[3]); })
-
-
-
 
 
 
@@ -736,4 +800,25 @@ function coordinates(point) {
 function point(coordinates) {
   var scale = zoomBeh.scale(), translate = zoomBeh.translate();
   return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
+}
+
+/**
+ * Zooms and pans smoothly to specified value ranges for x and y data values
+ * 
+ * @param  {[array]} xrange [specify the [min, max] value for x]
+ * @param  {[array]} yrange [specify the [min, max] value for y]
+ * 
+ */
+function GoToArea(xrange, yrange){
+
+
+    d3.transition().duration(750).tween("zoom", function() {
+      var ix = d3.interpolate(x.domain(), xrange),
+        iy = d3.interpolate(y.domain(), yrange);
+        return function(t) {
+          zoomBeh.x(x.domain(ix(t))).y(y.domain(iy(t)));
+          zoom();
+        };
+    });
+
 }

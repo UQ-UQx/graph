@@ -120,7 +120,9 @@ if(isset($ltivars{'custom_pre_load'})){
 </script>
 </head>
 <body>
-   <input id="updateButton" name="updateButton" type="button" value="Update"/>
+   <input id="addButton" name="updateButton" type="button" value="Add"/>
+      <input id="removeButton" name="updateButton" type="button" value="Remove"/>
+
       <input id="updateButton_trend" name="updateButton_trend" type="button" value="Trend"/>
 
 <div class="buttons">

@@ -31,8 +31,12 @@ $("document").ready(function(){
     	console.log(values);
 	});
 
-    $("#updateButton").click(function(e){
+    $("#addButton").click(function(e){
         console.log(graph.show_data(["Sun_Yang"]));
+    });
+
+    $("#removeButton").click(function(e){
+        console.log(graph.hide_data(["Sun_Yang"]));
     });
 
     $("#updateButton_trend").click(function(e){
