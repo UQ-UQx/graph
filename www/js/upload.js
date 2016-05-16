@@ -32,11 +32,17 @@ $(function(){
         }
     }).bind('fileuploaddone', function(e, data){
 
+
+
+
         var uploaded_files = [];
+        var uploaded_filenames = [];
         $.each(data.files, function(ind, file){
             uploaded_files.push((file.name).substring(0,(file.name).length - 4));
+            uploaded_filenames.push(file.name);
         })
         update_datasets(uploaded_files);
+        graph.add_data(uploaded_filenames);
     });
     // Prevent the default action when a file is dropped on the window
     $(document).on('drop dragover', function (e) {
@@ -47,6 +53,7 @@ $(function(){
     function update_datasets(new_files){
 
         console.log(new_files);
+
 
         $.each(new_files, function(ind, file){
             if($(".data_to_load[value='"+file+"']").length == 0){

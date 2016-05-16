@@ -42,9 +42,9 @@ module.exports = {
     });
 
   },
-  add_data: function(selected__data_set){
+  add_data: function(selected_data_set){
 
-
+    add_data_to_cache(selected_data_set);
 
   },
   remove_data: function(selected_data_set){
@@ -59,6 +59,7 @@ module.exports = {
   },
   remove_line: function(selected_data_set){
 
+    remove_trendline_for_data(selected_data_set);
 
 
   },
@@ -71,7 +72,6 @@ module.exports = {
   hide_data: function(selected_data_set){
 
     remove_data_from_graph(selected_data_set);
-    GoToArea([20, 400],[300,500]);
   },
   update: function(selected_data_set){
 
@@ -167,7 +167,8 @@ var svg = d3.select("#graph_container")
             .append("rect")
               .attr("class", "graph_back")
               .attr("width", width)
-              .attr("height", height).on("mousemove", mousemove);
+              .attr("height", height)
+              .on("mousemove", mousemove)
 
           svg.append("g")
               .attr("class", "x axis")
@@ -193,6 +194,8 @@ var svg = d3.select("#graph_container")
               .text($y_axis_display_text);
 
 var graph_svg = d3.select(".graph");
+
+
 
 
 
@@ -285,6 +288,8 @@ function resize() {
 
     setBoldGridLines(0);
 
+  refresh_legend();
+
 }
 
   var bisectDate = d3.bisector(function(d) { return d[0]; }).left;
@@ -292,43 +297,48 @@ function resize() {
 var x_cross =  graph_svg.append("line")
       .attr("class", "crosshair_x crosshairline")      
       .attr("stroke", "red")
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 2).style("opacity", 0);
 
 var y_cross =  graph_svg.append("line")
       .attr("class", "crosshair_y crosshairline")      
       .attr("stroke", "red")
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 2).style("opacity", 0);
+
+svg.selectAll(".crosshairline")              
+    .on("click", function(){ //reset trend so that crosshair doesn't show up
+      trend = [];
+    });
+
 
 var trend = [];
 
 function mousemove(){
-  
-  var mouse = d3.mouse(this);
-  var x_graph_val = x.invert(mouse[0]);
-  var y_graph_val = y.invert(mouse[1]);
+  if(trend.length > 0){
+    var mouse = d3.mouse(this);
+    var x_graph_val = x.invert(mouse[0]);
+    var y_graph_val = y.invert(mouse[1]);
+    
+    var y_trend_val = trend[0]*x_graph_val+trend[1];
 
-  console.log(trend);
+    setCross(mouse[0],y(y_trend_val))
 
-  // //svg.selectAll(".crosshairline").remove();
-  // 
-  
-  var y_trend_val = trend[0]*x_graph_val+trend[1];
+  }else{
+    svg.selectAll(".crosshairline").style("opacity", 0);
+  }
+}
 
+function setCross(x_cross_val, y_cross_val){
+    svg.select(".crosshair_x")
+        .attr("x1", x_cross_val)
+        .attr("y1", 0)
+        .attr("x2", x_cross_val)
+        .attr("y2",height).style("opacity", 1);   
 
-   svg.select(".crosshair_x")
-      .attr("x1", mouse[0])
-      .attr("y1", 0)
-      .attr("x2", mouse[0])
-      .attr("y2",height)      
-
-  svg.select(".crosshair_y")
-      .attr("x1", 0)
-      .attr("y1", y(y_trend_val))
-      .attr("x2", width)
-      .attr("y2",y(y_trend_val))  
-
-
-
+    svg.select(".crosshair_y")
+        .attr("x1", 0)
+        .attr("y1", y_cross_val)
+        .attr("x2", width)
+        .attr("y2",y_cross_val).style("opacity", 1);
 }
 
 function setBoldGridLines(grid_number){
@@ -354,6 +364,7 @@ var zoomBeh = d3.behavior.zoom()
                 .on("zoom", zoom);
 
 svg.call(zoomBeh);
+
 
 
 
@@ -388,7 +399,12 @@ function add_data_to_cache(data_to_add, callback){
         _cached_data[data_name] = csvObjs;
 
         if(!--remaining){
-          callback(added_data_names);
+          console.log(_cached_data);
+
+          if(callback){
+            callback(added_data_names);
+          }
+
         }
       });
   });
@@ -568,8 +584,13 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
                 .duration(500)
                 .attr("cx", function(d) { return x(d[$x_axis]); })
                 .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
-              })
+              });
+
+
+
   });
+
+  refresh_legend();
 
   zoom();
 
@@ -594,6 +615,14 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 function add_trendline_for_data(data_to_add, callback){
   data_to_add = convertFilenamesToDatanames(data_to_add);
 
+  _data_sets_in_use = _data_sets_in_use.concat(data_to_add);
+  var temp = [];
+  $.each(_data_sets_in_use, function(ind, el){
+      if($.inArray(el,temp) === -1) temp.push(el);
+  });
+  _data_sets_in_use = temp;
+  temp = [];
+
    $.each(data_to_add, function(ind, data_name){
 
 
@@ -611,7 +640,6 @@ function add_trendline_for_data(data_to_add, callback){
     var x2 = xSeries[xSeries.length - 1]+20000;
     var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+20000) + leastSquaresCoeff[1];
     var trendData = [[x1,y1,x2,y2,leastSquaresCoeff,data]];
-    trend = leastSquaresCoeff;
 
     console.log(trendData);
 
@@ -629,20 +657,35 @@ function add_trendline_for_data(data_to_add, callback){
       .attr("x2", function(d) { return x(d[2]); })
       .attr("y2", function(d) { return y(d[3]); })
       .on("mouseover", function(d) {
-         d3.select(this).attr("stroke", "red").attr("stroke-width", 10);
+         d3.select(this).attr("stroke", "#00E559").style("cursor","pointer").attr("stroke-width", 5);
       })
       .on("mouseout", function(d) {
          d3.select(this).attr("stroke", color(data_name)).attr("stroke-width", 3);
 
       })
+      .on("click", function(d){
+         trend = d[4];
+      })
       .attr("stroke", color(data_name))
       .attr("stroke-width", 3);
 
    });
+
+  refresh_legend();
 }
+
 
 function add_cross(data_name, callback){
 
+
+    var data = _cached_data[data_name];
+
+    var xSeries = data.map(function(d) { return d[$x_axis]; })
+    var ySeries = data.map(function(d) { return d[$y_axis]; });
+    
+    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+
+    console.log(leastSquaresCoeff);
 
 
 }
@@ -658,24 +701,70 @@ function remove_data_from_graph(data_to_remove){
   data_to_remove = convertFilenamesToDatanames(data_to_remove);
 
   $.each(data_to_remove, function(ind, name){
+
+    if((_data_sets_in_use.indexOf(name) > -1) && !(d3.selectAll("#"+name+"_trend")[0].length >= 1)){
+        _data_sets_in_use.splice(_data_sets_in_use.indexOf(name),1);
+    }
+
     d3.select(".graph").selectAll("circle."+name)
     .transition()  // Transition from old to new
     .duration(1000)  // Length of animation
     .delay(function(d, i) {
-      return i / d3.select(".graph").selectAll("circle."+name)[0].length * 1000;  // Dynamic delay (i.e. each item delays a little longer)
+      return i / d3.select(".graph").selectAll("circle."+name)[0].length * 500;  // Dynamic delay (i.e. each item delays a little longer)
     })
     .ease("linear")
     .each("end", function() {  // End animation
       d3.select(this)  // 'this' means the current element
       .remove();
-    })
+    });
+
   });
+
+  refresh_legend();
+}
+
+
+function remove_trendline_for_data(data_name){
+
+
+  d3.selectAll("#"+data_name+"_trend").remove();
+
+   if((_data_sets_in_use.indexOf(name) > -1) && !(d3.selectAll("#"+name+"_trend")[0].length >= 1)){
+        _data_sets_in_use.splice(_data_sets_in_use.indexOf(name),1);
+    }
+
+  refresh_legend();
 
 }
 
 
-function remove_trendline_for_data(){
+function refresh_legend(){
 
+  graph_svg.selectAll(".legend").remove();
+
+  console.log("WHHATT"+color.domain());
+
+  var legend = graph_svg.selectAll(".legend")
+      .data(_data_sets_in_use)
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  // draw legend colored rectangles
+  legend.append("rect")
+      .attr("x", width - 25)
+       .attr("y", 7)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  // draw legend text
+  legend.append("text")
+      .attr("x", width - 30)
+      .attr("y",16)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d;})
 
 
 }
@@ -738,6 +827,7 @@ function zoom() {
       .attr("y1", function(d) { return y(d[1]); })
       .attr("x2", function(d) { return x(d[2]); })
       .attr("y2", function(d) { return y(d[3]); })
+
 
 
 
@@ -810,7 +900,6 @@ function point(coordinates) {
  * 
  */
 function GoToArea(xrange, yrange){
-
 
     d3.transition().duration(750).tween("zoom", function() {
       var ix = d3.interpolate(x.domain(), xrange),

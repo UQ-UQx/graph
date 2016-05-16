@@ -9,7 +9,7 @@
   height: auto;
   min-width: 300px;
   min-height: 300px;
-  position: absolute;
+  //position: absolute;
  // background-color:red;
 }
 
@@ -37,6 +37,45 @@
 .dot {
   stroke: #000;
 }
+
+#datasets{
+
+  width:50%;
+  min-height:100px;
+  background:#E5E5E3;
+
+  ul{
+
+  
+    li{
+      
+     // background-color:red;
+
+    }
+
+
+  }
+
+
+}
+
+
+#data_sets_table{
+  table-layout:fixed;
+  width:100%;
+
+  th{
+    text-align:center;
+  }
+
+  td{
+    text-align:center;
+    height:30px;
+  }
+
+}
+
+
 
 
 // body {

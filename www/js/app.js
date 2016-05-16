@@ -24,23 +24,29 @@ $("document").ready(function(){
 	$(document).on("change",'.data_to_load', function() {
 	    var values = $(this).map(function() {
 	    	if(this.checked){
-        		return {"call":"add", "val":this.value};
+
+                graph.show_data([this.value]);
+                return;
+        		//return {"call":"add", "val":this.value};
         	}
-        	return {"call":"remove", "val":this.value};
-    	}).get();
-    	console.log(values);
+            graph.hide_data([this.value]);
+        	//return {"call":"remove", "val":this.value};
+    	})//.get();
+
 	});
 
-    $("#addButton").click(function(e){
-        console.log(graph.show_data(["Sun_Yang"]));
-    });
+    $(document).on("change",'.trendline_to_load', function() {
+        var values = $(this).map(function() {
+            if(this.checked){
 
-    $("#removeButton").click(function(e){
-        console.log(graph.hide_data(["Sun_Yang"]));
-    });
+                graph.add_line([this.value]);
+                return;
+                //return {"call":"add", "val":this.value};
+            }
+            graph.remove_line(this.value);
+            //return {"call":"remove", "val":this.value};
+        })//.get();
 
-    $("#updateButton_trend").click(function(e){
-        console.log(graph.add_line(["Sun_Yang"]));
     });
 
 
