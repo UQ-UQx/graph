@@ -77,6 +77,11 @@ module.exports = {
 
 
 
+  },
+  get_data: function(data_name){
+    console.log("REDDDD");
+    return _cached_data[data_name];
+
   }
 
 
@@ -557,32 +562,100 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
     graph_svg.selectAll("circle."+name).remove();
 
-    graph_svg.selectAll(".dot ."+name)
+    // graph_svg.selectAll(".dot ."+name)
+    //           .data(plot_data)
+    //           .enter().append("circle")
+    //           .transition()  // Transition from old to new
+    //           .duration(500)  // Length of animation
+    //           .each("start", function() {  // Start animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .attr("cx", x(0))
+    //             .attr("fill", "red")  // Change color
+    //           })
+    //           .delay(function(d, i) {
+    //             return i / data.length * 1000;  // Dynamic delay (i.e. each item delays a little longer)
+    //           })
+    //           .ease("linear")
+    //           .attr("class", "dot "+name)
+    //           .attr("id", ids)
+    //           .attr("data_x",function(d) { return d[$x_axis]; })
+    //           .attr("data_y",function(d) { return d[$y_axis]; })
+    //           .attr("cy", function(d) { return y(d[$y_axis]); })
+
+    //           .attr("r", function(d) {return r(radius)})
+    //           .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           .each("end", function() {  // End animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .transition()
+    //             .duration(500)
+    //                           .attr("cx", function(d) { return x(d[$x_axis]); })
+
+    //             .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           });
+
+
+    //Shoot from center
+    // graph_svg.selectAll(".dot ."+name)
+    //           .data(plot_data)
+    //           .enter().append("circle")
+    //           .transition()  // Transition from old to new
+    //           .duration(500)  // Length of animation
+    //           .each("start", function() {  // Start animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .attr("cy", y(0))
+    //             .attr("cx", x(0))
+
+    //             .attr("fill", "red")  // Change color
+    //           })
+    //           .delay(function(d, i) {
+    //             return i / data.length * i*50;  // Dynamic delay (i.e. each item delays a little longer)
+    //           })
+    //           .ease("linear")
+    //           .attr("class", "dot "+name)
+    //           .attr("id", ids)
+    //           .attr("data_x",function(d) { return d[$x_axis]; })
+    //           .attr("data_y",function(d) { return d[$y_axis]; })
+    //             .attr("cx", function(d) { return x(d[$x_axis]); })
+    //                           .attr("cy", function(d) { return y(d[$y_axis]); })
+
+    //           .attr("r", function(d) {return r(radius)})
+    //           .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           .each("end", function() {  // End animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .transition()
+    //             .duration(500)
+    //             .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           });
+
+        //pop in with bigger size and settle 
+        
+        graph_svg.selectAll(".dot ."+name)
               .data(plot_data)
               .enter().append("circle")
               .transition()  // Transition from old to new
-              .duration(1000)  // Length of animation
+              .duration(500)  // Length of animation
               .each("start", function() {  // Start animation
                 d3.select(this)  // 'this' means the current element
-                .attr("cx", 0)
+                 .attr("r", 0)
                 .attr("fill", "red")  // Change color
               })
               .delay(function(d, i) {
-                return i / data.length * 1000;  // Dynamic delay (i.e. each item delays a little longer)
+                return i / data.length * _.random(0,2000);  // Dynamic delay (i.e. each item delays a little longer)
               })
               .ease("linear")
               .attr("class", "dot "+name)
               .attr("id", ids)
               .attr("data_x",function(d) { return d[$x_axis]; })
               .attr("data_y",function(d) { return d[$y_axis]; })
-              .attr("r", function(d) {return r(radius)})
+              .attr("cx", function(d) { return x(d[$x_axis]); })
               .attr("cy", function(d) { return y(d[$y_axis]); })
+              .attr("r", function(d) {return r(radius)+_.random(0,10)})
               .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
               .each("end", function() {  // End animation
                 d3.select(this)  // 'this' means the current element
                 .transition()
                 .duration(500)
-                .attr("cx", function(d) { return x(d[$x_axis]); })
+                .attr("r", function(d) {return r(radius)})
                 .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
               });
 
@@ -628,8 +701,9 @@ function add_trendline_for_data(data_to_add, callback){
 
     var data = _cached_data[data_name];
 
-    var xSeries = data.map(function(d) { return d[$x_axis]; })
-    var ySeries = data.map(function(d) { return d[$y_axis]; });
+    var xSeries = data.map(function(d) { return +d[$x_axis]; })
+    var ySeries = data.map(function(d) { return +d[$y_axis]; });
+
     
     var leastSquaresCoeff = leastSquares(xSeries, ySeries);
     console.log(leastSquaresCoeff);
@@ -700,24 +774,31 @@ function remove_data_from_graph(data_to_remove){
 
   data_to_remove = convertFilenamesToDatanames(data_to_remove);
 
+
+
   $.each(data_to_remove, function(ind, name){
 
-    if((_data_sets_in_use.indexOf(name) > -1) && !(d3.selectAll("#"+name+"_trend")[0].length >= 1)){
+    console.log((d3.selectAll(".dot."+name)[0].length >= 1));
+
+    if((_data_sets_in_use.indexOf(name) > -1) && (!(d3.selectAll("#"+name+"_trend")[0].length >= 1) && (d3.selectAll(".dot."+name)[0].length >= 1))){
         _data_sets_in_use.splice(_data_sets_in_use.indexOf(name),1);
+
     }
 
-    d3.select(".graph").selectAll("circle."+name)
+
+     d3.select(".graph").selectAll("circle."+name)
     .transition()  // Transition from old to new
-    .duration(1000)  // Length of animation
+    .duration(500)  // Length of animation
+    
     .delay(function(d, i) {
       return i / d3.select(".graph").selectAll("circle."+name)[0].length * 500;  // Dynamic delay (i.e. each item delays a little longer)
     })
+    .attr("r", 0)
     .ease("linear")
     .each("end", function() {  // End animation
-      d3.select(this)  // 'this' means the current element
+      d3.select(this)              
       .remove();
-    });
-
+    });   
   });
 
   refresh_legend();
@@ -727,16 +808,21 @@ function remove_data_from_graph(data_to_remove){
 function remove_trendline_for_data(data_name){
 
 
-  d3.selectAll("#"+data_name+"_trend").remove();
+    d3.selectAll("#"+data_name+"_trend").remove();
+  console.log(_data_sets_in_use)
 
-   if((_data_sets_in_use.indexOf(name) > -1) && !(d3.selectAll("#"+name+"_trend")[0].length >= 1)){
-        _data_sets_in_use.splice(_data_sets_in_use.indexOf(name),1);
+   if((_data_sets_in_use.indexOf(data_name) > -1) && (!(d3.selectAll("#"+data_name+"_trend")[0].length >= 1) && !(d3.selectAll(".dot."+data_name)[0].length >= 1))){
+        _data_sets_in_use.splice(_data_sets_in_use.indexOf(data_name),1);
+
     }
+
+
+  console.log(_data_sets_in_use)
 
   refresh_legend();
 
 }
-
+    
 
 function refresh_legend(){
 

@@ -1,4 +1,4 @@
-var graph = require("./graph.js");
+var graph = query_graph;
 /**
  *
  * 	Basic file upload feature

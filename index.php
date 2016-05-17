@@ -122,7 +122,6 @@ if(isset($ltivars{'custom_pre_load'})){
 </head>
 <body>
 
-
 <div class="buttons">
   <button data-zoom="+1">Zoom In</button>
   <button data-zoom="-1">Zoom Out</button>
@@ -132,13 +131,14 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 
+
 <div id="datasets">
 
 
 
 	<table id="data_sets_table">
 		<thead>
-			<th></th>
+			<th>Data Name</th>
 			<th>Show Data</th>
 			<th>Show Line of Best Fit</th>
 			<th>Edit Data</th>
@@ -165,7 +165,7 @@ if(isset($ltivars{'custom_pre_load'})){
 				<td>'.$display_value.'</td>
 				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
 				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"></td>
-				<td><input class="data_to_edit" type="radio" name="dataSets"></td>
+				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
 
 
 
@@ -178,7 +178,7 @@ if(isset($ltivars{'custom_pre_load'})){
 			?>
 
 			<tr>
-				<td><button  type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Create Dataset</button></td>
+				<td><button  type="button" class="btn btn-primary add_data_button" data-toggle="modal" data-target="#myModal">Add Dataset</button></td>
 			</tr>
 
 
@@ -188,26 +188,65 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 
+
+
 	<!-- Modal -->
   <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
     
-      <!-- Modal content-->
+
+<!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
+          <h4 class="modal-title">Query101x Graph Data Editor</h4>
         </div>
         <div class="modal-body">
-          <p>Some text in the modal.</p>
+          
+          	<div class="modal_data_name_container">
+          		
+
+          	</div>
+
+			<div id="table" class="table-editable">
+		    <table class="table">
+		      <thead>
+		        <th><?php echo $x_axis_display_text; ?></th>
+		        <th><?php echo $y_axis_display_text; ?></th>
+		        <th></th>
+		      </thead>
+		      
+		      <!-- This is our clonable table line -->
+		      <tr class="hide">
+		        <td contenteditable="true"></td>
+		        <td contenteditable="true"></td>
+		        <td>
+		          <span class="table-remove glyphicon glyphicon-remove"></span>
+		        </td>
+		      </tr>
+
+		    </table>
+ <span class="table-add glyphicon glyphicon-plus"></span>
+		  </div>
+		  
+		  <p id="export"></p>
+
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        	<button id="export-btn" class="btn btn-primary addexport_buttons"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Export Data</button>
+
+          <button type="button" class="btn btn-success addexport_buttons" data-dismiss="modal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Add To Graph</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Close</button>
         </div>
       </div>
+
+
+
       
     </div>
   </div>
+
+
 
 
 
