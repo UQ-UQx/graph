@@ -57,7 +57,6 @@ $("document").ready(function(){
     });
 
 
-    editable_table.init();
 
 
 
@@ -66,31 +65,33 @@ $("document").ready(function(){
     $(document).on("click", ".add_data_button", function(){
 
       
-        $(".modal_data_name_container").html('<input class="data_name_input_modal" type="text" name="data_name" placeholder="Data Name"><br>');
+        console.log("red");
 
+        $(".modal_data_name_container").html('<input class="data_name_input_modal" type="text" name="data_name" placeholder="Data Name"><br>');
+        $(".add_button span").text("Add To Graph");
+
+        editable_table.init();
 
     });
 
 
     $(document).on("click", ".edit_button", function(){
 
-        console.log(query_graph.get_data("Sun_Yang"));
+        
+        var data_display_name = $(this).data("dataset_display_text");
+        var data_name = $(this).data("dataset_name");
 
+         $(".modal_data_name_container").html('<input class="data_name_input_modal" type="text" name="data_name" placeholder="Data Name" value="'+data_display_name+'" readonly><br>');
+        $(".add_button span").text("Update Data");
 
-        $(".modal_data_name_container").html('<input class="data_name_input_modal" type="text" name="data_name" placeholder="Data Name"><br>');
-
-
-
-
-
+        editable_table.generateTable(query_graph.get_data(data_name));
 
     });
 
     $(document).on('hidden.bs.modal', '#myModal', function (e) {
     // do something…
     // 
-        $(".red").remove();
-        editable_table.init();
+       // $(".myrow").remove();
      console.log("EDIT CLOSED");
 
     })

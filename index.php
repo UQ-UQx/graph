@@ -165,7 +165,7 @@ if(isset($ltivars{'custom_pre_load'})){
 				<td>'.$display_value.'</td>
 				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
 				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"></td>
-				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
+				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
 
 
 
@@ -233,9 +233,10 @@ if(isset($ltivars{'custom_pre_load'})){
 
         </div>
         <div class="modal-footer">
-        	<button id="export-btn" class="btn btn-primary addexport_buttons"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Export Data</button>
+        	<button id="export-btn" id="export_button" class="btn btn-primary addexport_buttons"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Export Data</button>
 
-          <button type="button" class="btn btn-success addexport_buttons" data-dismiss="modal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Add To Graph</button>
+          <button type="button" class="btn btn-success addexport_buttons add_button" data-dismiss="modal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span></span></button>
+
           <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Close</button>
         </div>
       </div>

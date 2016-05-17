@@ -5,36 +5,60 @@ var $BTN = $('#export-btn');
 var $EXPORT = $('#export');
 
 var numOfRows = 0;
+var enableAutoGenerate = false;
 
 
 
 
 module.exports = {
   init:function(){
+    removeAllRows();
+    addRows(2);
+  },
+  generateTable:function(data){
+    console.log(data);
 
-      numOfRows++;
-      var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line').addClass("red row_"+numOfRows);
+    
+    removeAllRows();
 
-      $TABLE.find('table').append($clone);
+    addRows(data.length);
 
-      numOfRows++;
-      var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line').addClass("red row_"+numOfRows);
-      $TABLE.find('table').append($clone);
+    rows = 0;
 
+    $.each(data, function(ind,datapoint){
+        console.log(ind);
+        var tr = $TABLE.find('tr.row_'+ind);
+        $($(tr[0]).find("td")[0]).text(datapoint[$x_axis]);
+        $($(tr[0]).find("td")[1]).text(datapoint[$y_axis]);
+
+    });
+
+    lint();
+
+   // console.log($($(tr[0]).find("td")[0]).text("valuemyrowdit"));
   }
 }
 
-$(document).on("focus",'[contenteditable]', function() {
-          console.log($(this).parent());
+function removeAllRows(){
 
-          if($(this).parent().attr("class") == "red row_"+numOfRows){
-            numOfRows++;
+    $(".myrow").remove();
+    numOfRows = 0;
+}
+function addRows(num_of_rows){
 
-             var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line').addClass("red row_"+numOfRows);
-            $TABLE.find('table').append($clone);
-          }
+    for (var i = 0; i < num_of_rows; i++) {
 
-}).on('blur keyup paste input', ['[contenteditable]', '.data_name_input_modal'], function() {
+        var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line').addClass("myrow row_"+numOfRows);
+                numOfRows++;
+
+        $TABLE.find('table').append($clone);
+
+    }
+
+    lint();
+}
+
+function lint(){
 
 
     var numInvalid = 0;
@@ -57,11 +81,6 @@ $(document).on("focus",'[contenteditable]', function() {
     
     });
 
-
-           
-
-
-
     if(numInvalid == 0 && $(".data_name_input_modal").val().length > 0){
       $(".addexport_buttons").prop("disabled", false);
     }else{
@@ -69,18 +88,33 @@ $(document).on("focus",'[contenteditable]', function() {
     }
 
 
+
+
+}
+
+$(document).on("focus",'[contenteditable]', function() {
+
+        if(enableAutoGenerate){
+          if($(this).parent().attr("class") == "myrow row_"+numOfRows){
+            addRows(1);
+          }
+        }
+
+}).on('blur keyup paste input', ['[contenteditable]', '.data_name_input_modal'], function() {
+
+
+    lint();
+
+
 });
 
 $('.table-add').click(function () {
-            numOfRows++;
-
-   var $clone = $TABLE.find('tr.hide').clone(true).removeClass('hide table-line').addClass("red row_"+numOfRows);
-  $TABLE.find('table').append($clone);
+            addRows(1);
 });
 
 $('.table-remove').click(function () {
   $(this).parents('tr').detach();
-              numOfRows--;
+   numOfRows--;
 
 });
 
@@ -91,7 +125,7 @@ $('.table-up').click(function () {
 });
 
 $('.table-down').click(function () {
-  console.log("red")
+  console.log("myrow")
   var $row = $(this).parents('tr');
   $row.next().after($row.get(0));
 });
