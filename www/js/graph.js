@@ -358,12 +358,17 @@ function setCross(x_cross_val, y_cross_val, values){
         .attr("x2", width)
         .attr("y2",y_cross_val).style("opacity", 1);
 
+    var m = trend[0].toFixed(2);
+    var c = trend[1].toFixed(2);
+    var x = values[0].toFixed(2);
+    var y = values[1].toFixed(2);
+
 
     tooltip_div
         .style("opacity", .9);    
-    tooltip_div.html( $y_axis_display_text+": <b>"+values[1] + "</b><br/>"  + $x_axis_display_text+": <b>"+values[0]+"</b>")  
+    tooltip_div.html( "<b>y</b> = "+m+"<b>x</b> "+c+"<br>"+$y_axis_display_text+": <b>"+y + "</b><br/>"  + $x_axis_display_text+": <b>"+x+"</b>")  
         .style("left", (x_cross_val+120) + "px")   
-        .style("top", (y_cross_val+160) + "px");  
+        .style("top", (y_cross_val+110) + "px");  
   
 }
 
