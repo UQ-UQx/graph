@@ -33,8 +33,7 @@
 
 module.exports = {
   init: function(uploaded, pre_load){
-    console.log("Graph init");
-    console.log(uploaded);
+
     add_data_to_cache(uploaded, function(added_data_names){
 
         add_data_to_graph(pre_load);

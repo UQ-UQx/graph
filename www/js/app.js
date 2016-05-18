@@ -58,14 +58,13 @@ $("document").ready(function(){
 
 
 
-
+    
 
        
 
     $(document).on("click", ".add_data_button", function(){
 
       
-        console.log("red");
 
         $(".modal_data_name_container").html('<input class="data_name_input_modal" type="text" name="data_name" placeholder="Data Name"><br>');
         $(".add_button span").text("Add To Graph");
@@ -90,11 +89,20 @@ $("document").ready(function(){
 
     $(document).on('hidden.bs.modal', '#myModal', function (e) {
     // do something…
-    // 
-       // $(".myrow").remove();
-     console.log("EDIT CLOSED");
 
-    })
+    });
+
+
+    $(document).on('click', ".add_button", function(e){
+
+
+       console.log(editable_table.getData());
+
+
+
+    });
+
+
 
 
 

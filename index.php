@@ -227,6 +227,7 @@ if(isset($ltivars{'custom_pre_load'})){
 
 		    </table>
  <span class="table-add glyphicon glyphicon-plus"></span>
+ <div class="bg-danger error_span"></div>
 		  </div>
 		  
 		  <p id="export"></p>

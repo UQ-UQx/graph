@@ -88,7 +88,8 @@
 .table-editable {
   position: relative;
 
-
+    max-height: 540px;
+    overflow: scroll;
   
   .glyphicon {
     font-size: 20px;
@@ -186,8 +187,34 @@
   }
 }
 
+.input_invalid{
+  border:2px red solid !important;
+}
 
+.input_valid{
+    -webkit-appearance: textfield;
+    background-color: white;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    -webkit-rtl-ordering: logical;
+    -webkit-user-select: text;
+    cursor: auto;
+    padding: 1px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: initial;
+}
 
+.error_span{
+  width:100%;
+  text-align:center;
+  height:30px;
+  padding-top:5px;
+  color: #C7481A;
+}
 
 
 
