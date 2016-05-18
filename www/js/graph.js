@@ -116,7 +116,7 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([height, 0]);
 
-var radius = 0.5;
+var radius = 0.7;
 var r = d3.scale.linear()
     .range([radius, radius]);
 
@@ -200,7 +200,9 @@ var svg = d3.select("#graph_container")
 
 var graph_svg = d3.select(".graph");
 
-
+var tooltip_div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
 
 
 
@@ -237,7 +239,7 @@ function resize() {
   d3.select(".graph_svg")
               .attr("width", outerHeight)
               .attr("height", outerWidth)
-
+          
 
 
   // Update the range of the scale with new width/height
@@ -319,6 +321,10 @@ var y_cross =  graph_svg.append("line")
 svg.selectAll(".crosshairline")              
     .on("click", function(){ //reset trend so that crosshair doesn't show up
       trend = [];
+          svg.selectAll(".crosshairline").style("opacity", 0);
+
+               tooltip_div.style("opacity", 0); 
+
     });
 
 
@@ -332,14 +338,14 @@ function mousemove(){
     
     var y_trend_val = trend[0]*x_graph_val+trend[1];
 
-    setCross(mouse[0],y(y_trend_val))
+    setCross(mouse[0],y(y_trend_val),[x_graph_val, y_trend_val]);
 
   }else{
     svg.selectAll(".crosshairline").style("opacity", 0);
   }
 }
 
-function setCross(x_cross_val, y_cross_val){
+function setCross(x_cross_val, y_cross_val, values){
     svg.select(".crosshair_x")
         .attr("x1", x_cross_val)
         .attr("y1", 0)
@@ -351,6 +357,14 @@ function setCross(x_cross_val, y_cross_val){
         .attr("y1", y_cross_val)
         .attr("x2", width)
         .attr("y2",y_cross_val).style("opacity", 1);
+
+
+    tooltip_div
+        .style("opacity", .9);    
+    tooltip_div.html( $y_axis_display_text+": <b>"+values[1] + "</b><br/>"  + $x_axis_display_text+": <b>"+values[0]+"</b>")  
+        .style("left", (x_cross_val+120) + "px")   
+        .style("top", (y_cross_val+160) + "px");  
+  
 }
 
 function setBoldGridLines(grid_number){
@@ -674,6 +688,7 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
               .attr("data_y",function(d) { return d[$y_axis]; })
               .attr("cx", function(d) { return x(d[$x_axis]); })
               .attr("cy", function(d) { return y(d[$y_axis]); })
+             
               .attr("r", function(d) {return r(radius)+_.random(0,10)})
               .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
               .each("end", function() {  // End animation
@@ -685,6 +700,9 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
               });
 
+       
+
+        
 
 
   });
@@ -707,6 +725,8 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
 
 }
+
+
 
 /**
  * 

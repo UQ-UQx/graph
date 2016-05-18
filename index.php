@@ -259,8 +259,6 @@ if(isset($ltivars{'custom_pre_load'})){
       </div>
 
 
-
-      
     </div>
   </div>
 
