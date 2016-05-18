@@ -291,6 +291,13 @@ function resize() {
     .attr("cy", function(d) { return y(d[$y_axis]); })
 
 
+   svg.selectAll(".trendline")
+      .attr("x1", function(d) { return x(d[0]); })
+      .attr("y1", function(d) { return y(d[1]); })
+      .attr("x2", function(d) { return x(d[2]); })
+      .attr("y2", function(d) { return y(d[3]); });
+
+
     setBoldGridLines(0);
 
   refresh_legend();
@@ -730,10 +737,11 @@ function add_trendline_for_data(data_to_add, callback){
     //console.log(leastSquaresCoeff);
     
     // apply the reults of the least squares regression
-    var x1 = -20000;
-    var y1 = leastSquaresCoeff[0] * -20000 + leastSquaresCoeff[1];
-    var x2 = xSeries[xSeries.length - 1]+20000;
-    var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+20000) + leastSquaresCoeff[1];
+    var crosshairline_range = 20000;
+    var x1 = -crosshairline_range;
+    var y1 = leastSquaresCoeff[0] * -crosshairline_range + leastSquaresCoeff[1];
+    var x2 = xSeries[xSeries.length - 1]+crosshairline_range;
+    var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+crosshairline_range) + leastSquaresCoeff[1];
     var trendData = [[x1,y1,x2,y2,leastSquaresCoeff,data]];
 
     //console.log(trendData);
@@ -973,6 +981,16 @@ function leastSquares(xSeries, ySeries) {
 
 d3.selectAll("button[data-zoom]")
     .on("click", clicked);
+
+d3.selectAll("button[reset-view]")
+    .on("click", resetView);
+
+function resetView(){
+
+  GoToArea([_current_x_axis_min, _current_x_axis_max+100], [_current_y_axis_min, _current_y_axis_max+100]);
+
+
+}
 
 function clicked() {
   //console.log()

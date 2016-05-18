@@ -12,6 +12,8 @@ require_once('scripts/download_csv.php');
  $y_axis_display_text = "Distance (meters)";
  $x_axis_format = "none";
  $y_axis_format = "none";
+ $graph_header = "Query101x Graph";
+
 
 
  $editable = true;
@@ -64,6 +66,10 @@ if(isset($ltivars{'custom_x_axis_format'})){
 
 if(isset($ltivars{'custom_y_axis_format'})){
 	$y_axis_format = $ltivars{'custom_y_axis_format'};
+}
+
+if(isset($ltivars{'custom_graph_header'})){
+    $graph_header = $ltivars{'custom_graph_header'};
 }
 
 
@@ -122,14 +128,21 @@ if(isset($ltivars{'custom_pre_load'})){
 </head>
 <body>
 
-<div class="buttons">
-  <button data-zoom="+1">Zoom In</button>
-  <button data-zoom="-1">Zoom Out</button>
+<div class="graph_header_container">
+    <span class="graph_header"><?php echo $graph_header; ?></span>
 </div>
 
 <div id="graph_container"></div>
 
+<div class="scale_buttons">
+  <button class="btn btn-primary btn-sm" data-zoom="+1"><i class="fa fa-search-plus" aria-hidden="true"></i>
+&nbsp;&nbsp;&nbsp;Zoom In</button>
+  <button class="btn btn-primary btn-sm" data-zoom="-1"><i class="fa fa-search-minus" aria-hidden="true"></i>
+&nbsp;&nbsp;&nbsp;Zoom Out</button>
+  <button class="btn btn-primary btn-sm" reset-view=''><i class="fa fa-refresh" aria-hidden="true"></i>
+&nbsp;&nbsp;&nbsp;Reset View</button>
 
+</div>
 
 
 <div id="datasets">

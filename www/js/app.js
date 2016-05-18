@@ -87,21 +87,35 @@ $("document").ready(function(){
 
     });
 
+    $(document).on('shown.bs.modal', '#myModal', function (e) {
+    // do something…
+    // 
+             $('#myModaltrigger').one('focus', function(e){$(this).blur();});
+
+
+    });
+
 
     $(document).on('click', ".add_button", function(e){
 
 
-       editable_table.generate_csv(function(filename, display_name, data_set_name){
+       editable_table.generate_csv(function(filename, display_name, data_set_name, state){
             console.log("all done", filename, display_name, data_set_name);
             query_graph.init([filename], [filename]);
 
-            $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" $checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"></td><td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td></tr>');
+            if(state == "added"){
+                $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"></td><td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td></tr>');
+            }
        });
 
 
 
     });
 
+
+    $('#myModal').on('shown.bs.modal', function(e){
+        $('#myModaltrigger').one('focus', function(e){$(this).blur();});
+    });
 
 
 
