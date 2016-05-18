@@ -34,6 +34,7 @@
 module.exports = {
   init: function(uploaded, pre_load){
 
+    console.log("init called", uploaded, pre_load);
     add_data_to_cache(uploaded, function(added_data_names){
 
         add_data_to_graph(pre_load);
@@ -78,7 +79,7 @@ module.exports = {
 
   },
   get_data: function(data_name){
-    console.log("REDDDD");
+    //console.log("REDDDD");
     return _cached_data[data_name];
 
   }
@@ -153,7 +154,7 @@ if($y_axis_format == "date_year"){
   yAxis.tickFormat(d3.time.format("%Y"));
 }
 
-console.log(outerWidth);
+//console.log(outerWidth);
 
 var svg = d3.select("#graph_container")
             .append("svg")
@@ -402,6 +403,8 @@ function add_data_to_cache(data_to_add, callback){
         added_data_names.push(data_name);
         _cached_data[data_name] = csvObjs;
 
+
+
         if(!--remaining){
           console.log(_cached_data);
 
@@ -432,16 +435,29 @@ function add_data_to_graph(data_to_add, callback){
   });
   _data_sets_in_use = temp;
   temp = [];
+
+
+  var temp_data = [];
   $.each(data_to_add, function(ind, data_name){
     $.each(_cached_data[data_name], function(ind, data_point){
-      if($.inArray(data_point, _data) === -1){
-        _data.push(data_point);
+      if(data_point["data_set"] != data_name){
+        temp_data.push(data_point);
       }
+    })
+  });
+  _data = temp_data;
+  temp_data = [];
+
+  $.each(data_to_add, function(ind, data_name){
+    $.each(_cached_data[data_name], function(ind, data_point){
+     // if($.inArray(data_point, _data) === -1){
+        _data.push(data_point);
+      //}
     })
   });
 
   var data = _data;
-  console.log(data);
+  //console.log(data);
 
   data.forEach(function(d){
     if($x_axis_format == "date_year"){
@@ -452,7 +468,7 @@ function add_data_to_graph(data_to_add, callback){
     d[$y_axis] = +d[$y_axis];
   });
 
-  setScales(data);
+   setScales(data);
 
   var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
   var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
@@ -475,11 +491,14 @@ function add_data_to_graph(data_to_add, callback){
     _current_y_axis_min = y_min;
   }
 
-  console.log(x_min);
-  console.log(y_min);
+  //console.log(x_min);
+  //console.log(y_min);
+  var margin_of_point = 10;
 
-  x.domain([x_min, x_max]).nice();
-  y.domain([y_min, y_max]).nice();
+   x.domain([_current_x_axis_min, _current_x_axis_max+margin_of_point]).nice();
+   y.domain([_current_y_axis_min, _current_y_axis_max+margin_of_point]).nice();
+  // 
+  //GoToArea([_current_x_axis_min, _current_x_axis_max], [_current_y_axis_min, _current_y_axis_max]);
 
 
   svg.selectAll(".axis").remove();
@@ -656,6 +675,7 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
                 .duration(500)
                 .attr("r", function(d) {return r(radius)})
                 .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+
               });
 
 
@@ -675,6 +695,8 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
                 .on("zoom", zoom);
 
   svg.call(zoomBeh);
+
+  console.log("AHHHHHH")
 
 
 }
@@ -705,7 +727,7 @@ function add_trendline_for_data(data_to_add, callback){
 
     
     var leastSquaresCoeff = leastSquares(xSeries, ySeries);
-    console.log(leastSquaresCoeff);
+    //console.log(leastSquaresCoeff);
     
     // apply the reults of the least squares regression
     var x1 = -20000;
@@ -714,7 +736,7 @@ function add_trendline_for_data(data_to_add, callback){
     var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+20000) + leastSquaresCoeff[1];
     var trendData = [[x1,y1,x2,y2,leastSquaresCoeff,data]];
 
-    console.log(trendData);
+    //console.log(trendData);
 
     graph_svg.selectAll(data_name+"_trendlines").remove();
     
@@ -758,7 +780,7 @@ function add_cross(data_name, callback){
     
     var leastSquaresCoeff = leastSquares(xSeries, ySeries);
 
-    console.log(leastSquaresCoeff);
+    //console.log(leastSquaresCoeff);
 
 
 }
@@ -777,7 +799,7 @@ function remove_data_from_graph(data_to_remove){
 
   $.each(data_to_remove, function(ind, name){
 
-    console.log((d3.selectAll(".dot."+name)[0].length >= 1));
+    //console.log((d3.selectAll(".dot."+name)[0].length >= 1));
 
     if((_data_sets_in_use.indexOf(name) > -1) && (!(d3.selectAll("#"+name+"_trend")[0].length >= 1) && (d3.selectAll(".dot."+name)[0].length >= 1))){
         _data_sets_in_use.splice(_data_sets_in_use.indexOf(name),1);
@@ -808,7 +830,7 @@ function remove_trendline_for_data(data_name){
 
 
     d3.selectAll("#"+data_name+"_trend").remove();
-  console.log(_data_sets_in_use)
+  //console.log(_data_sets_in_use)
 
    if((_data_sets_in_use.indexOf(data_name) > -1) && (!(d3.selectAll("#"+data_name+"_trend")[0].length >= 1) && !(d3.selectAll(".dot."+data_name)[0].length >= 1))){
         _data_sets_in_use.splice(_data_sets_in_use.indexOf(data_name),1);
@@ -816,7 +838,7 @@ function remove_trendline_for_data(data_name){
     }
 
 
-  console.log(_data_sets_in_use)
+  //console.log(_data_sets_in_use)
 
   refresh_legend();
 
@@ -827,7 +849,7 @@ function refresh_legend(){
 
   graph_svg.selectAll(".legend").remove();
 
-  console.log("WHHATT"+color.domain());
+  //console.log("WHHATT"+color.domain());
 
   var legend = graph_svg.selectAll(".legend")
       .data(_data_sets_in_use)
@@ -898,7 +920,7 @@ function setScales(data){
 }
 
 function zoom() {
-  console.log("BRAAAAHHH!!");
+  //console.log("BRAAAAHHH!!");
     svg.select(".x.axis").call(xAxis);
     svg.select(".y.axis").call(yAxis);
 
@@ -953,7 +975,7 @@ d3.selectAll("button[data-zoom]")
     .on("click", clicked);
 
 function clicked() {
-  console.log()
+  //console.log()
   svg.call(zoomBeh.event); // https://github.com/mbostock/d3/issues/2387
 
   // Record the coordinates (in data space) of the center (in screen space).

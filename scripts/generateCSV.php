@@ -3,7 +3,15 @@
     header('Content-Type: application/json');
     //require_once('available_files.php'); 
     //
-    $files = array_slice(scandir('../'.'data/'.$_POST["lti_id"].'/'.$_POST["user_id"].'/'), 2);
-    $files = array_diff($files, array($user_id.".csv"));
-    error_log(json_encode($files),0);
+    
+    $file = '../data/'.$_POST['lti_id'].'/'.$_POST["user_id"].'/'.$_POST["filename"];
+    // Open the file to get existing content
+    // Append a new person to the file
+    $current .= $_POST["csvstring"];
+    // Write the contents back to the file
+    file_put_contents($file, $current);
+
+    error_log(json_encode($_POST["csvstring"]),0);
+
+    echo json_encode("success");
 

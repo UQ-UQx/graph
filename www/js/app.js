@@ -12,15 +12,10 @@ var editable_table = require("./editable_table.js");
 
 $("document").ready(function(){
 	var check_loaded = setInterval(function(){
-		console.log("checking...");
 		if($pre_load.length > 0){
 			clearInterval(check_loaded);
-
             $init_available_data_sets = $.map($init_available_data_sets, function(el){return el;});
 			query_graph.init($init_available_data_sets, $pre_load);
-
-
-
 		}
 	},500);
 
@@ -58,7 +53,7 @@ $("document").ready(function(){
 
 
 
-    
+
 
        
 
@@ -96,7 +91,12 @@ $("document").ready(function(){
     $(document).on('click', ".add_button", function(e){
 
 
-       console.log(editable_table.getData());
+       editable_table.generate_csv(function(filename, display_name, data_set_name){
+            console.log("all done", filename, display_name, data_set_name);
+            query_graph.init([filename], [filename]);
+
+            $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" $checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"></td><td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td></tr>');
+       });
 
 
 

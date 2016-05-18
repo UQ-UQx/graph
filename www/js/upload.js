@@ -55,12 +55,15 @@ $(function(){
         console.log(new_files);
 
 
-        $.each(new_files, function(ind, file){
-            if($(".data_to_load[value='"+file+"']").length == 0){
-                display_name = file.replace(/\_/g,' ');
-                $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+file+'"> '+display_name+'</li>');
-            }
-        });
+        
+
+
+        // $.each(new_files, function(ind, file){
+        //     if($(".data_to_load[value='"+file+"']").length == 0){
+        //         display_name = file.replace(/\_/g,' ');
+        //         $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+file+'"> '+display_name+'</li>');
+        //     }
+        // });
 
     }
     function formatFileSize(bytes) {

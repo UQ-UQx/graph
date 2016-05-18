@@ -29,7 +29,7 @@ data['path'] = "../";
 
 
 setInterval(function () {
-    if($(".data_name_input_modal")){
+    if($(".data_name_input_modal") && (state == "added")){
 
 
         if($.trim($(".data_name_input_modal").val()).length == 0){
@@ -65,13 +65,11 @@ setInterval(function () {
 
                         $(".data_name_input_modal").removeClass("input_invalid");
                         $(".data_name_input_modal").addClass("input_valid");
-                        $(".error_span").text("Please enter data for "+requested_name);
-
+                        $(".error_span").text("Please enter "+$x_axis_display_text+" and "+$y_axis_display_text+" data for "+requested_name);
                     }
-
                 },
                 error: function(error){
-                    console.log(error);
+                    //console.log(error);
                 }
             });
 
@@ -88,7 +86,7 @@ module.exports = {
     state = "added";
   },
   generateTable:function(data){
-    console.log(data);
+    //console.log(data);
 
     
     removeAllRows();
@@ -98,7 +96,7 @@ module.exports = {
     rows = 0;
 
     $.each(data, function(ind,datapoint){
-        console.log(ind);
+        //console.log(ind);
         var tr = $TABLE.find('tr.row_'+ind);
         $($(tr[0]).find("td")[0]).text(datapoint[$x_axis]);
         $($(tr[0]).find("td")[1]).text(datapoint[$y_axis]);
@@ -108,11 +106,13 @@ module.exports = {
 
     state = "edited";
 
-   // console.log($($(tr[0]).find("td")[0]).text("valuemyrowdit"));
+   // //console.log($($(tr[0]).find("td")[0]).text("valuemyrowdit"));
   },
-  getData:function(){
+  generate_csv:function(callback){
 
-    return [state, getJSON()];
+    generateCSV(callback);
+
+   // return [state, getJSON()];
   }
 }
 
@@ -142,7 +142,7 @@ function addRows(num_of_rows){
 function lint(){
 
 
-    console.log("linting");
+    //console.log("linting");
     var numInvalid = 0;
 
     $('[contenteditable]').each(function(ind,obj){
@@ -150,7 +150,7 @@ function lint(){
         if(!$(obj).parent().hasClass("hide")){
 
              if(!$.isNumeric(+$(obj).text()) || $(obj).text().length == 0){
-                console.log($(obj).parent());
+                //console.log($(obj).parent());
                numInvalid++;
                $(obj).addClass("invalid");
                $(obj).removeClass("valid");
@@ -167,7 +167,7 @@ function lint(){
 
 
 
-        console.log(numInvalid);
+        //console.log(numInvalid);
 
     if(numInvalid == 0 && $(".data_name_input_modal").val().length > 0){
 
@@ -177,10 +177,10 @@ function lint(){
 
     }else{
       if($(".data_name_input_modal").val().length == 0){
-            $(".error_span").text("Please enter a name for your new data set")
+        //$(".error_span").text("Please enter a name for your new data set")
 
-      }else if(numInvalid == 0){
-            //$(".error_span").text("Please enter data")
+      }else if(numInvalid != 0){
+            //$(".error_span").text("Please enter numerical data")
 
       }
       $(".addexport_buttons").prop("disabled", true);
@@ -227,7 +227,7 @@ $('.table-up').click(function () {
 });
 
 $('.table-down').click(function () {
-  console.log("myrow")
+  //console.log("myrow")
   var $row = $(this).parents('tr');
   $row.next().after($row.get(0));
 });
@@ -305,7 +305,7 @@ function getJSON(){
     
     headers.forEach(function (header, i) {
       h[header] = $td.eq(i).text(); 
-      h["data_set"] =  data_name; 
+      //h["data_set"] =  data_name; 
     });
     
     data.push(h);
@@ -317,4 +317,71 @@ function getJSON(){
 
 }
 
+
+function generateCSV(callback){
+
+    var data = getJSON();
+
+    console.log(ConvertToCSV(data));
+
+    var csv_data_string = ConvertToCSV(data);
+
+    console.log(csv_data_string);
+
+    var csv_data = {};
+
+    var filename = $(".data_name_input_modal").val().split(' ').join('_')+".csv";
+
+    csv_data["filename"] = filename;
+    csv_data["csvstring"] = csv_data_string;
+    csv_data['lti_id'] = $lti_id;
+    csv_data['user_id'] = $user_id;
+
+    $.ajax({
+        type: "POST",
+        url: "scripts/generateCSV.php",
+        data: csv_data,
+        success: function(response) {
+
+            console.log(response);
+
+            if(response == "success"){
+
+               // query_graph.init([filename], [filename]);
+                callback(filename, $(".data_name_input_modal").val(), $(".data_name_input_modal").val().split(' ').join('_'));
+
+
+
+            }
+
+        },
+        error: function(error){
+           
+
+
+        }
+    });
+
+
+
+}
+
+
+function ConvertToCSV(objArray) {
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = $x_axis+","+$y_axis+ '\r\n';
+
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        for (var index in array[i]) {
+            if (line != '') line += ','
+
+            line += array[i][index];
+        }
+
+        str += line + '\r\n';
+    }
+
+    return str;
+}
 

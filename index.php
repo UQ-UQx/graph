@@ -177,14 +177,16 @@ if(isset($ltivars{'custom_pre_load'})){
 				}
 			?>
 
-			<tr>
+<!-- 			<tr>
 				<td><button  type="button" class="btn btn-primary add_data_button" data-toggle="modal" data-target="#myModal">Add Dataset</button></td>
-			</tr>
+			</tr> -->
 
 
 		</tbody>
 	</table>
-
+    <div class="add_data_button_container">
+    <button  type="button" class="btn btn-primary btn-block btn-lg add_data_button" data-toggle="modal" data-target="#myModal">Add Dataset</button>
+    </div>
 
 
 
@@ -227,13 +229,14 @@ if(isset($ltivars{'custom_pre_load'})){
 
 		    </table>
  <span class="table-add glyphicon glyphicon-plus"></span>
- <div class="bg-danger error_span"></div>
 		  </div>
 		  
 		  <p id="export"></p>
 
         </div>
         <div class="modal-footer">
+         <div class="bg-danger error_span"></div><br>
+
         	<button id="export-btn" id="export_button" class="btn btn-primary addexport_buttons"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Export Data</button>
 
           <button type="button" class="btn btn-success addexport_buttons add_button" data-dismiss="modal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span></span></button>
