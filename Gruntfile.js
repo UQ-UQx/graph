@@ -68,4 +68,6 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-sass');
 
     grunt.registerTask('run', ["browserify:init","sass:dist","concurrent:app"]);
+    grunt.registerTask('build', ["browserify:init","sass:dist"]);
+
 }

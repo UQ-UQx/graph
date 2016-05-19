@@ -26,6 +26,10 @@ require_once('scripts/download_csv.php');
 $ltivars = $lti->calldata();
 
 $oldmask = umask(0);
+if (!file_exists('data')) {
+    mkdir('data', 0777, true);
+    error_log("Creating folder for data",0);
+}
 if (!file_exists('data/'.$lti_id)) {
 	mkdir('data/'.$lti_id, 0777, true);
 	error_log("Creating folder for LTI",0);

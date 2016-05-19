@@ -7,7 +7,8 @@
     "url": "git+https://github.com/UQ-UQx/graph.git"
   },
   "scripts": {
-    "start": "npm install && grunt run"
+    "start": "npm install && grunt run",
+    "build": "npm install && touch config.php && grunt build"
   },
   "author": "Ankith Konda",
   "license": "MIT",
