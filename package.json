@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "npm install && grunt run",
-    "build": "npm install && touch config.php && grunt build"
+    "build": "npm install && grunt build"
   },
   "author": "Ankith Konda",
   "license": "MIT",
@@ -31,15 +31,15 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
-    "grunt": "~0.4.5",
+    "grunt": "^0.4.5",
     "grunt-browserify": "^5.0.0",
     "grunt-concurrent": "^2.3.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-insert": "^0.1.0",
     "grunt-sass": "^1.1.0",
+    "grunt-shell": "^1.3.0",
     "watchify": "^3.7.0"
   }
 }

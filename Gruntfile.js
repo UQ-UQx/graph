@@ -58,16 +58,27 @@ module.exports = function(grunt){
                     'build/css/app.min.css': 'www/sass/main.scss',
                 }
             }
-        }
-    });
+        },
+	shell:{
+	  make_data_folder:{
+	  	command: 'test -d data && echo "Data folder exists" || mkdir -m 777 data'
+	  },
+	  make_config_file:{
+		command: 'test -d config.php && echo "config.php exists" || touch config.php'
+	  }
+	  
+	}
+    })
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-concurrent');
-    grunt.loadNpmTasks('grunt-sass');
+    grunt.loadNpmTasks('grunt-sass');  
+    grunt.loadNpmTasks('grunt-shell');
+    
 
-    grunt.registerTask('run', ["browserify:init","sass:dist","concurrent:app"]);
-    grunt.registerTask('build', ["browserify:init","sass:dist"]);
+    grunt.registerTask('run', ["shell", "browserify:init","sass:dist","concurrent:app"]);
+    grunt.registerTask('build', ["browserify:init","sass:dist","shell"]);
 
 }
