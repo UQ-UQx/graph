@@ -177,7 +177,7 @@ if(isset($ltivars{'custom_pre_load'})){
 
 				<td>'.$display_value.'</td>
 				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
-				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"></td>
+				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"><span class="trendline_formula_container" data-dataname="'.$value.'"></span></td>
 				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
 
 

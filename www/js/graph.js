@@ -32,12 +32,12 @@
 
 
 module.exports = {
-  init: function(uploaded, pre_load){
+  init: function(uploaded, pre_load, callback){
 
     console.log("init called", uploaded, pre_load);
     add_data_to_cache(uploaded, function(added_data_names){
 
-        add_data_to_graph(pre_load);
+        add_data_to_graph(pre_load, callback);
 
     });
 
@@ -81,6 +81,16 @@ module.exports = {
   get_data: function(data_name){
     //console.log("REDDDD");
     return _cached_data[data_name];
+
+  },
+  get_line_of_best_fit_formulas: function(data_names){
+
+    var formulas = {};
+    $.each(data_names, function(ind, data_name){
+      formulas[data_name] = getLeastSqCof(data_name);
+    });
+
+    return formulas;
 
   }
 
@@ -424,8 +434,14 @@ function add_data_to_cache(data_to_add, callback){
       
         $.each(csvObjs, function(ind, obj){
             obj["data_set"] = data_name;
+            if($x_axis_format == "date_year"){
+              obj[$x_axis] = parseDate(obj[$x_axis]);
+            }else{
+              obj[$x_axis] = +obj[$x_axis];
+            }
+            obj[$y_axis] = +obj[$y_axis];
         });
-  
+
 
         added_data_names.push(data_name);
         _cached_data[data_name] = csvObjs;
@@ -433,8 +449,6 @@ function add_data_to_cache(data_to_add, callback){
 
 
         if(!--remaining){
-          console.log(_cached_data);
-
           if(callback){
             callback(added_data_names);
           }
@@ -475,6 +489,7 @@ function add_data_to_graph(data_to_add, callback){
   _data = temp_data;
   temp_data = [];
 
+
   $.each(data_to_add, function(ind, data_name){
     $.each(_cached_data[data_name], function(ind, data_point){
      // if($.inArray(data_point, _data) === -1){
@@ -485,38 +500,43 @@ function add_data_to_graph(data_to_add, callback){
 
   var data = _data;
   //console.log(data);
+  //
+  
+  var cached_max_x = 0;
+  var cached_max_y = 0;
 
-  data.forEach(function(d){
-    if($x_axis_format == "date_year"){
-      d[$x_axis] = parseDate(d[$x_axis]);
-    }else{
-      d[$x_axis] = +d[$x_axis];
-    }
-    d[$y_axis] = +d[$y_axis];
-  });
+  var cached_min_x = 0;
+  var cached_min_y = 0;
+
+  $.each(_cached_data, function(cached_data_name, cached_data){
+      var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
+      var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
+
+      var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
+      var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
+
+      if(x_max > cached_max_x){
+        cached_max_x = x_max;
+      }
+      if(y_max > cached_max_y){
+        cached_max_y = y_max;
+      }
+
+  });  
+
+  console.log(cached_max_x);
+  console.log(cached_max_y);
+
+
+  _current_x_axis_max = cached_max_x;
+  _current_y_axis_max = cached_max_y;
+
+  _current_x_axis_min = cached_min_x;
+  _current_y_axis_min = cached_min_y;
 
    setScales(data);
 
-  var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
-  var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
 
-  if(x_max > _current_x_axis_max){
-    _current_x_axis_max = x_max;
-  }
-  if(y_max > _current_y_axis_max){
-    _current_y_axis_max = y_max;
-  }
-
-  var x_min = d3.min(data, function(d){return d[$x_axis] || Infinity;});
-  var y_min = d3.min(data, function(d){return d[$y_axis] || Infinity;});
-
-  
-  if(x_min < _current_x_axis_min){
-    _current_x_axis_min = x_min;
-  }
-  if(y_max < _current_y_axis_max){
-    _current_y_axis_min = y_min;
-  }
 
   //console.log(x_min);
   //console.log(y_min);
@@ -685,7 +705,7 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
                 .attr("fill", "red")  // Change color
               })
               .delay(function(d, i) {
-                return i / data.length * _.random(0,2000);  // Dynamic delay (i.e. each item delays a little longer)
+                return i / data.length * _.random(0,1000);  // Dynamic delay (i.e. each item delays a little longer)
               })
               .ease("linear")
               .attr("class", "dot "+name)
@@ -695,7 +715,7 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
               .attr("cx", function(d) { return x(d[$x_axis]); })
               .attr("cy", function(d) { return y(d[$y_axis]); })
              
-              .attr("r", function(d) {return r(radius)+_.random(0,10)})
+              .attr("r", function(d) {return r(radius)+_.random(0,30)})
               .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
               .each("end", function() {  // End animation
                 d3.select(this)  // 'this' means the current element
@@ -712,6 +732,17 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
 
   });
+
+
+  var available_data_names_in_cache = [];
+  $.each(_cached_data, function(name,data){
+    available_data_names_in_cache.push(name);
+  });
+
+  if(callback){
+    callback(available_data_names_in_cache);
+  }
+
 
   refresh_legend();
 
@@ -733,6 +764,23 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 }
 
 
+function getLeastSqCof(data_name){
+
+    var data = _cached_data[data_name];
+
+    if(data.length <= 1){
+      return;
+    }
+
+    var xSeries = data.map(function(d) { return +d[$x_axis]; })
+    var ySeries = data.map(function(d) { return +d[$y_axis]; });
+
+    
+    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+
+    return leastSquaresCoeff;
+}
+
 
 /**
  * 
@@ -753,22 +801,28 @@ function add_trendline_for_data(data_to_add, callback){
    $.each(data_to_add, function(ind, data_name){
 
 
-    var data = _cached_data[data_name];
+    var leastSquaresCoeff = getLeastSqCof(data_name);
+    if(!leastSquaresCoeff){
+      return;
+    }
 
-    var xSeries = data.map(function(d) { return +d[$x_axis]; })
-    var ySeries = data.map(function(d) { return +d[$y_axis]; });
-
-    
-    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
     //console.log(leastSquaresCoeff);
     
     // apply the reults of the least squares regression
-    var crosshairline_range = 20000;
-    var x1 = -crosshairline_range;
-    var y1 = leastSquaresCoeff[0] * -crosshairline_range + leastSquaresCoeff[1];
-    var x2 = xSeries[xSeries.length - 1]+crosshairline_range;
-    var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+crosshairline_range) + leastSquaresCoeff[1];
-    var trendData = [[x1,y1,x2,y2,leastSquaresCoeff,data]];
+    // 
+   
+    // var crosshairline_range = x(width);
+    // var x1 = -crosshairline_range;
+    // var y1 = leastSquaresCoeff[0] * -crosshairline_range + leastSquaresCoeff[1];
+    // var x2 = xSeries[xSeries.length - 1]+crosshairline_range;
+    // var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+crosshairline_range) + leastSquaresCoeff[1];
+    // 
+    var crosshairline_range = xAxis.scale().domain();
+    var x1 = crosshairline_range[0];
+    var y1 = leastSquaresCoeff[0] * crosshairline_range[0] + leastSquaresCoeff[1];
+    var x2 = crosshairline_range[1];
+    var y2 = leastSquaresCoeff[0] * crosshairline_range[1] + leastSquaresCoeff[1];
+    var trendData = [[x1,y1,x2,y2,leastSquaresCoeff]];
 
     //console.log(trendData);
 
@@ -963,11 +1017,26 @@ function zoom() {
         .attr("cy", function(d){ return y(d[$y_axis]);})
         .attr("r", function(d) {return r(radius)})
 
+
+    var x_domain = xAxis.scale().domain();
+
     svg.selectAll(".trendline")
-      .attr("x1", function(d) { return x(d[0]); })
-      .attr("y1", function(d) { return y(d[1]); })
-      .attr("x2", function(d) { return x(d[2]); })
-      .attr("y2", function(d) { return y(d[3]); })
+      .attr("x1", function(d) { 
+        var leastsq = d[4]; 
+        return x(x_domain[0]); })
+      .attr("y1", function(d) { 
+        var leastsq = d[4]; 
+        return y(leastsq[0]*x_domain[0]+leastsq[1]); 
+      })
+      .attr("x2", function(d) { 
+        var leastsq = d[4]; 
+        return x(x_domain[1]); 
+      })
+      .attr("y2", function(d) { 
+        var leastsq = d[4]; 
+        return y(leastsq[0]*x_domain[1]+leastsq[1]); 
+      })
+
 
 
 
