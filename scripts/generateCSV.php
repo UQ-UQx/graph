@@ -4,7 +4,7 @@
     //require_once('available_files.php'); 
     //
     
-    $file = '../data/'.$_POST['lti_id'].'/'.$_POST["user_id"].'/'.$_POST["filename"];
+    $file = '../data/'.$_POST['lti_id'].'/'.$_POST["user_id"].'/user/'.$_POST["filename"];
     // Open the file to get existing content
     // Append a new person to the file
     $current .= $_POST["csvstring"];

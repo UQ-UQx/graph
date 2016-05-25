@@ -16,8 +16,6 @@ require_once('scripts/download_csv.php');
  $decimal_place = "1";
 
 
-
- $editable = true;
  $lti_id = $lti->context_id()."_".$lti->resource_id();
  $user_id = $lti->user_id();
  $pre_load = array();
@@ -34,6 +32,14 @@ if (!file_exists('data/'.$lti_id)) {
 if (!file_exists('data/'.$lti_id."/".$user_id)) {
 	mkdir('data/'.$lti_id."/".$user_id, 0777, true);
 	error_log("Creating folder for LTI User",0);
+}
+if (!file_exists('data/'.$lti_id."/".$user_id."/default")) {
+    mkdir('data/'.$lti_id."/".$user_id."/default", 0777, true);
+    error_log("Creating folder for LTI User Default files Directory",0);
+}
+if (!file_exists('data/'.$lti_id."/".$user_id."/user")) {
+    mkdir('data/'.$lti_id."/".$user_id."/user", 0777, true);
+    error_log("Creating folder for LTI User Files Directory",0);
 }
 if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
 	$myfile = fopen('data/'.$lti_id."/".$user_id."/".$user_id.".csv", "w");
@@ -156,7 +162,7 @@ if(isset($ltivars{'custom_pre_load'})){
 			<th>Data Name</th>
 			<th>Show Data</th>
 			<th>Show Line of Best Fit</th>
-			<th>Edit Data</th>
+			<th>Options</th>
 		</thead>
 		<tbody>
 			
@@ -165,30 +171,30 @@ if(isset($ltivars{'custom_pre_load'})){
 			<?php 
 
 				foreach ($data_sets as $ind => $value) {
+
+
 					$value = substr($value,0,-4);
 					$display_value = str_replace("_"," ", $value);
 					$checked = '';
 					if(in_array($value.".csv", $pre_load)){
 						$checked = "checked";
 					}
+
+                    
+
 					echo "<tr>";
 
 
 					echo '
 
 
-				<td>'.$display_value.'</td>
-				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
-				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"><span class="trendline_formula_container" data-dataname="'.$value.'"></span></td>
-				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
-
-
-
-					';
+    				<td>'.$display_value.'</td>
+    				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
+    				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"><span class="trendline_formula_container" data-dataname="'.$value.'"></span></td>
+    				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
+    					';
 
 					echo "</tr>";
-	
-
 				}
 			?>
 
