@@ -9,7 +9,7 @@ require_once('scripts/download_csv.php');
  $x_axis = "Time";
  $y_axis = "Distance";
  $x_axis_display_text = "Time (seconds)";
- $y_axis_display_text = "Distance (meters)";
+ $y_axis_display_text = "Distance (metres)";
  $x_axis_format = "none";
  $y_axis_format = "none";
  $graph_header = "Query101x Graph";

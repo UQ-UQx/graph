@@ -493,10 +493,15 @@ function add_data_to_graph(data_to_add, callback){
 
   //console.log(x_min);
   //console.log(y_min);
-  var margin_of_point = 5;
+  var margin_of_point_max = 5;
+  var margin_of_point_min = 5;
 
-   x.domain([_current_x_axis_min-margin_of_point, _current_x_axis_max+margin_of_point]).nice();
-   y.domain([_current_y_axis_min-margin_of_point, _current_y_axis_max+margin_of_point]).nice();
+  if(_current_x_axis_min == 0){
+    margin_of_point_min = 0;
+  }
+
+   x.domain([_current_x_axis_min-margin_of_point_min, _current_x_axis_max+margin_of_point_max]).nice();
+   y.domain([_current_y_axis_min-margin_of_point_min, _current_y_axis_max+margin_of_point_max]).nice();
   // 
   //GoToArea([_current_x_axis_min, _current_x_axis_max], [_current_y_axis_min, _current_y_axis_max]);
 
