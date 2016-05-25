@@ -17,11 +17,27 @@ if(isset($_POST['func'])){
 
 function getAvailableFiles($lti_id, $user_id){
 
-        $files = array_slice(scandir($_SERVER['DOCUMENT_ROOT'].$_SERVER["REQUEST_URI"].'data/'.$lti_id.'/'.$user_id.'/'), 2);
+        //$files = array_slice(scandir($_SERVER['DOCUMENT_ROOT'].$_SERVER["REQUEST_URI"].'data/'.$lti_id.'/'.$user_id.'/'), 2);
+        $dir = $_SERVER['DOCUMENT_ROOT'].$_SERVER["REQUEST_URI"].'data/'.$lti_id.'/'.$user_id.'/';
+        $files = [];
+        if (is_dir($dir)) {
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if (strpos($file, '.csv') !== false) {
+                       // error_log(json_encode($file),0);
+                        
+                        $f["file_name"] = $file;
+                        $f["directory"] = "default";
+                        error_log(json_encode($f),0);
 
-    
-	$files = array_diff($files, array($user_id.".csv"));
-	return $files;
+                        array_push($files, $file);
+                    }
+                }
+                closedir($dh);
+            }
+        }
+    $files = array_diff($files, array($user_id.".csv"));
+    return $files;
 }
 
 function getAvailableFilesWithPath($mypath, $lti_id, $user_id){
