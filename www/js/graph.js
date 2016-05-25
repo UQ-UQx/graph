@@ -139,7 +139,7 @@ var xAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-width)
               .outerTickSize(0)
-              .tickPadding(10);
+              .tickPadding(10).tickFormat(d3.format("d"));
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -147,30 +147,10 @@ var yAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-height)
               .outerTickSize(0)
-              .tickPadding(10);
-
-var parseDate = d3.time.format("%Y").parse;
+              .tickPadding(10).tickFormat(d3.format("d"));
 
 
-// if($x_axis_format == "date_year"){
-//   var x = d3.time.scale().range([0, width]);
-//  xAxis.scale(x);
-//  xAxis.tickFormat(d3.time.format("%Y"));
-// }
 
-if($x_axis_format == "years"){
-
-  xAxis.tickFormat(d3.format("d"));
-
-}
-
-if($y_axis_format == "date_year"){
-  var y = d3.time.scale().range([0, width]);
-  yAxis.scale(y);
-  yAxis.tickFormat(d3.time.format("%Y"));
-}
-
-//console.log(outerWidth);
 
 var svg = d3.select("#graph_container")
             .append("svg")
@@ -508,9 +488,7 @@ function add_data_to_graph(data_to_add, callback){
   
 
    calculate_min_max();
-
    setScales(data);
-
 
 
   //console.log(x_min);
