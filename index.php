@@ -117,7 +117,6 @@ if(isset($ltivars{'custom_pre_load'})){
 <body>
 
 
-
 		<div id="graph">
 			<svg id="chart"></svg>
 		</div>
