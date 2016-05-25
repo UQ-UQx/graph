@@ -108,6 +108,9 @@ var _current_y_axis_min = 0;
 var _cached_data = {};
 var _data = [];
 var _data_sets_in_use = [];
+var axis_display_size = "15px";
+var axis_display_x_offset = 60;
+var axis_display_y_offset = 80;
 
 
 
@@ -177,10 +180,10 @@ var svg = d3.select("#graph_container")
               .call(xAxis)
             .append("text")
               .attr("class", "label")
-              .attr("x", width/2+40)
-              .attr("y", 70)
+              .attr("x", width/2+axis_display_x_offset)
+              .attr("y", axis_display_y_offset-20)
               .style("text-anchor", "end")
-              .text($x_axis_display_text);
+              .text($x_axis_display_text).style("font-size",axis_display_size);
 
           svg.append("g")
               .attr("class", "y axis")
@@ -188,11 +191,11 @@ var svg = d3.select("#graph_container")
             .append("text")
               .attr("class", "label")
               .attr("transform", "rotate(-90)")
-              .attr("y", -70)
-              .attr("x", -height/2+40)
+              .attr("y", -axis_display_y_offset)
+              .attr("x", -height/2+axis_display_x_offset)
               .attr("dy", ".71em")
               .style("text-anchor", "end")
-              .text($y_axis_display_text);
+              .text($y_axis_display_text).style("font-size",axis_display_size);
 
 var graph_svg = d3.select(".graph");
 
@@ -354,11 +357,11 @@ function setCross(x_cross_val, y_cross_val, values){
         .attr("x2", width)
         .attr("y2",y_cross_val).style("opacity", 1);
 
-    var m = trend[0].toFixed(2);
-    var c = trend[1].toFixed(2);
-    var rs = trend[2].toFixed(2);
-    var x = values[0].toFixed(2);
-    var y = values[1].toFixed(2);
+    var m = trend[0].toFixed($decimal_place);
+    var c = trend[1].toFixed($decimal_place);
+    var rs = trend[2].toFixed($decimal_place);
+    var x = values[0].toFixed($decimal_place);
+    var y = values[1].toFixed($decimal_place);
 
 
     tooltip_div
@@ -526,10 +529,10 @@ function add_data_to_graph(data_to_add, callback){
     
     d3.select(".x").append("text")
       .attr("class", "label")
-      .attr("x", width/2+40)
-      .attr("y", 70)
+      .attr("x", width/2+axis_display_x_offset)
+      .attr("y", axis_display_y_offset-20)
       .style("text-anchor", "end")
-      .text($x_axis_display_text);
+      .text($x_axis_display_text).style("font-size",axis_display_size);
 
   svg.append("g")
       .attr("class", "y axis")
@@ -548,11 +551,11 @@ function add_data_to_graph(data_to_add, callback){
     d3.select(".y").append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-      .attr("y", -70)
-      .attr("x", -height/2+40)
+      .attr("y", -axis_display_y_offset)
+      .attr("x", -height/2+axis_display_x_offset)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text($y_axis_display_text);
+      .text($y_axis_display_text).style("font-size",axis_display_size);
 
 
 
@@ -938,9 +941,23 @@ function refresh_legend(){
   graph_svg.selectAll(".legend").remove();
 
   //console.log("WHHATT"+color.domain());
+  //
+  
+  var in_use = [];
+  $.each(_data_sets_in_use, function(ind, set){
+  var dat = {};
+
+      dat["data_name"] = set;
+      dat["data_name_pretty"] = set.replace(/_/g, ' ');
+    in_use.push(dat);
+
+  });
+
+  console.log(in_use);
+
 
   var legend = graph_svg.selectAll(".legend")
-      .data(_data_sets_in_use)
+      .data(in_use)
     .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
@@ -951,7 +968,7 @@ function refresh_legend(){
        .attr("y", 7)
       .attr("width", 18)
       .attr("height", 18)
-      .style("fill", color);
+      .style("fill", function(d) { return color(d["data_name"]);});
 
   // draw legend text
   legend.append("text")
@@ -959,7 +976,7 @@ function refresh_legend(){
       .attr("y",16)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text(function(d) { return d;})
+      .text(function(d) { return d["data_name_pretty"];})
 
 
 }

@@ -13,6 +13,7 @@ require_once('scripts/download_csv.php');
  $x_axis_format = "none";
  $y_axis_format = "none";
  $graph_header = "Query101x Graph";
+ $decimal_place = "1";
 
 
 
@@ -50,7 +51,6 @@ if(isset($ltivars{'custom_y_axis_display_text'})){
 	$y_axis_display_text = $ltivars{'custom_y_axis_display_text'};
 }
 
-
 if(isset($ltivars{'custom_x_axis'})){
 	$x_axis = $ltivars{'custom_x_axis'};
 }
@@ -58,7 +58,6 @@ if(isset($ltivars{'custom_x_axis'})){
 if(isset($ltivars{'custom_y_axis'})){
 	$y_axis = $ltivars{'custom_y_axis'};
 }
-
 
 if(isset($ltivars{'custom_x_axis_format'})){
 	$x_axis_format = $ltivars{'custom_x_axis_format'};
@@ -72,7 +71,9 @@ if(isset($ltivars{'custom_graph_header'})){
     $graph_header = $ltivars{'custom_graph_header'};
 }
 
-
+if(isset($ltivars{'custom_decimal_place'})){
+    $decimal_place = $ltivars{'custom_decimal_place'};
+}
 
 if(isset($ltivars{'custom_upload'})){
 	$links = str_getcsv($ltivars{'custom_upload'});
@@ -121,6 +122,7 @@ if(isset($ltivars{'custom_pre_load'})){
  $lti_id = '<?php echo $lti_id; ?>';
  $pre_load = JSON.parse('<?php echo json_encode($pre_load); ?>');
  $init_available_data_sets = JSON.parse('<?php echo json_encode($data_sets); ?>');
+ $decimal_place = parseInt('<?php echo $decimal_place; ?>');
 
 
 
