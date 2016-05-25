@@ -151,6 +151,7 @@ var yAxis = d3.svg.axis()
 
 
 
+
 var svg = d3.select("#graph_container")
             .append("svg")
               .attr("class", "graph_svg")
@@ -419,11 +420,9 @@ function add_data_to_cache(data_to_add, callback){
       
         $.each(csvObjs, function(ind, obj){
             obj["data_set"] = data_name;
-            if($x_axis_format == "date_year"){
-              obj[$x_axis] = parseDate(obj[$x_axis]);
-            }else{
-              obj[$x_axis] = +obj[$x_axis];
-            }
+
+            obj[$x_axis] = +obj[$x_axis];
+            
             obj[$y_axis] = +obj[$y_axis];
         });
 
@@ -486,6 +485,7 @@ function add_data_to_graph(data_to_add, callback){
   var data = _data;
   //console.log(data);
   //
+  
 
    calculate_min_max();
    setScales(data);
@@ -493,10 +493,10 @@ function add_data_to_graph(data_to_add, callback){
 
   //console.log(x_min);
   //console.log(y_min);
-  var margin_of_point = 10;
+  var margin_of_point = 5;
 
-   x.domain([_current_x_axis_min, _current_x_axis_max+margin_of_point]).nice();
-   y.domain([_current_y_axis_min, _current_y_axis_max+margin_of_point]).nice();
+   x.domain([_current_x_axis_min-margin_of_point, _current_x_axis_max+margin_of_point]).nice();
+   y.domain([_current_y_axis_min-margin_of_point, _current_y_axis_max+margin_of_point]).nice();
   // 
   //GoToArea([_current_x_axis_min, _current_x_axis_max], [_current_y_axis_min, _current_y_axis_max]);
 
@@ -734,6 +734,48 @@ function getLeastSqCof(data_name){
     return leastSquaresCoeff;
 }
 
+function calculate_min_max(){
+
+
+  var cached_max_x = 0;
+  var cached_max_y = 0;
+
+  var cached_min_x = 0;
+  var cached_min_y = 0;
+
+  //calculate max first and set min and max to the max value
+  $.each(_cached_data, function(cached_data_name, cached_data){
+      var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
+      var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
+      if(x_max > cached_max_x){
+        cached_max_x = x_max;
+        cached_min_x = x_max;
+      }
+      if(y_max > cached_max_y){
+        cached_max_y = y_max;
+        cached_min_y = y_max;
+      }
+  });  
+
+
+    //calculate min and check if it's less than the cached min value which was set to the max value
+  $.each(_cached_data, function(cached_data_name, cached_data){
+      var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
+      var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
+      if(x_min < cached_min_x){
+        cached_min_x = x_min;
+      }
+      if(y_min < cached_min_y){
+        cached_min_y = y_min;
+      }
+  }); 
+
+  _current_x_axis_max = cached_max_x;
+  _current_y_axis_max = cached_max_y;
+  _current_x_axis_min = cached_min_x;
+  _current_y_axis_min = cached_min_y;
+
+}
 
 /**
  * 
