@@ -134,11 +134,7 @@ if(isset($ltivars{'custom_pre_load'})){
     <span class="graph_header"><?php echo $graph_header; ?></span>
 </div>
 
-<<<<<<< HEAD
-		<div id="graph">
-			<svg id="chart"></svg>
-		</div>
-=======
+
 <div id="graph_container"></div>
 
 <div class="scale_buttons">
@@ -148,7 +144,7 @@ if(isset($ltivars{'custom_pre_load'})){
 &nbsp;&nbsp;&nbsp;Zoom Out</button>
   <button class="btn btn-primary btn-sm" reset-view=''><i class="fa fa-refresh" aria-hidden="true"></i>
 &nbsp;&nbsp;&nbsp;Reset View</button>
->>>>>>> afbd6557e254f67f793ef1136ae7e4dc07837968
+
 
 </div>
 
