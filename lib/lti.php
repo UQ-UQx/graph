@@ -157,8 +157,8 @@ class Lti {
 		    'oauth_signature'=>'dSffHcwBbfyR01HQloYJIQRu9T0',
 		    'lti_message_type'=>'basic-lti-launch-request',
 		    'oauth_callback'=>'about:blank',
-		    'custom_pre_load'=>'Sun_Yang.csv,Hacket_2004.csv',
-		    'custom_upload'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv'
+		    'custom_pre_load'=>'running_times.csv',
+		    'custom_upload'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@running_times.csv'
 
 		);
 	}
