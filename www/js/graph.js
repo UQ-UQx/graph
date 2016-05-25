@@ -1,18 +1,127 @@
-var _data_sets = [];
-var _data = {};
-var _parsed_csv_files = {};
+/**
+ *
+ *
+ *
+ * init (data_sets, pre_load)
+ *   Load all files in available files 
+ *   get preload list and plot them on the graph
+ *
+ * load data (data_set)
+ *   is called when upload.js completes uploading a new file, data is sent over and is stored in _data_sets for use later
+ *
+ * add data (data_set)
+ *   checks to see if it exists in _data_sets,
+ *     if yes
+ *       puts it on the graph
+ *     no
+ *       calls load data with the file name and then calls show data again if successfully loaded
+ *
+ * remove data (data_set)
+ *   checks to see if data is being used
+ *    removes it if it is, otherwise ignores
+ *
+ * add line (data_set)
+ *
+ * remove line (data_set)
+ *
+ *
+ *
+ * 
+ */
+
+
+
+module.exports = {
+  init: function(uploaded, pre_load, callback){
+
+    console.log("init called", uploaded, pre_load);
+    add_data_to_cache(uploaded, function(added_data_names){
+
+        add_data_to_graph(pre_load, callback);
+
+    });
+
+  },
+  add_data: function(selected_data_set){
+
+    add_data_to_cache(selected_data_set);
+
+  },
+  remove_data: function(selected_data_set){
+
+
+
+  },
+  add_line: function(selected_data_set){
+
+    add_trendline_for_data(selected_data_set);
+
+  },
+  remove_line: function(selected_data_set){
+
+    remove_trendline_for_data(selected_data_set);
+
+
+  },
+  show_data: function(selected_data_set){
+
+   
+    add_data_to_graph(selected_data_set);
+    
+  },
+  hide_data: function(selected_data_set){
+
+    remove_data_from_graph(selected_data_set);
+  },
+  update: function(selected_data_set){
+
+
+
+  },
+  get_data: function(data_name){
+    //console.log("REDDDD");
+    return _cached_data[data_name];
+
+  },
+  get_line_of_best_fit_formulas: function(data_names){
+
+    var formulas = {};
+    $.each(data_names, function(ind, data_name){
+      formulas[data_name] = getLeastSqCof(data_name);
+    });
+
+    return formulas;
+
+  }
+
+
+}
+
+
+var _dateFormat = d3.time.format("%b %Y");
 var _data_base_path = "data/"+$lti_id+"/"+$user_id+"/";
 var _current_x_axis_max = 0;
 var _current_y_axis_max = 0;
 var _current_x_axis_min = 0;
 var _current_y_axis_min = 0;
-var _dateFormat = d3.time.format("%b %Y");
+
+var _cached_data = {};
+var _data = [];
+var _data_sets_in_use = [];
+var axis_display_size = "15px";
+var axis_display_x_offset = 60;
+var axis_display_y_offset = 80;
 
 
-var margin = {top: 40, right: 40, bottom: 55, left: 55},
-    dim = Math.min(parseInt(d3.select("#chart").style("width")), parseInt(d3.select("#chart").style("height"))),
+
+var margin = {top: 100, right: 100, bottom: 100, left: 100},
+    dim = Math.min(parseInt(d3.select("#graph_container").style("width")), parseInt(d3.select("#graph_container").style("height"))),
+    outerWidth = dim,
+    outerHeight = dim,
     width = dim - margin.left - margin.right,
     height = dim - margin.top - margin.bottom;
+
+
 
 var x = d3.scale.linear()
     .range([0, width]);
@@ -20,7 +129,7 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([height, 0]);
 
-var radius = 0.5;
+var radius = 0.7;
 var r = d3.scale.linear()
     .range([radius, radius]);
 
@@ -33,7 +142,7 @@ var xAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-width)
               .outerTickSize(0)
-              .tickPadding(10);
+              .tickPadding(10).tickFormat(d3.format("d"));
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -41,91 +150,96 @@ var yAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-height)
               .outerTickSize(0)
-              .tickPadding(10);
-
-var parseDate = d3.time.format("%Y").parse;
-
-
-if($x_axis_format == "date_year"){
-  var x = d3.time.scale().range([0, width]);
-
- xAxis.scale(x);
- xAxis.tickFormat(d3.time.format("%Y"));
-
-
-}
-
-if($y_axis_format == "date_year"){
-  var y = d3.time.scale().range([0, width]);
-  yAxis.scale(y);
-
-
-  yAxis.tickFormat(d3.time.format("%Y"));
-
-}
+              .tickPadding(10).tickFormat(d3.format("d"));
 
 
 
-var svg = d3.select("#chart")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", width/2+40)
-      .attr("y", 40)
-      .style("text-anchor", "end")
-      .text($x_axis_display_text);
+var svg = d3.select("#graph_container")
+            .append("svg")
+              .attr("class", "graph_svg")
+              .attr("width", outerHeight)
+              .attr("height", outerWidth)
+            .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -50)
-      .attr("x", -height/2+40)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text($y_axis_display_text);
 
-svg.append("rect")
-      .attr("class", "graph_back")
-      .attr("width", width)
-      .attr("height", height);
+          svg.append("svg")
+              .attr("class", "graph")
+              .attr("width", width)
+              .attr("height", height)
+            .append("rect")
+              .attr("class", "graph_back")
+              .attr("width", width)
+              .attr("height", height)
+              .on("mousemove", mousemove)
+
+          svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis)
+            .append("text")
+              .attr("class", "label")
+              .attr("x", width/2+axis_display_x_offset)
+              .attr("y", axis_display_y_offset-20)
+              .style("text-anchor", "end")
+              .text($x_axis_display_text).style("font-size",axis_display_size);
+
+          svg.append("g")
+              .attr("class", "y axis")
+              .call(yAxis)
+            .append("text")
+              .attr("class", "label")
+              .attr("transform", "rotate(-90)")
+              .attr("y", -axis_display_y_offset)
+              .attr("x", -height/2+axis_display_x_offset)
+              .attr("dy", ".71em")
+              .style("text-anchor", "end")
+              .text($y_axis_display_text).style("font-size",axis_display_size);
+
+var graph_svg = d3.select(".graph");
+
+var tooltip_div = d3.select("body").append("div") 
+    .attr("class", "tooltip")       
+    .style("opacity", 0);
+
+
 
 
 resize();
 
 setInterval(function(){
 
+    xAxis.ticks(dim / 80).innerTickSize(-width)
+          .outerTickSize(0)
+          .tickPadding(10);
 
-    xAxis.ticks(dim / 50).innerTickSize(-width)
-              .outerTickSize(0)
-              .tickPadding(10);
-
-    yAxis.ticks(dim / 50).innerTickSize(-height)
-              .outerTickSize(0)
-              .tickPadding(10);
+    yAxis.ticks(dim / 80).innerTickSize(-height)
+          .outerTickSize(0)
+          .tickPadding(10);
 
 },100);
 
-function resize() {
-  dim = parseInt(d3.select("#chart").style("width")),
-      width = dim - margin.left - margin.right,
-  height = dim - margin.top - margin.bottom;
-  //console.log(dim);
 
-  $("#graph").css({
-      "width":width+margin.left+margin.right,
-      "height":height+margin.top+margin.bottom
-  });
+
+function resize() {
+
+  dim = parseInt(d3.select("#graph_container").style("width")),
+    outerWidth = dim,
+    outerHeight = dim,
+    width = dim - margin.left - margin.right,
+    height = dim - margin.top - margin.bottom;
+  
+  d3.select("#graph_container")
+    .attr("width", outerWidth)
+    .attr("height", outerHeight)
+
+
+  d3.select(".graph_svg")
+              .attr("width", outerHeight)
+              .attr("height", outerWidth)
+          
+
 
   // Update the range of the scale with new width/height
   x.range([0, width]);
@@ -140,6 +254,10 @@ function resize() {
       .attr("width", width)
       .attr("height", height);
 
+    svg.select('.graph')
+      .attr("width", width)
+      .attr("height", height);
+
   svg.select('.x.axis').select('.label')
       .attr("x",width/2+40);
   svg.select('.y.axis').select('.label')
@@ -150,9 +268,9 @@ function resize() {
 
 
 
-  // Update the tick marks
-  xAxis.ticks(dim / 50);
-  yAxis.ticks(dim / 50);
+  // // Update the tick marks
+  // xAxis.ticks(dim / 10);
+  // yAxis.ticks(dim / 10);
 
   // Update the circles
   r.range([(dim*radius)/100, (dim*radius)/100])
@@ -160,11 +278,11 @@ function resize() {
 
 
     // Update the tick marks
-    xAxis.ticks(dim / 50).innerTickSize(-width)
+    xAxis.ticks(dim / 10).innerTickSize(-width)
               .outerTickSize(0)
               .tickPadding(10);
 
-    yAxis.ticks(dim / 50).innerTickSize(-height)
+    yAxis.ticks(dim / 10).innerTickSize(-height)
               .outerTickSize(0)
               .tickPadding(10);
 
@@ -174,8 +292,84 @@ function resize() {
     .attr("cy", function(d) { return y(d[$y_axis]); })
 
 
-          setBoldGridLines(0);
+   svg.selectAll(".trendline")
+      .attr("x1", function(d) { return x(d[0]); })
+      .attr("y1", function(d) { return y(d[1]); })
+      .attr("x2", function(d) { return x(d[2]); })
+      .attr("y2", function(d) { return y(d[3]); });
 
+
+    setBoldGridLines(0);
+
+  refresh_legend();
+
+}
+
+  var bisectDate = d3.bisector(function(d) { return d[0]; }).left;
+
+var x_cross =  graph_svg.append("line")
+      .attr("class", "crosshair_x crosshairline")      
+      .attr("stroke", "red")
+      .attr("stroke-width", 2).style("opacity", 0);
+
+var y_cross =  graph_svg.append("line")
+      .attr("class", "crosshair_y crosshairline")      
+      .attr("stroke", "red")
+      .attr("stroke-width", 2).style("opacity", 0);
+
+svg.selectAll(".crosshairline")              
+    .on("click", function(){ //reset trend so that crosshair doesn't show up
+      trend = [];
+          svg.selectAll(".crosshairline").style("opacity", 0);
+
+               tooltip_div.style("opacity", 0); 
+
+    });
+
+
+var trend = [];
+
+function mousemove(){
+  if(trend.length > 0){
+    var mouse = d3.mouse(this);
+    var x_graph_val = x.invert(mouse[0]);
+    var y_graph_val = y.invert(mouse[1]);
+    
+    var y_trend_val = trend[0]*x_graph_val+trend[1];
+
+    setCross(mouse[0],y(y_trend_val),[x_graph_val, y_trend_val]);
+
+  }else{
+    svg.selectAll(".crosshairline").style("opacity", 0);
+  }
+}
+
+function setCross(x_cross_val, y_cross_val, values){
+    svg.select(".crosshair_x")
+        .attr("x1", x_cross_val)
+        .attr("y1", 0)
+        .attr("x2", x_cross_val)
+        .attr("y2",height).style("opacity", 1);   
+
+    svg.select(".crosshair_y")
+        .attr("x1", 0)
+        .attr("y1", y_cross_val)
+        .attr("x2", width)
+        .attr("y2",y_cross_val).style("opacity", 1);
+
+    var m = trend[0].toFixed($decimal_place);
+    var c = trend[1].toFixed($decimal_place);
+    var rs = trend[2].toFixed($decimal_place);
+    var x = values[0].toFixed($decimal_place);
+    var y = values[1].toFixed($decimal_place);
+
+
+    tooltip_div
+        .style("opacity", .9);    
+    tooltip_div.html( "<b>y</b> = "+m+"<b>x</b> + "+c+"<br><b>r-squared: "+rs+"<br>"+$y_axis_display_text+": <b>"+y + "</b><br/>"  + $x_axis_display_text+": <b>"+x+"</b>")  
+        .style("left", (x_cross_val+120) + "px")   
+        .style("top", (y_cross_val+100) + "px");  
+  
 }
 
 function setBoldGridLines(grid_number){
@@ -192,307 +386,648 @@ function setBoldGridLines(grid_number){
 
 d3.select(window).on('resize', resize);
 
+var zoomBeh = d3.behavior.zoom()
+                .x(x)
+                .y(y)
+                .scaleExtent([0, 2000])
+                .center([width / 2, height / 2])
+                .size([width, height])
+                .on("zoom", zoom);
+
+svg.call(zoomBeh);
 
 
 
 
-module.exports = {
-  init: function(data){
-    console.log("Graph init");
-    
-    $.each(data,function(ind,obj){
-      if ($.inArray(obj, _data_sets) == -1) {
-        _data_sets.push(obj);
-      }
-    });
-    load_and_render_data();
-   // renderData();
-  },
-  add: function(selected__data_set){
+
+/**
+ * 
+ * takes an array of file names to load into memoery to be used by the graph at anypoint.
+ *
+ * @param {[array]} data_to_add [array of csv file names e.g. hacket_2004.csv]
+ * @param {[function]} callback [callback function when add data specefied in data_to_add has been loaded to cache]
+ * 
+ */
+function add_data_to_cache(data_to_add, callback){
+  var remaining = data_to_add.length;
+  var added_data_names = [];
+  $.each(data_to_add, function(ind, filename){
+      d3.text(_data_base_path+filename, function(data) {
+        data_name = filename.substring(0,filename.length - 4);
 
 
-
-  },
-  remove: function(selected_data_set){
-
-
-
-  },
-  add_line: function(selected_data_set){
-
-
-
-  },
-  remove_line: function(selected_data_set){
-
-
-
-  },
-  show_data: function(selected_data_set){
-
-
-
-  },
-  update: function(selected_data_set){
-
-
-
-  }
-
-
-}
-
-
-//keep track of all data being loaded
-//
-//run through each one and set scale
-//
-//display the data points
-//
-//
-
-
-
-// add
-// remove
-// add_line
-// remove_line
-// update
-
-
-
-function load_and_render_data(){
-  var remaining = _data_sets.length;
-  $.each(_data_sets, function (ind, filename){
-    d3.text(_data_base_path+filename, function(data) {
         var parsedCSV = d3.csv.parseRows(data);
-        file_name = filename.substring(0,filename.length - 4);
-        _parsed_csv_files[file_name] = parsedCSV;
-        if (!--remaining) renderDataTable();
-    });
-  });
-  function renderDataTable(){
-    $.each(_parsed_csv_files, function(key,dat_text){
-      var csvString = d3.csv.formatRows(dat_text);
-      var csvObjs = d3.csv.parse(csvString);
-      $.each(csvObjs, function(ind, obj){
-          obj["set"] = key;
-      });
-      _data[key]=csvObjs;
-      _data[key]["display"] = true;
-      // if(key == "aHacket_2004"){
-      //   _data[key]["display"] = false;
-      // }
-    })
-    setScales();
-  }
-  function setScales(){
-    remaining = _data_sets.length;
-    $.each(_data_sets, function(ind, filename){
-      d3.csv(_data_base_path+filename, function(error,data){
-        if (error) throw error;
-        data.forEach(function(d){
-          if($x_axis_format == "date_year"){
-            d[$x_axis] = parseDate(d[$x_axis]);
-
-        }else{
-           d[$x_axis] = +d[$x_axis];
-
-             }
-        d[$y_axis] = +d[$y_axis];
-        });
-
-        var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
-        var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
-
-        if(x_max > _current_x_axis_max){
-          _current_x_axis_max = x_max;
-        }
-        if(y_max > _current_y_axis_max){
-          _current_y_axis_max = y_max;
-        }
-
-         var x_min = Math.min(d3.min(data, function(d){return d[$x_axis] || Infinity;}),_current_x_axis_min);
-      var y_min = Math.min(d3.min(data, function(d){return d[$y_axis] || Infinity;}),_current_y_axis_min);
-
-      if(x_min < _current_x_axis_min){
-        _current_x_axis_min = x_min;
-      }
-      if(y_max > _current_y_axis_max){
-        _current_y_axis_min = y_min;
-      }
-
-        if (!--remaining) renderGraph();
-      });
-    });
-  }
-}
-
-
-function renderGraph() {
-  //console.log(_data);
-    $.each(_data, function(data_name, obj){
-     if(obj["display"]){
-        renderGraphWithDataName(data_name, obj);
-     }
-    });
-}
-
-function renderGraphWithDataName(name, data){
-  resize();
-  dim = parseInt(d3.select("#chart").style("width")),
-      width = dim - margin.left - margin.right,
-  height = dim - margin.top - margin.bottom;
-
-$("#datasets").append(d3.select("#chart").style("width"));
-      data.forEach(function(d){
-        if($x_axis_format == "date_year"){
-            d[$x_axis] = parseDate(d[$x_axis]);
-
-        }else{
-            d[$x_axis] = +d[$x_axis];
-        }
-        d[$y_axis] = +d[$y_axis];
-        d["set"] = name;
-      });
-
-    //console.log(data);
-
-      var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
-      var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
-
-      if(x_max > _current_x_axis_max){
-        _current_x_axis_max = x_max;
-      }
-      if(y_max > _current_y_axis_max){
-        _current_y_axis_max = y_max;
-      }
-
-
-      var x_min = d3.min(data, function(d){return d[$x_axis] || Infinity;});
-      var y_min = d3.min(data, function(d){return d[$y_axis] || Infinity;});
+        var csvString = d3.csv.formatRows(parsedCSV);
+        var csvObjs = d3.csv.parse(csvString);
 
       
-      if(x_min < _current_x_axis_min){
-        _current_x_axis_min = x_min;
-      }
-      if(y_max < _current_y_axis_max){
-        _current_y_axis_min = y_min;
-      }
+        $.each(csvObjs, function(ind, obj){
+            obj["data_set"] = data_name;
 
-      console.log(x_min);
-      console.log(y_min);
+            obj[$x_axis] = +obj[$x_axis];
+            
+            obj[$y_axis] = +obj[$y_axis];
+        });
 
-      x.domain([x_min, x_max]).nice();
-      y.domain([y_min, y_max]).nice();
+
+        added_data_names.push(data_name);
+        _cached_data[data_name] = csvObjs;
+
+
+
+        if(!--remaining){
+          if(callback){
+            callback(added_data_names);
+          }
+
+        }
+      });
+  });
+}
+
+
+/**
+ *
+ * 
+ * 
+ * @param {[array]}   data_to_add [description]
+ * @param {Function} callback    [description]
+ */
+function add_data_to_graph(data_to_add, callback){
+
+  data_to_add = convertFilenamesToDatanames(data_to_add);
+  _data_sets_in_use = _data_sets_in_use.concat(data_to_add);
+  var temp = [];
+  $.each(_data_sets_in_use, function(ind, el){
+      if($.inArray(el,temp) === -1) temp.push(el);
+  });
+  _data_sets_in_use = temp;
+  temp = [];
+
+
+  var temp_data = [];
+  $.each(data_to_add, function(ind, data_name){
+    $.each(_cached_data[data_name], function(ind, data_point){
+      if(data_point["data_set"] != data_name){
+        temp_data.push(data_point);
+      }
+    })
+  });
+  _data = temp_data;
+  temp_data = [];
+
+
+  $.each(data_to_add, function(ind, data_name){
+    $.each(_cached_data[data_name], function(ind, data_point){
+     // if($.inArray(data_point, _data) === -1){
+        _data.push(data_point);
+      //}
+    })
+  });
+
+  var data = _data;
+  //console.log(data);
+  //
+  
+
+   calculate_min_max();
+   setScales(data);
+
+
+  //console.log(x_min);
+  //console.log(y_min);
+  var margin_of_point_max = 5;
+  var margin_of_point_min = 5;
+
+  if(_current_x_axis_min == 0){
+    margin_of_point_min = 0;
+  }
+
+   x.domain([_current_x_axis_min-margin_of_point_min, _current_x_axis_max+margin_of_point_max]).nice();
+   y.domain([_current_y_axis_min-margin_of_point_min, _current_y_axis_max+margin_of_point_max]).nice();
+  // 
+  //GoToArea([_current_x_axis_min, _current_x_axis_max], [_current_y_axis_min, _current_y_axis_max]);
 
 
   svg.selectAll(".axis").remove();
 
 
-  svg.append("g")
+ svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
+      .style("dominant-baseline", "central")
       .call(xAxis)
-    .append("text")
+      .append("defs").append("marker")
+    .attr("id", "arrowhead_x")
+    .attr("refX",2)
+    .attr("refY",8)
+    .attr("markerWidth", 13)
+    .attr("markerHeight",13)
+    .attr("orient", "0")
+    .append("path")
+    .attr("d", "M2,2 L2,13 L8,7 L2,2")
+    
+    d3.select(".x").append("text")
       .attr("class", "label")
-      .attr("x", width/2+40)
-      .attr("y", 40)
+      .attr("x", width/2+axis_display_x_offset)
+      .attr("y", axis_display_y_offset-20)
       .style("text-anchor", "end")
-      .text($x_axis_display_text);
+      .text($x_axis_display_text).style("font-size",axis_display_size);
 
   svg.append("g")
       .attr("class", "y axis")
+      .style("dominant-baseline", "central")
       .call(yAxis)
-    .append("text")
+    .append("defs").append("marker")
+    .attr("id", "arrowhead_y")
+    .attr("refX",2)
+    .attr("refY",8)
+    .attr("markerWidth", 13)
+    .attr("markerHeight",13)
+    .attr("orient", "270")
+    .append("path")
+    .attr("d", "M2,2 L2,13 L8,7 L2,2")
+
+    d3.select(".y").append("text")
       .attr("class", "label")
       .attr("transform", "rotate(-90)")
-      .attr("y", -50)
-      .attr("x", -height/2+40)
+      .attr("y", -axis_display_y_offset)
+      .attr("x", -height/2+axis_display_x_offset)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text($y_axis_display_text);
-
-
-  svg.selectAll("circle."+name).remove();
-   // svg.selectAll("circle.dot").remove();
-
-   var id = 0;
-   var ids = function(){
-      return name+"_"+id++;
-   }
-
-    svg.selectAll(".dot ."+name)
-      .data(data)
-    .enter().append("circle")
-
-      .transition()  // Transition from old to new
-      .duration(1000)  // Length of animation
-      .each("start", function() {  // Start animation
-          d3.select(this)  // 'this' means the current element
-          .attr("cx", 0)
-              .attr("fill", "red")  // Change color
-
-
-      })
-      .delay(function(d, i) {
-          return i / data.length * 1000;  // Dynamic delay (i.e. each item delays a little longer)
-      })
-      .ease("linear")
-      .attr("class", "dot "+name)
-      .attr("id", ids)
-      .attr("data_x",function(d) { return d[$x_axis]; })
-      .attr("data_y",function(d) { return d[$y_axis]; })
-      .attr("r", function(d) {return r(radius)})
-//      .attr("cx", function(d) { return x(d[$x_axis]); })
-      .attr("cy", function(d) { return y(d[$y_axis]); })
-      .attr("fill", function(d) { return color(d["set"]);})  // Change color
-
-      .each("end", function() {  // End animation
-                            d3.select(this)  // 'this' means the current element
-                                .transition()
-                                .duration(500)
-                                .attr("cx", function(d) { return x(d[$x_axis]); })
-                                .attr("fill", function(d) { return color(d["set"]);})  // Change color
-
-                                //.attr("r", r(radius));  // Change radius
-                        })
+      .text($y_axis_display_text).style("font-size",axis_display_size);
 
 
 
-  //})
-  //
-  //  //
-     d3.selectAll('.tick')
-  .filter(function(d){ 
-      return d==0;
+d3.select(".x path").attr("marker-end","url(#arrowhead_x)");
+d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
+
+
+  graph_svg.selectAll(".dot")
+    .attr("cx", function(d){ return x(d[$x_axis]);})
+    .attr("cy", function(d){ return y(d[$y_axis]);})
+    .attr("r", function(d) {return r(radius)})
+
+
+
+  $.each(data_to_add, function(ind, name){
+
+    var plot_data = [];
+
+    $.each(data, function(ind, dot){
+      if(dot["data_set"] == name){
+        plot_data.push(dot);
+      }
     })
-   //only ticks that returned true for the filter will be included
-   //in the rest of the method calls:
-  .select('line') //grab the tick line
-  //.attr("opacity","1");
-//  .attr('class', 'quadrantBorder') //style with a custom class and CSS
-  .style('stroke-width', 2) //or style directly with attributes or inline styles
-  .style('opacity', 1);        
 
-      var zoomBeh = d3.behavior.zoom()
-      .x(x)
-      .y(y)
-      .on("zoom", zoom);
+    var id = 0;
+    var ids = function(){
+      return name+"_"+id++;
+    }
 
 
+    graph_svg.selectAll("circle."+name).remove();
 
-      svg.call(zoomBeh);
+    // graph_svg.selectAll(".dot ."+name)
+    //           .data(plot_data)
+    //           .enter().append("circle")
+    //           .transition()  // Transition from old to new
+    //           .duration(500)  // Length of animation
+    //           .each("start", function() {  // Start animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .attr("cx", x(0))
+    //             .attr("fill", "red")  // Change color
+    //           })
+    //           .delay(function(d, i) {
+    //             return i / data.length * 1000;  // Dynamic delay (i.e. each item delays a little longer)
+    //           })
+    //           .ease("linear")
+    //           .attr("class", "dot "+name)
+    //           .attr("id", ids)
+    //           .attr("data_x",function(d) { return d[$x_axis]; })
+    //           .attr("data_y",function(d) { return d[$y_axis]; })
+    //           .attr("cy", function(d) { return y(d[$y_axis]); })
+
+    //           .attr("r", function(d) {return r(radius)})
+    //           .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           .each("end", function() {  // End animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .transition()
+    //             .duration(500)
+    //                           .attr("cx", function(d) { return x(d[$x_axis]); })
+
+    //             .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           });
+
+
+    //Shoot from center
+    // graph_svg.selectAll(".dot ."+name)
+    //           .data(plot_data)
+    //           .enter().append("circle")
+    //           .transition()  // Transition from old to new
+    //           .duration(500)  // Length of animation
+    //           .each("start", function() {  // Start animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .attr("cy", y(0))
+    //             .attr("cx", x(0))
+
+    //             .attr("fill", "red")  // Change color
+    //           })
+    //           .delay(function(d, i) {
+    //             return i / data.length * i*50;  // Dynamic delay (i.e. each item delays a little longer)
+    //           })
+    //           .ease("linear")
+    //           .attr("class", "dot "+name)
+    //           .attr("id", ids)
+    //           .attr("data_x",function(d) { return d[$x_axis]; })
+    //           .attr("data_y",function(d) { return d[$y_axis]; })
+    //             .attr("cx", function(d) { return x(d[$x_axis]); })
+    //                           .attr("cy", function(d) { return y(d[$y_axis]); })
+
+    //           .attr("r", function(d) {return r(radius)})
+    //           .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           .each("end", function() {  // End animation
+    //             d3.select(this)  // 'this' means the current element
+    //             .transition()
+    //             .duration(500)
+    //             .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+    //           });
+
+        //pop in with bigger size and settle 
+        
+        graph_svg.selectAll(".dot ."+name)
+              .data(plot_data)
+              .enter().append("circle")
+              .transition()  // Transition from old to new
+              .duration(500)  // Length of animation
+              .each("start", function() {  // Start animation
+                d3.select(this)  // 'this' means the current element
+                 .attr("r", 0)
+                .attr("fill", "red")  // Change color
+              })
+              .delay(function(d, i) {
+                return i / data.length * _.random(0,1000);  // Dynamic delay (i.e. each item delays a little longer)
+              })
+              .ease("linear")
+              .attr("class", "dot "+name)
+              .attr("id", ids)
+              .attr("data_x",function(d) { return d[$x_axis]; })
+              .attr("data_y",function(d) { return d[$y_axis]; })
+              .attr("cx", function(d) { return x(d[$x_axis]); })
+              .attr("cy", function(d) { return y(d[$y_axis]); })
+             
+              .attr("r", function(d) {return r(radius)+_.random(0,30)})
+              .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+              .each("end", function() {  // End animation
+                d3.select(this)  // 'this' means the current element
+                .transition()
+                .duration(500)
+                .attr("r", function(d) {return r(radius)})
+                .attr("fill", function(d) { return color(d["data_set"]);})  // Change color
+
+              });
+
+       
+
+        
+
+
+  });
+
+
+  var available_data_names_in_cache = [];
+  $.each(_cached_data, function(name,data){
+    available_data_names_in_cache.push(name);
+  });
+
+  if(callback){
+    callback(available_data_names_in_cache);
+  }
+
+
+  refresh_legend();
+
+  zoom();
+
+  zoomBeh = d3.behavior.zoom()
+                .x(x)
+                .y(y)
+                .scaleExtent([0, 2000])
+                .center([width / 2, height / 2])
+                .size([width, height])
+                .on("zoom", zoom);
+
+  svg.call(zoomBeh);
+
+  console.log("AHHHHHH")
 
 
 }
 
-function zoom() {
-    svg.select(".x.axis").call(xAxis);
-    svg.select(".y.axis").call(yAxis);
+
+function getLeastSqCof(data_name){
+
+    var data = _cached_data[data_name];
+
+    if(data.length <= 1){
+      return;
+    }
+
+    var xSeries = data.map(function(d) { return +d[$x_axis]; })
+    var ySeries = data.map(function(d) { return +d[$y_axis]; });
 
     
+    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
 
+    return leastSquaresCoeff;
+}
+
+function calculate_min_max(){
+
+
+  var cached_max_x = 0;
+  var cached_max_y = 0;
+
+  var cached_min_x = 0;
+  var cached_min_y = 0;
+
+  //calculate max first and set min and max to the max value
+  $.each(_cached_data, function(cached_data_name, cached_data){
+      var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
+      var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
+      if(x_max > cached_max_x){
+        cached_max_x = x_max;
+        cached_min_x = x_max;
+      }
+      if(y_max > cached_max_y){
+        cached_max_y = y_max;
+        cached_min_y = y_max;
+      }
+  });  
+
+
+    //calculate min and check if it's less than the cached min value which was set to the max value
+  $.each(_cached_data, function(cached_data_name, cached_data){
+      var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
+      var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
+      if(x_min < cached_min_x){
+        cached_min_x = x_min;
+      }
+      if(y_min < cached_min_y){
+        cached_min_y = y_min;
+      }
+  }); 
+
+  _current_x_axis_max = cached_max_x;
+  _current_y_axis_max = cached_max_y;
+  _current_x_axis_min = cached_min_x;
+  _current_y_axis_min = cached_min_y;
+
+}
+
+/**
+ * 
+ * @param {[array]}   data_to_add [description]
+ * @param {Function} callback    [description]
+ */
+function add_trendline_for_data(data_to_add, callback){
+  data_to_add = convertFilenamesToDatanames(data_to_add);
+
+  _data_sets_in_use = _data_sets_in_use.concat(data_to_add);
+  var temp = [];
+  $.each(_data_sets_in_use, function(ind, el){
+      if($.inArray(el,temp) === -1) temp.push(el);
+  });
+  _data_sets_in_use = temp;
+  temp = [];
+
+   $.each(data_to_add, function(ind, data_name){
+
+
+    var leastSquaresCoeff = getLeastSqCof(data_name);
+    if(!leastSquaresCoeff){
+      return;
+    }
+
+    //console.log(leastSquaresCoeff);
+    
+    // apply the reults of the least squares regression
+    // 
+   
+    // var crosshairline_range = x(width);
+    // var x1 = -crosshairline_range;
+    // var y1 = leastSquaresCoeff[0] * -crosshairline_range + leastSquaresCoeff[1];
+    // var x2 = xSeries[xSeries.length - 1]+crosshairline_range;
+    // var y2 = leastSquaresCoeff[0] * (xSeries[xSeries.length - 1]+crosshairline_range) + leastSquaresCoeff[1];
+    // 
+    var crosshairline_range = xAxis.scale().domain();
+    var x1 = crosshairline_range[0];
+    var y1 = leastSquaresCoeff[0] * crosshairline_range[0] + leastSquaresCoeff[1];
+    var x2 = crosshairline_range[1];
+    var y2 = leastSquaresCoeff[0] * crosshairline_range[1] + leastSquaresCoeff[1];
+    var trendData = [[x1,y1,x2,y2,leastSquaresCoeff]];
+
+    //console.log(trendData);
+
+    graph_svg.selectAll(data_name+"_trendlines").remove();
+    
+    var trendline = graph_svg.selectAll(data_name+"_trendlines")
+      .data(trendData);
+      
+    trendline.enter()
+      .append("line")
+      .attr("id", data_name+"_trend")
+      .attr("class", data_name+"_trendlines trendline")
+      .attr("x1", function(d) { return x(d[0]); })
+      .attr("y1", function(d) { return y(d[1]); })
+      .attr("x2", function(d) { return x(d[2]); })
+      .attr("y2", function(d) { return y(d[3]); })
+      .on("mouseover", function(d) {
+         d3.select(this).attr("stroke", "#00E559").style("cursor","pointer").attr("stroke-width", 5);
+      })
+      .on("mouseout", function(d) {
+         d3.select(this).attr("stroke", color(data_name)).attr("stroke-width", 3);
+
+      })
+      .on("click", function(d){
+         trend = d[4];
+      })
+      .attr("stroke", color(data_name))
+      .attr("stroke-width", 3);
+
+   });
+
+  refresh_legend();
+}
+
+
+function add_cross(data_name, callback){
+
+
+    var data = _cached_data[data_name];
+
+    var xSeries = data.map(function(d) { return d[$x_axis]; })
+    var ySeries = data.map(function(d) { return d[$y_axis]; });
+    
+    var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+
+    //console.log(leastSquaresCoeff);
+
+
+}
+
+function remove_data_from_cache(){
+
+  // doesn't need to be implimented as current use case does not need removal of files
+
+}
+
+function remove_data_from_graph(data_to_remove){
+
+  data_to_remove = convertFilenamesToDatanames(data_to_remove);
+
+
+
+  $.each(data_to_remove, function(ind, name){
+
+    //console.log((d3.selectAll(".dot."+name)[0].length >= 1));
+
+    if((_data_sets_in_use.indexOf(name) > -1) && (!(d3.selectAll("#"+name+"_trend")[0].length >= 1) && (d3.selectAll(".dot."+name)[0].length >= 1))){
+        _data_sets_in_use.splice(_data_sets_in_use.indexOf(name),1);
+
+    }
+
+
+     d3.select(".graph").selectAll("circle."+name)
+    .transition()  // Transition from old to new
+    .duration(500)  // Length of animation
+    
+    .delay(function(d, i) {
+      return i / d3.select(".graph").selectAll("circle."+name)[0].length * 500;  // Dynamic delay (i.e. each item delays a little longer)
+    })
+    .attr("r", 0)
+    .ease("linear")
+    .each("end", function() {  // End animation
+      d3.select(this)              
+      .remove();
+    });   
+  });
+
+  refresh_legend();
+}
+
+
+function remove_trendline_for_data(data_name){
+
+
+    d3.selectAll("#"+data_name+"_trend").remove();
+  //console.log(_data_sets_in_use)
+
+   if((_data_sets_in_use.indexOf(data_name) > -1) && (!(d3.selectAll("#"+data_name+"_trend")[0].length >= 1) && !(d3.selectAll(".dot."+data_name)[0].length >= 1))){
+        _data_sets_in_use.splice(_data_sets_in_use.indexOf(data_name),1);
+
+    }
+
+
+  //console.log(_data_sets_in_use)
+
+  refresh_legend();
+
+}
+    
+
+function refresh_legend(){
+
+  graph_svg.selectAll(".legend").remove();
+
+  //console.log("WHHATT"+color.domain());
+  //
+  
+  var in_use = [];
+  $.each(_data_sets_in_use, function(ind, set){
+  var dat = {};
+
+      dat["data_name"] = set;
+      dat["data_name_pretty"] = set.replace(/_/g, ' ');
+    in_use.push(dat);
+
+  });
+
+  console.log(in_use);
+
+
+  var legend = graph_svg.selectAll(".legend")
+      .data(in_use)
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  // draw legend colored rectangles
+  legend.append("rect")
+      .attr("x", width - 25)
+       .attr("y", 7)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", function(d) { return color(d["data_name"]);});
+
+  // draw legend text
+  legend.append("text")
+      .attr("x", width - 30)
+      .attr("y",16)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d["data_name_pretty"];})
+
+
+}
+
+/*
+ 
+ HELPER FUNCTIONS
+
+ */
+
+function convertFilenamesToDatanames(filenames){
+  var datanames = [];
+  $.each(filenames, function(ind, filename){
+    if(filename.indexOf(".csv") >= 0){
+      datanames.push(filename.substring(0,filename.length - 4))
+    }else{
+      datanames.push(filename);
+    }
+    
+  });
+  return datanames;
+}
+
+function setScales(data){
+
+  var x_max = Math.max(d3.max(data, function(d){return d[$x_axis]}),_current_x_axis_max);
+  var y_max = Math.max(d3.max(data, function(d){return d[$y_axis]}),_current_y_axis_max);
+
+  if(x_max > _current_x_axis_max){
+    _current_x_axis_max = x_max;
+  }
+  if(y_max > _current_y_axis_max){
+    _current_y_axis_max = y_max;
+  }
+
+  var x_min = Math.min(d3.min(data, function(d){return d[$x_axis] || Infinity;}),_current_x_axis_min);
+  var y_min = Math.min(d3.min(data, function(d){return d[$y_axis] || Infinity;}),_current_y_axis_min);
+
+  if(x_min < _current_x_axis_min){
+    _current_x_axis_min = x_min;
+  }
+  if(y_max > _current_y_axis_max){
+    _current_y_axis_min = y_min;
+  }
+
+}
+
+function zoom() {
+  //console.log("BRAAAAHHH!!");
+    svg.select(".x.axis").call(xAxis);
+    svg.select(".y.axis").call(yAxis);
 
     svg.selectAll(".dot")
         .attr("cx", function(d){ return x(d[$x_axis]);})
@@ -500,22 +1035,116 @@ function zoom() {
         .attr("r", function(d) {return r(radius)})
 
 
+    var x_domain = xAxis.scale().domain();
+
+    svg.selectAll(".trendline")
+      .attr("x1", function(d) { 
+        var leastsq = d[4]; 
+        return x(x_domain[0]); })
+      .attr("y1", function(d) { 
+        var leastsq = d[4]; 
+        return y(leastsq[0]*x_domain[0]+leastsq[1]); 
+      })
+      .attr("x2", function(d) { 
+        var leastsq = d[4]; 
+        return x(x_domain[1]); 
+      })
+      .attr("y2", function(d) { 
+        var leastsq = d[4]; 
+        return y(leastsq[0]*x_domain[1]+leastsq[1]); 
+      })
+
+
+
+
+
     d3.selectAll('.tick')
-  .filter(function(d){ 
-      return d==0;
-    })
-   //only ticks that returned true for the filter will be included
-   //in the rest of the method calls:
-  .select('line') //grab the tick line
-  //.attr("opacity","1");
-//  .attr('class', 'quadrantBorder') //style with a custom class and CSS
-  .style('stroke-width', 2) //or style directly with attributes or inline styles
-  .style('opacity', 1);
+      .filter(function(d){ 
+        return d==0
+      })
+      .select('line') //grab the tick line
+      .style('stroke-width', 2) //or style directly with attributes or inline styles
+      .style('opacity', 1);
+}
 
-  }
+// returns slope, intercept and r-square of the line
+function leastSquares(xSeries, ySeries) {
+  var reduceSumFunc = function(prev, cur) { return prev + cur; };
+  
+  var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
+  var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+
+  var ssXX = xSeries.map(function(d) { return Math.pow(d - xBar, 2); })
+    .reduce(reduceSumFunc);
+  
+  var ssYY = ySeries.map(function(d) { return Math.pow(d - yBar, 2); })
+    .reduce(reduceSumFunc);
+    
+  var ssXY = xSeries.map(function(d, i) { return (d - xBar) * (ySeries[i] - yBar); })
+    .reduce(reduceSumFunc);
+    
+  var slope = ssXY / ssXX;
+  var intercept = yBar - (xBar * slope);
+  var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+  
+  return [slope, intercept, rSquare];
+}
 
 
+d3.selectAll("button[data-zoom]")
+    .on("click", clicked);
+
+d3.selectAll("button[reset-view]")
+    .on("click", resetView);
+
+function resetView(){
+
+  GoToArea([_current_x_axis_min, _current_x_axis_max+100], [_current_y_axis_min, _current_y_axis_max+100]);
 
 
+}
 
+function clicked() {
+  //console.log()
+  svg.call(zoomBeh.event); // https://github.com/mbostock/d3/issues/2387
 
+  // Record the coordinates (in data space) of the center (in screen space).
+  var center0 = zoomBeh.center(), translate0 = zoomBeh.translate(), coordinates0 = coordinates(center0);
+  zoomBeh.scale(zoomBeh.scale() * Math.pow(2, +this.getAttribute("data-zoom")));
+
+  // Translate back to the center.
+  var center1 = point(coordinates0);
+  zoomBeh.translate([translate0[0] + center0[0] - center1[0], translate0[1] + center0[1] - center1[1]]);
+
+  svg.transition().call(zoomBeh.event);
+}
+
+function coordinates(point) {
+  var scale = zoomBeh.scale(), translate = zoomBeh.translate();
+  return [(point[0] - translate[0]) / scale, (point[1] - translate[1]) / scale];
+}
+
+function point(coordinates) {
+  var scale = zoomBeh.scale(), translate = zoomBeh.translate();
+  return [coordinates[0] * scale + translate[0], coordinates[1] * scale + translate[1]];
+}
+
+/**
+ * Zooms and pans smoothly to specified value ranges for x and y data values
+ * 
+ * @param  {[array]} xrange [specify the [min, max] value for x]
+ * @param  {[array]} yrange [specify the [min, max] value for y]
+ * 
+ */
+function GoToArea(xrange, yrange){
+
+    d3.transition().duration(750).tween("zoom", function() {
+      var ix = d3.interpolate(x.domain(), xrange),
+        iy = d3.interpolate(y.domain(), yrange);
+        return function(t) {
+          zoomBeh.x(x.domain(ix(t))).y(y.domain(iy(t)));
+          zoom();
+        };
+    });
+
+}

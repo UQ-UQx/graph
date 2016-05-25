@@ -1,4 +1,4 @@
-var graph = require("./graph.js");
+var graph = query_graph;
 /**
  *
  * 	Basic file upload feature
@@ -23,6 +23,8 @@ $(function(){
         progress: function(e, data){
             // Calculate the completion percentage of the upload
             var progress = parseInt(data.loaded / data.total * 100, 10);
+                        console.log(progress);
+
             console.log(data.files[0].name);
         },
         fail:function(e, data){
@@ -30,11 +32,17 @@ $(function(){
         }
     }).bind('fileuploaddone', function(e, data){
 
+
+
+
         var uploaded_files = [];
+        var uploaded_filenames = [];
         $.each(data.files, function(ind, file){
             uploaded_files.push((file.name).substring(0,(file.name).length - 4));
+            uploaded_filenames.push(file.name);
         })
         update_datasets(uploaded_files);
+        graph.add_data(uploaded_filenames);
     });
     // Prevent the default action when a file is dropped on the window
     $(document).on('drop dragover', function (e) {
@@ -46,12 +54,16 @@ $(function(){
 
         console.log(new_files);
 
-        $.each(new_files, function(ind, file){
-            if($(".data_to_load[value='"+file+"']").length == 0){
-                display_name = file.replace(/\_/g,' ');
-                $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+file+'"> '+display_name+'</li>');
-            }
-        });
+
+        
+
+
+        // $.each(new_files, function(ind, file){
+        //     if($(".data_to_load[value='"+file+"']").length == 0){
+        //         display_name = file.replace(/\_/g,' ');
+        //         $("#datasets ul").append('<li><input class="data_to_load" type="checkbox" name="dataSets" value="'+file+'"> '+display_name+'</li>');
+        //     }
+        // });
 
     }
     function formatFileSize(bytes) {

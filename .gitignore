@@ -1,4 +1,5 @@
-config.php
 node_modules
+config.php
 logs/*.log
 data/
+build
