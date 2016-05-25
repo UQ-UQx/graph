@@ -139,7 +139,7 @@ var xAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-width)
               .outerTickSize(0)
-              .tickPadding(10);
+              .tickPadding(10).tickFormat(d3.format("d"));
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -147,24 +147,9 @@ var yAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-height)
               .outerTickSize(0)
-              .tickPadding(10);
-
-var parseDate = d3.time.format("%Y").parse;
+              .tickPadding(10).tickFormat(d3.format("d"));
 
 
-if($x_axis_format == "date_year"){
-  var x = d3.time.scale().range([0, width]);
- xAxis.scale(x);
- xAxis.tickFormat(d3.time.format("%Y"));
-}
-
-if($y_axis_format == "date_year"){
-  var y = d3.time.scale().range([0, width]);
-  yAxis.scale(y);
-  yAxis.tickFormat(d3.time.format("%Y"));
-}
-
-//console.log(outerWidth);
 
 var svg = d3.select("#graph_container")
             .append("svg")
@@ -501,41 +486,9 @@ function add_data_to_graph(data_to_add, callback){
   var data = _data;
   //console.log(data);
   //
-  
-  var cached_max_x = 0;
-  var cached_max_y = 0;
 
-  var cached_min_x = 0;
-  var cached_min_y = 0;
-
-  $.each(_cached_data, function(cached_data_name, cached_data){
-      var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
-      var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
-
-      var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
-      var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
-
-      if(x_max > cached_max_x){
-        cached_max_x = x_max;
-      }
-      if(y_max > cached_max_y){
-        cached_max_y = y_max;
-      }
-
-  });  
-
-  console.log(cached_max_x);
-  console.log(cached_max_y);
-
-
-  _current_x_axis_max = cached_max_x;
-  _current_y_axis_max = cached_max_y;
-
-  _current_x_axis_min = cached_min_x;
-  _current_y_axis_min = cached_min_y;
-
+   calculate_min_max();
    setScales(data);
-
 
 
   //console.log(x_min);
