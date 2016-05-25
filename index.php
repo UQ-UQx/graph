@@ -6,11 +6,11 @@ require_once('scripts/available_files.php');
 require_once('scripts/download_csv.php'); 
 
 
- $x_axis = "Year";
- $y_axis = "Time";
- $x_axis_display_text = "Years";
- $y_axis_display_text = "Time (seconds)";
- $x_axis_format = "years";
+ $x_axis = "Time";
+ $y_axis = "Distance";
+ $x_axis_display_text = "Time (seconds)";
+ $y_axis_display_text = "Distance (meters)";
+ $x_axis_format = "none";
  $y_axis_format = "none";
  $graph_header = "Query101x Graph";
 
