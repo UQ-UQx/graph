@@ -107,8 +107,10 @@ $("document").ready(function(){
             console.log("all done", filename, display_name, data_set_name);
             query_graph.init([filename], [filename], updateLineOfBestFitFormula);
 
+            var edit_button  = '<div class="dropdown"> <button class="btn btn-sm btn-primary dropdown-toggle " type="button" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Options <span class="caret"></span></button> <ul class="dropdown-menu options_menu"> <li><a href="#" class="edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li> <li><a href="#" class="duplicate_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" ><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li> <li class="divider"></li> <li><a href="#" class="delete_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" ><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li> </ul> </div>';
+
             if(state == "added"){
-                $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"><span class="trendline_formula_container" data-dataname="'+data_set_name+'"></span></td><td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td></tr>');
+                $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"><span class="trendline_formula_container" data-dataname="'+data_set_name+'"></span></td><td>'+edit_button+'</tr>');
             }
        });
 

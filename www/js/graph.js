@@ -412,7 +412,12 @@ function add_data_to_cache(data_to_add, callback){
   var remaining = data_to_add.length;
   var added_data_names = [];
   $.each(data_to_add, function(ind, filename){
-      d3.text(_data_base_path+filename, function(data) {
+    console.log(filename);
+
+      var dir = filename["directory"];
+      var filename = filename["file_name"];
+
+      d3.text(_data_base_path+dir+"/"+filename, function(data) {
         data_name = filename.substring(0,filename.length - 4);
 
 
@@ -990,6 +995,9 @@ function refresh_legend(){
 function convertFilenamesToDatanames(filenames){
   var datanames = [];
   $.each(filenames, function(ind, filename){
+    if(filename["file_name"]){
+      filename = filename["file_name"];
+    }
     if(filename.indexOf(".csv") >= 0){
       datanames.push(filename.substring(0,filename.length - 4))
     }else{

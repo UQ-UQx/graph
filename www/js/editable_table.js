@@ -348,7 +348,11 @@ function generateCSV(callback){
             if(response == "success"){
 
                // query_graph.init([filename], [filename]);
-                callback(filename, $(".data_name_input_modal").val(), $(".data_name_input_modal").val().split(' ').join('_'), state);
+               // 
+               file = {};
+               file["file_name"] = filename;
+               file["directory"] = "user";
+                callback(file, $(".data_name_input_modal").val(), $(".data_name_input_modal").val().split(' ').join('_'), state);
 
 
 
