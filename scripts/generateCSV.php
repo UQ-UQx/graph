@@ -11,7 +11,6 @@
     // Write the contents back to the file
     file_put_contents($file, $current);
 
-    error_log(json_encode($_POST["csvstring"]),0);
 
     echo json_encode("success");
 

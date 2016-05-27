@@ -266,19 +266,19 @@ border-radius: 10px;
   li{
     a.duplicate_button{
 
-      color:#f0ad4e;
-
+      span{color:#f0ad4e;
+}
     }
 
     a.edit_button{
       
-      color: #31b0d5;
+      span{color: #31b0d5;}
 
     }
 
     a.delete_button{
       
-      color: #d9534f;
+      span{color: #d9534f;}
 
     }
   }

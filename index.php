@@ -187,11 +187,12 @@ if(isset($ltivars{'custom_pre_load'})){
 						$checked = "checked";
 					}
 
-                    $edit_button = '<button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button>';
 
-                    $duplicate_button = '<button type="button" class="btn btn-warning btn-sm duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" ><i class="fa fa-clone" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Duplicate</button>';
+                    $edit_button = '<button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button>';
 
-                    $delete = '<button type="button" class="btn btn-danger btn-sm delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" ><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Delete</button>';
+                    $duplicate_button = '<button type="button" class="btn btn-warning btn-sm duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><i class="fa fa-clone" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Duplicate</button>';
+
+                    $delete = '<button type="button" class="btn btn-danger btn-sm delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" ><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Delete</button>';
 
                     $options = '<td></td>';
 
@@ -207,10 +208,10 @@ if(isset($ltivars{'custom_pre_load'})){
                                               <button class="btn btn-sm btn-primary dropdown-toggle " type="button" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Options
                                               <span class="caret"></span></button>
                                               <ul class="dropdown-menu options_menu">
-                                                <li><a href="#" class="edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li>
-                                                <li><a href="#" class="duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" ><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li>
+                                                <li><a href="#" class="edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li>
+                                                <li><a href="#" class="duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li>
                                                       <li class="divider"></li>
-                                                <li><a href="#" class="delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" ><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li>
+                                                <li><a href="#" class="delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li>
                                               </ul>
                                             </div>
                                     </td>';
@@ -218,15 +219,6 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 
-                    $options_menu = '<div class="dropdown">
-                                      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
-                                      <span class="caret"></span></button>
-                                      <ul class="dropdown-menu">
-                                        <li><a href="#">HTML</a></li>
-                                        <li><a href="#">CSS</a></li>
-                                        <li><a href="#">JavaScript</a></li>
-                                      </ul>
-                                    </div>';
 
 
 

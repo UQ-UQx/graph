@@ -53,12 +53,6 @@ $("document").ready(function(){
 
     });
 
-
-
-
-
-
-
        
 
     $(document).on("click", ".add_data_button", function(){
@@ -86,6 +80,61 @@ $("document").ready(function(){
 
     });
 
+
+
+    $(document).on("click", ".duplicate_button", function(e){
+
+        e.preventDefault();
+        
+        var data_display_name = $(this).data("dataset_display_text");
+        var data_name = $(this).data("dataset_name");
+        var dir = $(this).data("dataset_directory");
+
+        console.log(data_display_name, data_name, dir);
+
+        var data = {};
+        data['lti_id'] = $lti_id;
+        data['user_id'] = $user_id;
+        data['dir'] = dir;
+
+        data['file_name'] = data_name;
+
+         $.ajax({
+                type: "POST",
+                url: "scripts/duplicateCSV.php",
+                data: data,
+                success: function(response) {
+                    
+                    console.log("reddddddd");
+
+
+                    var data_set_name = response;
+                    var display_name = response.replace(/_/g, ' ');
+                  //  var filename = response+".csv";
+
+                        var file = {};
+                       file["file_name"] = response+".csv";
+                       file["directory"] = "user";
+
+                    query_graph.init([file], [file], updateLineOfBestFitFormula);
+
+
+
+                    var edit_button  = '<div class="dropdown"> <button class="btn btn-sm btn-primary dropdown-toggle " type="button" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Options <span class="caret"></span></button> <ul class="dropdown-menu options_menu"> <li><a href="#" class="edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-dataset_directory="'+dir+'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li> <li><a href="#" class="duplicate_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-dataset_directory="'+dir+'"><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li> <li class="divider"></li> <li><a href="#" class="delete_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-dataset_directory="'+dir+'"><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li> </ul> </div>';
+
+                    $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"><span class="trendline_formula_container" data-dataname="'+data_set_name+'"></span></td><td>'+edit_button+'</tr>');
+
+
+                },
+                error: function(error){
+                    //console.log(error);
+                }
+            });
+       
+
+    });
+
+
     $(document).on('hidden.bs.modal', '#myModal', function (e) {
     // do something…
 
@@ -102,19 +151,22 @@ $("document").ready(function(){
 
     $(document).on('click', ".add_button", function(e){
 
-
        editable_table.generate_csv(function(filename, display_name, data_set_name, state){
             console.log("all done", filename, display_name, data_set_name);
             query_graph.init([filename], [filename], updateLineOfBestFitFormula);
 
-            var edit_button  = '<div class="dropdown"> <button class="btn btn-sm btn-primary dropdown-toggle " type="button" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Options <span class="caret"></span></button> <ul class="dropdown-menu options_menu"> <li><a href="#" class="edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li> <li><a href="#" class="duplicate_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" ><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li> <li class="divider"></li> <li><a href="#" class="delete_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" ><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li> </ul> </div>';
+            var dir = filename["directory"];
+
+            var edit_button  = '<div class="dropdown"> <button class="btn btn-sm btn-primary dropdown-toggle " type="button" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Options <span class="caret"></span></button> <ul class="dropdown-menu options_menu"> <li><a href="#" class="edit_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-dataset_directory="'+dir+'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li> <li><a href="#" class="duplicate_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-dataset_directory="'+dir+'"><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li> <li class="divider"></li> <li><a href="#" class="delete_button" data-dataset_display_text="'+display_name+'" data-dataset_name="'+data_set_name+'" data-dataset_directory="'+dir+'"><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li> </ul> </div>';
 
             if(state == "added"){
                 $("#data_sets_table tbody").append('<tr><td>'+display_name+'</td><td><input class="data_to_load" type="checkbox" name="dataSets" value="'+data_set_name+'" checked></td><td><input class="trendline_to_load" type="checkbox" value="'+data_set_name+'" name="dataSets"><span class="trendline_formula_container" data-dataname="'+data_set_name+'"></span></td><td>'+edit_button+'</tr>');
+            }else if(state == "edited"){
+                console.log("WOIAHHHH: ",$("input.data_to_load[value="+data_set_name+"]"));
+                $("input.data_to_load[value="+data_set_name+"]").prop("checked", "true");
+                //console.log("UPDATED");
             }
        });
-
-
 
     });
 
