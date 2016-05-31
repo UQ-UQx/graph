@@ -25,7 +25,7 @@ function getAvailableFiles($lti_id, $user_id){
     $dirs["default"] = $_SERVER['DOCUMENT_ROOT'].$_SERVER["REQUEST_URI"].'data/'.$lti_id.'/'.$user_id.'/default/';
     $dirs["user"] = $_SERVER['DOCUMENT_ROOT'].$_SERVER["REQUEST_URI"].'data/'.$lti_id.'/'.$user_id.'/user/';
 
-    $files = [];
+    $files = array();
     foreach ($dirs as $dir_name => $dir_path) {
 
 
@@ -64,7 +64,7 @@ function getAvailableFilesInDirectory($dir, $lti_id, $user_id){
   
     $dirs[$dir] = '../data/'.$_POST['lti_id'].'/'.$_POST["user_id"].'/'.$dir;
 
-    $files = [];
+    $files = array();
     foreach ($dirs as $dir_name => $dir_path) {
 
 
