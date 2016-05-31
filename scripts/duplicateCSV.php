@@ -27,26 +27,21 @@ error_log(json_encode($_POST),0);
     $copy_num = 0;
 
     $checking = true;
-    $f = $filename;
-    while($checking){
+    $f = $filename."_copy.csv";
 
-        $filename_to_check = $f;
-        if((!in_array( $filename_to_check.'_copy_'.$copy_num.'.csv' ,$existing_files )) || (!in_array( $filename_to_check.'_copy.csv' ,$existing_files )) ){
+    while($checking){
+        if(in_array($f, $existing_files)){
+            $copy_num = $copy_num + 1;
+            $f = $filename."_copy_".$copy_num.".csv";
+        }else{
             if($copy_num == 0){
-               $filename = $f.'_copy';
+                $filename = $filename."_copy";
             }else{
-               $filename = $f.'_copy_'.$copy_num;
+                $filename = $filename."_copy_".$copy_num;
             }
             $checking = false;
-        }else{
-            $copy_num++;
         }
-    
     }
-
-
-    error_log($filename,0);
-
 
 
 
@@ -59,4 +54,7 @@ error_log(json_encode($_POST),0);
     echo json_encode($filename);
 
 
+
 ?>
+
+
