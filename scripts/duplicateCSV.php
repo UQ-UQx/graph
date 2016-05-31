@@ -19,7 +19,7 @@ error_log(json_encode($_POST),0);
    // 
     $num_already_exists = 1;
 
-    $existing_files = [];
+    $existing_files = array();
     foreach ($files_in_dir as $ind => $file) {
         array_push($existing_files, $file["file_name"]);
     }
