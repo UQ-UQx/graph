@@ -16,8 +16,6 @@ require_once('scripts/download_csv.php');
  $decimal_place = "1";
 
 
-
- $editable = true;
  $lti_id = $lti->context_id()."_".$lti->resource_id();
  $user_id = $lti->user_id();
  $pre_load = array();
@@ -34,6 +32,14 @@ if (!file_exists('data/'.$lti_id)) {
 if (!file_exists('data/'.$lti_id."/".$user_id)) {
 	mkdir('data/'.$lti_id."/".$user_id, 0777, true);
 	error_log("Creating folder for LTI User",0);
+}
+if (!file_exists('data/'.$lti_id."/".$user_id."/default")) {
+    mkdir('data/'.$lti_id."/".$user_id."/default", 0777, true);
+    error_log("Creating folder for LTI User Default files Directory",0);
+}
+if (!file_exists('data/'.$lti_id."/".$user_id."/user")) {
+    mkdir('data/'.$lti_id."/".$user_id."/user", 0777, true);
+    error_log("Creating folder for LTI User Files Directory",0);
 }
 if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
 	$myfile = fopen('data/'.$lti_id."/".$user_id."/".$user_id.".csv", "w");
@@ -79,7 +85,7 @@ if(isset($ltivars{'custom_upload'})){
 	$links = str_getcsv($ltivars{'custom_upload'});
 	//echo "<b>Upload: </b> ";
 	foreach ($links as $key => $link) {
-		download_csv_edx_weblink($link, $lti_id, $user_id);
+		download_csv_edx_weblink_to_default($link, $lti_id, $user_id);
 		//echo $link."<br/>";
 	}
 	//echo "<br/>";
@@ -102,7 +108,7 @@ if(isset($ltivars{'custom_pre_load'})){
  // echo "<br/><b>USER ID:</b> ".$user_id;
 
 
-
+// [{"file_name":"Hacket_2004.csv","directory":"default"},{"file_name":"Hacket_2006.csv","directory":"default"},{"file_name":"Sun_Yang.csv","directory":"default"}]
  $data_sets = getAvailableFiles($lti_id,$user_id);
 
 
@@ -153,12 +159,14 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 
+
+
 	<table id="data_sets_table">
 		<thead>
 			<th>Data Name</th>
 			<th>Show Data</th>
 			<th>Show Line of Best Fit</th>
-			<th>Edit Data</th>
+			<th>Options</th>
 		</thead>
 		<tbody>
 			
@@ -167,30 +175,68 @@ if(isset($ltivars{'custom_pre_load'})){
 			<?php 
 
 				foreach ($data_sets as $ind => $value) {
+
+                    error_log(json_encode($value),0);
+
+                    $directory = $value["directory"];
+                    $value = $value["file_name"];
+
+
 					$value = substr($value,0,-4);
 					$display_value = str_replace("_"," ", $value);
 					$checked = '';
 					if(in_array($value.".csv", $pre_load)){
 						$checked = "checked";
 					}
+
+
+                    $edit_button = '<button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button>';
+
+                    $duplicate_button = '<button type="button" class="btn btn-warning btn-sm duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><i class="fa fa-clone" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Duplicate</button>';
+
+                    $delete = '<button type="button" class="btn btn-danger btn-sm delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" ><i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Delete</button>';
+
+                    $options = '<td></td>';
+
+                    if($directory == "default"){
+                        $options = '<td>
+                                        <div class="options_container">
+                                            '.$duplicate_button.'
+                                        <div>
+                                    </td>';
+                    }else{
+                        $options = '<td>
+                                            <div class="dropdown">
+                                              <button class="btn btn-sm btn-primary dropdown-toggle " type="button" data-toggle="dropdown"><i class="fa fa-bars" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Options
+                                              <span class="caret"></span></button>
+                                              <ul class="dropdown-menu options_menu">
+                                                <li><a href="#" class="edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li>
+                                                <li><a href="#" class="duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li>
+                                                      <li class="divider"></li>
+                                                <li><a href="#" class="delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li>
+                                              </ul>
+                                            </div>
+                                    </td>';
+                    }
+
+
+
+
+
+
 					echo "<tr>";
 
 
 					echo '
 
 
-				<td>'.$display_value.'</td>
-				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
-				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"><span class="trendline_formula_container" data-dataname="'.$value.'"></span></td>
-				<td><button type="button" class="btn btn-info btn-sm edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Edit</button></td>
-
-
-
-					';
+    				<td>'.$display_value.'</td>
+    				<td><input class="data_to_load" type="checkbox" name="dataSets" value="'.$value.'" '.$checked.'></td>
+    				<td><input class="trendline_to_load" type="checkbox" value="'.$value.'" name="dataSets"><span class="trendline_formula_container" data-dataname="'.$value.'"></span></td>
+    				
+    					'.$options;
 
 					echo "</tr>";
-	
-
 				}
 			?>
 

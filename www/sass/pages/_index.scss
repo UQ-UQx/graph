@@ -42,21 +42,10 @@
 
   width:100%;
 
-  ul{
-
-  
-    li{
-      
-     // background-color:red;
-
-    }
-
-
-  }
-
 
 }
 
+$padding: 0%;
 
 #data_sets_table{
   table-layout:fixed;
@@ -72,17 +61,28 @@
     text-align:center;
     height:30px;
     border-bottom:1px solid black;
-      background:#E5E5E3;
-
+    background:#E5E5E3;
+    padding-left:$padding;
   }
 
   td{
     text-align:center;
     height:40px;
+    padding-left:$padding;
+
+    .options_container{
+     // text-align:right !important;
+      //float:right;
+
+    }
 
   }
 
 
+}
+
+.options_buttons{
+  width:100%;
 }
 
 
@@ -261,5 +261,28 @@ border-radius: 10px;
 }
 
 
+.options_menu{
+
+  li{
+    a.duplicate_button{
+
+      span{color:#f0ad4e;
+}
+    }
+
+    a.edit_button{
+      
+      span{color: #31b0d5;}
+
+    }
+
+    a.delete_button{
+      
+      span{color: #d9534f;}
+
+    }
+  }
+
+}
 
 
