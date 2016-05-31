@@ -211,8 +211,7 @@ if(isset($ltivars{'custom_pre_load'})){
                                               <span class="caret"></span></button>
                                               <ul class="dropdown-menu options_menu">
                                                 <li><a href="#" class="edit_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'" data-toggle="modal" data-target="#myModal" ><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit</a></li>
-                                                <li><a href="#" class="duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li>
-                                                      <li class="divider"></li>
+                                                
                                                 <li><a href="#" class="delete_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-trash" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Delete</a></li>
                                               </ul>
                                             </div>
@@ -220,7 +219,8 @@ if(isset($ltivars{'custom_pre_load'})){
                     }
 
 
-
+// <li><a href="#" class="duplicate_button" data-dataset_display_text="'.$display_value.'" data-dataset_name="'.$value.'" data-dataset_directory="'.$directory.'"><span class="fa fa-clone" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Duplicate</a></li>
+//                                                       <li class="divider"></li>
 
 
 
