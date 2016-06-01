@@ -67,11 +67,18 @@ module.exports = {
 
    
     add_data_to_graph(selected_data_set);
-    
+    setTimeout(function(){
+      resetView();
+    },2000);
+
   },
   hide_data: function(selected_data_set){
 
     remove_data_from_graph(selected_data_set);
+    setTimeout(function(){
+      resetView();
+    },2000);
+
   },
   update: function(selected_data_set){
 
@@ -112,7 +119,8 @@ var axis_display_size = "15px";
 var axis_display_x_offset = 60;
 var axis_display_y_offset = 80;
 
-
+  var margin_of_point_max = 5;
+  var margin_of_point_min = 5;
 
 var margin = {top: 100, right: 100, bottom: 100, left: 100},
     dim = Math.min(parseInt(d3.select("#graph_container").style("width")), parseInt(d3.select("#graph_container").style("height"))),
@@ -501,8 +509,7 @@ function add_data_to_graph(data_to_add, callback){
 
   //console.log(x_min);
   //console.log(y_min);
-  var margin_of_point_max = 5;
-  var margin_of_point_min = 5;
+
 
   if(_current_x_axis_min == 0){
     margin_of_point_min = 0;
@@ -1107,8 +1114,55 @@ d3.selectAll("button[reset-view]")
 
 function resetView(){
 
-  GoToArea([_current_x_axis_min, _current_x_axis_max+100], [_current_y_axis_min, _current_y_axis_max+100]);
+  //calculate in slected data max and min
+  console.log(_data_sets_in_use);
 
+  var data_to_check = {};
+
+  $.each(_data_sets_in_use, function(ind, data_set_name){
+
+
+    console.log(data_set_name,_cached_data[data_set_name]);
+
+    data_to_check[data_set_name] = _cached_data[data_set_name];
+
+  });
+
+
+  var cached_max_x = 0;
+  var cached_max_y = 0;
+  var cached_min_x = 0;
+  var cached_min_y = 0;
+
+  //calculate max first and set min and max to the max value
+  $.each(data_to_check, function(cached_data_name, cached_data){
+      var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
+      var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
+      if(x_max > cached_max_x){
+        cached_max_x = x_max;
+        cached_min_x = x_max;
+      }
+      if(y_max > cached_max_y){
+        cached_max_y = y_max;
+        cached_min_y = y_max;
+      }
+  });  
+
+
+    //calculate min and check if it's less than the cached min value which was set to the max value
+  $.each(data_to_check, function(cached_data_name, cached_data){
+      var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
+      var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
+      if(x_min < cached_min_x){
+        cached_min_x = x_min;
+      }
+      if(y_min < cached_min_y){
+        cached_min_y = y_min;
+      }
+  }); 
+
+
+  GoToArea([cached_min_x-margin_of_point_min, cached_max_x+margin_of_point_max], [cached_min_y-margin_of_point_min, cached_max_y+margin_of_point_max]);
 
 }
 
