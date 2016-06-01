@@ -224,7 +224,7 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 
-					echo "<tr>";
+					echo "<tr class='".$value."_row'>";
 
 
 					echo '

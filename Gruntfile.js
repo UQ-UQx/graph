@@ -59,15 +59,15 @@ module.exports = function(grunt){
                 }
             }
         },
-	shell:{
-	  make_data_folder:{
-	  	command: 'test -d data && echo "Data folder exists" || mkdir -m 777 data'
-	  },
-	  make_config_file:{
-		command: 'test -d config.php && echo "config.php exists" || touch config.php'
-	  }
-	  
-	}
+    	shell:{
+    	  make_data_folder:{
+    	  	command: 'test -d data && echo "Data folder exists" || mkdir -m 777 data'
+    	  },
+    	  make_config_file:{
+    		command: 'test -d config.php && echo "config.php exists" || touch config.php'
+    	  }
+    	  
+    	}
     })
 
     grunt.loadNpmTasks('grunt-contrib-watch');
