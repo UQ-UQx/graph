@@ -144,13 +144,15 @@ var r = d3.scale.linear()
 var color = d3.scale.category10();
 var num_of_ticks = 10;
 
+var axis_tick_format = "gf03";
+
 var xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
               .ticks(num_of_ticks)
               .innerTickSize(-width)
               .outerTickSize(0)
-              .tickPadding(10).tickFormat(d3.format("d"));
+              .tickPadding(10).tickFormat(d3.format(axis_tick_format));
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -158,7 +160,7 @@ var yAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-height)
               .outerTickSize(0)
-              .tickPadding(10).tickFormat(d3.format("d"));
+              .tickPadding(10).tickFormat(d3.format(axis_tick_format));
 
 
 
