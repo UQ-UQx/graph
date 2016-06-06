@@ -144,7 +144,7 @@ var r = d3.scale.linear()
 var color = d3.scale.category10();
 var num_of_ticks = 10;
 
-var axis_tick_format = "gf03";
+var axis_tick_format = "d";
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -152,7 +152,7 @@ var xAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-width)
               .outerTickSize(0)
-              .tickPadding(10).tickFormat(d3.format(axis_tick_format));
+              .tickPadding(10)
 
 var yAxis = d3.svg.axis()
     .scale(y)
@@ -160,10 +160,18 @@ var yAxis = d3.svg.axis()
               .ticks(num_of_ticks)
               .innerTickSize(-height)
               .outerTickSize(0)
-              .tickPadding(10).tickFormat(d3.format(axis_tick_format));
+              .tickPadding(10)
 
 
+var x_axis_name = $x_axis;
+if((x_axis_name.toLowerCase() == "years") || (x_axis_name.toLowerCase() == "year")){
+  xAxis.tickFormat(d3.format(axis_tick_format));
+}
 
+var y_axis_name = $y_axis;
+if((y_axis_name.toLowerCase() == "years") || (y_axis_name.toLowerCase() == "year")){
+  yAxis.tickFormat(d3.format(axis_tick_format));
+}
 
 var svg = d3.select("#graph_container")
             .append("svg")
@@ -584,6 +592,33 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
 
 
+
+      var available_data_names_in_cache = [];
+  $.each(_cached_data, function(name,data){
+    available_data_names_in_cache.push(name);
+  });
+
+  if(callback){
+    callback(available_data_names_in_cache);
+  }
+
+
+  refresh_legend();
+
+  //zoom();
+
+  zoomBeh = d3.behavior.zoom()
+                .x(x)
+                .y(y)
+                .scaleExtent([0, 2000])
+                .center([width / 2, height / 2])
+                .size([width, height])
+                .on("zoom", zoom);
+
+  svg.call(zoomBeh);
+
+
+
   $.each(data_to_add, function(ind, name){
 
     var plot_data = [];
@@ -701,37 +736,12 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
               });
 
-       
-
-        
 
 
   });
 
 
-  var available_data_names_in_cache = [];
-  $.each(_cached_data, function(name,data){
-    available_data_names_in_cache.push(name);
-  });
 
-  if(callback){
-    callback(available_data_names_in_cache);
-  }
-
-
-  refresh_legend();
-
-  zoom();
-
-  zoomBeh = d3.behavior.zoom()
-                .x(x)
-                .y(y)
-                .scaleExtent([0, 2000])
-                .center([width / 2, height / 2])
-                .size([width, height])
-                .on("zoom", zoom);
-
-  svg.call(zoomBeh);
 
   console.log("AHHHHHH")
 
@@ -1166,6 +1176,8 @@ function resetView(){
 
   GoToArea([cached_min_x-margin_of_point_min, cached_max_x+margin_of_point_max], [cached_min_y-margin_of_point_min, cached_max_y+margin_of_point_max]);
 
+
+
 }
 
 function clicked() {
@@ -1212,3 +1224,4 @@ function GoToArea(xrange, yrange){
     });
 
 }
+
