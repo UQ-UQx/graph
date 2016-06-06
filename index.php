@@ -14,6 +14,12 @@ require_once('scripts/download_csv.php');
  $y_axis_format = "none";
  $graph_header = "Query101x Graph";
  $decimal_place = "1";
+ $graph_type = "scatter";
+ $car_velocity = "144";
+ $final_police_velocity = "130";
+ $police_stationary_time = "5";
+ $police_acceleration_time = "20";
+
 
 
  $lti_id = $lti->context_id()."_".$lti->resource_id();
@@ -48,6 +54,25 @@ if (!file_exists('data/'.$lti_id."/".$user_id."/".$user_id.".csv")) {
 umask($oldmask);
 
 
+if(isset($ltivars{'custom_graph_type'})){
+    $graph_type = $ltivars{'custom_graph_type'};
+}
+
+if(isset($ltivars{'custom_car_velocity'})){
+    $car_velocity = $ltivars{'custom_car_velocity'};
+}
+
+if(isset($ltivars{'custom_police_velocity'})){
+    $final_police_velocity = $ltivars{'custom_police_velocity'};
+}
+
+if(isset($ltivars{'custom_stationary_time'})){
+    $police_stationary_time = $ltivars{'custom_stationary_time'};
+}
+
+if(isset($ltivars{'custom_acceleration_time'})){
+    $police_acceleration_time = $ltivars{'custom_acceleration_time'};
+}
 
 if(isset($ltivars{'custom_x_axis_display_text'})){
 	$x_axis_display_text = $ltivars{'custom_x_axis_display_text'};
@@ -116,6 +141,14 @@ if(isset($ltivars{'custom_pre_load'})){
 ?>
 
 <script type="text/javascript">
+
+ $graph_type = "<?php echo $graph_type; ?>";
+
+ $car_velocity = parseInt('<?php echo $car_velocity; ?>');
+ $final_police_velocity = parseInt('<?php echo $final_police_velocity; ?>');
+ $police_stationary_time = parseInt('<?php echo $police_stationary_time; ?>');
+ $police_acceleration_time = parseInt('<?php echo $police_acceleration_time; ?>');
+
 
  $x_axis = "<?php echo $x_axis; ?>";
  $y_axis = "<?php echo $y_axis; ?>";

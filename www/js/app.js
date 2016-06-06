@@ -8,17 +8,43 @@ require("blueimp-file-upload");
 require("jquery-knob"); 
 require("./upload.js"); // Upload files through AJAX
 var editable_table = require("./editable_table.js");
+var carchase = require("./carchase.js");
+
 
 
 $("document").ready(function(){
 
-	var check_loaded = setInterval(function(){
-		if($pre_load.length > 0){
-			clearInterval(check_loaded);
-            $init_available_data_sets = $.map($init_available_data_sets, function(el){return el;});
-			query_graph.init($init_available_data_sets, $pre_load, updateLineOfBestFitFormula);
-		}
-	},500);
+
+    if($graph_type == "carchase"){
+
+        console.log($graph_type);
+        console.log($car_velocity);
+        console.log($final_police_velocity);
+        console.log($police_stationary_time);
+        console.log($police_acceleration_time);
+
+        $("#datasets").hide();
+
+
+
+
+
+
+    }else{
+
+
+
+        var check_loaded = setInterval(function(){
+            if($pre_load.length > 0){
+                clearInterval(check_loaded);
+                $init_available_data_sets = $.map($init_available_data_sets, function(el){return el;});
+                query_graph.init($init_available_data_sets, $pre_load, updateLineOfBestFitFormula);
+            }
+        },500);
+
+
+
+    }
 
 
 
