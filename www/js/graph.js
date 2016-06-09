@@ -34,7 +34,7 @@
 module.exports = {
   init: function(uploaded, pre_load, callback){
 
-    console.log("init called", uploaded, pre_load);
+   // console.log("init called", uploaded, pre_load);
     add_data_to_cache(uploaded, function(added_data_names){
 
         add_data_to_graph(pre_load, callback);
@@ -99,10 +99,48 @@ module.exports = {
 
     return formulas;
 
+  },
+  setPointOfCollision: function(point_of_col){
+
+   //// console.log("red", point_of_col);
+    if(point_of_col["time"]){
+
+       // console.log(point_of_col);
+
+        var delay = carchase_line_animation_time*(point_of_col["time"]/point_of_col["total_time"]);
+        graph_svg.append("circle")
+          .transition()
+          .delay(delay)  // Transition from old to new
+          .duration(700)  // Length of animation
+          .each("start", function() {  // Start animation
+            d3.select(this)  // 'this' means the current element
+             .attr("r", 0)
+            .attr("fill", "#000080")  // Change color
+          })
+          .ease("linear")
+          .attr("class", "collission")
+          .attr("cx", function(d) { return x(point_of_col["time"]); })
+          .attr("cy", function(d) { return y(point_of_col["police_distance"]); })
+          .attr("r", 50)
+         // .attr("fill", "red")  // Change color
+          .each("end", function() {  // End animation
+            d3.select(this)  // 'this' means the current element
+            .transition()
+            .duration(700)
+            .attr("r", 10)
+            .attr("fill", "red")  // Change color
+
+          });
+    }
+
+
   }
 
 
 }
+
+var carchase_line_animation_time = 10000;
+
 
 
 var _dateFormat = d3.time.format("%b %Y");
@@ -221,6 +259,9 @@ var tooltip_div = d3.select("body").append("div")
     .attr("class", "tooltip")       
     .style("opacity", 0);
 
+var data_line = d3.svg.line()
+    .x(function(d) { return x(d[$x_axis]); })
+    .y(function(d) { return y(d[$y_axis]); });
 
 
 
@@ -316,6 +357,9 @@ function resize() {
       .attr("x2", function(d) { return x(d[2]); })
       .attr("y2", function(d) { return y(d[3]); });
 
+
+    svg.selectAll("path.line")
+          .attr("d", data_line);
 
     setBoldGridLines(0);
 
@@ -430,7 +474,7 @@ function add_data_to_cache(data_to_add, callback){
   var remaining = data_to_add.length;
   var added_data_names = [];
   $.each(data_to_add, function(ind, filename){
-    console.log(filename);
+   // console.log(filename);
 
       var dir = filename["directory"];
       var filename = filename["file_name"];
@@ -636,6 +680,7 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
 
     graph_svg.selectAll("circle."+name).remove();
+    graph_svg.selectAll("path."+name).remove();
 
     // graph_svg.selectAll(".dot ."+name)
     //           .data(plot_data)
@@ -703,6 +748,8 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
     //           });
 
         //pop in with bigger size and settle 
+        //
+    if($graph_type == "scatter"){
         
         graph_svg.selectAll(".dot ."+name)
               .data(plot_data)
@@ -736,14 +783,37 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
 
               });
 
+      }else{
+     
 
+           var pth =  graph_svg.append("path").data(plot_data)
+              .attr("class", "line "+name)
+              .attr("id", ids)
+              .attr("d", data_line(plot_data))
+              .attr("stroke", function(d) { return color(d["data_set"]);})  // Change color
+              .attr("stroke-width", 2)  // Change color
+              .attr("fill", "none")  // Change color
+
+
+              var totalLength = pth.node().getTotalLength();
+
+                pth
+                  .attr("stroke-dasharray", totalLength + " " + totalLength)
+                  .attr("stroke-dashoffset", totalLength)
+                  .transition()
+                    .duration(carchase_line_animation_time)
+                    .ease("linear")
+                    .attr("stroke-dashoffset", 0);
+
+            //svg.selectAll(".police").data(plot_data);
+      }
 
   });
 
 
 
 
-  console.log("AHHHHHH")
+ // console.log("AHHHHHH")
 
 
 }
@@ -977,7 +1047,7 @@ function refresh_legend(){
 
   });
 
-  console.log(in_use);
+ // console.log(in_use);
 
 
   var legend = graph_svg.selectAll(".legend")
@@ -1081,7 +1151,8 @@ function zoom() {
         return y(leastsq[0]*x_domain[1]+leastsq[1]); 
       })
 
-
+svg.selectAll("path.line")
+          .attr("d", data_line);
 
 
 
@@ -1127,14 +1198,14 @@ d3.selectAll("button[reset-view]")
 function resetView(){
 
   //calculate in slected data max and min
-  console.log(_data_sets_in_use);
+ // console.log(_data_sets_in_use);
 
   var data_to_check = {};
 
   $.each(_data_sets_in_use, function(ind, data_set_name){
 
 
-    console.log(data_set_name,_cached_data[data_set_name]);
+   // console.log(data_set_name,_cached_data[data_set_name]);
 
     data_to_check[data_set_name] = _cached_data[data_set_name];
 

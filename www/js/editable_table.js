@@ -321,6 +321,7 @@ function getJSON(){
 function generateCSV(callback){
 
     var data = getJSON();
+    console.log(data);
 
     console.log(ConvertToCSV(data));
 

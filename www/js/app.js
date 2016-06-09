@@ -1,3 +1,4 @@
+global.math = require('mathjs');
 global.$ = global.jQuery = require("jquery");
 global.d3 = require("d3");
 global._ = require("underscore");
@@ -22,12 +23,15 @@ $("document").ready(function(){
         console.log($final_police_velocity);
         console.log($police_stationary_time);
         console.log($police_acceleration_time);
-
         $("#datasets").hide();
 
-
-
-
+        //carchase creates a csv based on initial values 
+        carchase.generate($car_velocity, $final_police_velocity, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
+            query_graph.init(files,files,function(){
+                console.log(files," Updated ", point_of_col);
+                query_graph.setPointOfCollision(point_of_col);
+            });
+        });
 
 
     }else{
@@ -77,7 +81,6 @@ $("document").ready(function(){
 
 
     });
-
        
 
     $(document).on("click", ".add_data_button", function(){

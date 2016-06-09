@@ -16,7 +16,7 @@ require_once('scripts/download_csv.php');
  $decimal_place = "1";
  $graph_type = "scatter";
  $car_velocity = "144";
- $final_police_velocity = "130";
+ $final_police_velocity = "500";
  $police_stationary_time = "5";
  $police_acceleration_time = "20";
 
