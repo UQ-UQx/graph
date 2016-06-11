@@ -105,10 +105,11 @@ module.exports = {
    //// console.log("red", point_of_col);
     if(point_of_col["time"]){
 
-       // console.log(point_of_col);
+       console.log(point_of_col);
+
 
         var delay = carchase_line_animation_time*(point_of_col["time"]/point_of_col["total_time"]);
-        graph_svg.append("circle")
+        graph_svg.append("circle").datum(point_of_col)
           .transition()
           .delay(delay)  // Transition from old to new
           .duration(700)  // Length of animation
@@ -119,8 +120,8 @@ module.exports = {
           })
           .ease("linear")
           .attr("class", "collission")
-          .attr("cx", function(d) { return x(point_of_col["time"]); })
-          .attr("cy", function(d) { return y(point_of_col["police_distance"]); })
+          .attr("cx", function(d) { return x(d["time"]); })
+          .attr("cy", function(d) { return y(d["car_distance"]); })
           .attr("r", 50)
          // .attr("fill", "red")  // Change color
           .each("end", function() {  // End animation
@@ -259,7 +260,7 @@ var tooltip_div = d3.select("body").append("div")
     .attr("class", "tooltip")       
     .style("opacity", 0);
 
-var data_line = d3.svg.line()
+var data_line = d3.svg.line().interpolate("basis")  
     .x(function(d) { return x(d[$x_axis]); })
     .y(function(d) { return y(d[$y_axis]); });
 
@@ -358,8 +359,18 @@ function resize() {
       .attr("y2", function(d) { return y(d[3]); });
 
 
-    svg.selectAll("path.line")
+    // svg.selectAll("path.line")
+    //       .attr("d", data_line);
+
+   graph_svg.selectAll('.collission')
+    .attr("r", function(d) {return 10})
+    .attr("cx", function(d) { return x(d["time"]); })
+    .attr("cy", function(d) { return y(d["car_distance"]); })
+
+graph_svg.selectAll("path.line")
           .attr("d", data_line);
+
+
 
     setBoldGridLines(0);
 
@@ -456,7 +467,7 @@ var zoomBeh = d3.behavior.zoom()
                 .size([width, height])
                 .on("zoom", zoom);
 
-svg.call(zoomBeh);
+//svg.call(zoomBeh);
 
 
 
@@ -659,7 +670,6 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
                 .size([width, height])
                 .on("zoom", zoom);
 
-  svg.call(zoomBeh);
 
 
 
@@ -750,7 +760,8 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
         //pop in with bigger size and settle 
         //
     if($graph_type == "scatter"){
-        
+          svg.call(zoomBeh);
+
         graph_svg.selectAll(".dot ."+name)
               .data(plot_data)
               .enter().append("circle")
@@ -786,13 +797,38 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
       }else{
      
 
-           var pth =  graph_svg.append("path").data(plot_data)
-              .attr("class", "line "+name)
-              .attr("id", ids)
-              .attr("d", data_line(plot_data))
-              .attr("stroke", function(d) { return color(d["data_set"]);})  // Change color
+           // var pth =  graph_svg.append("path").data(plot_data)
+           //    .attr("class", "line "+name)
+           //    .attr("id", ids)
+           //    .attr("d", data_line(plot_data))
+           //    .attr("stroke", function(d) { return color(d["data_set"]);})  // Change color
+           //    .attr("stroke-width", 2)  // Change color
+           //    .attr("fill", "none")  // Change color
+
+           var pth = graph_svg.append("path").datum(plot_data)
+                      .attr("class", "line "+name)
+                      .attr("d", data_line)
+
+                      .attr("stroke", function(d) {return color(d[0]["data_set"]);})  // Change color
               .attr("stroke-width", 2)  // Change color
               .attr("fill", "none")  // Change color
+                      //.attr("stroke-width", 1)  // Change color
+                     //.attr("fill", "none")  // Change color
+
+
+         // pth
+
+            // var pth = graph_svg.selectAll(".line ."+name)
+            //   .data(plot_data)
+            //   .enter().append("path")
+            //   .attr("class", "line "+name)
+            //   .attr("id", ids)
+            //   .attr("d", data_line(plot_data))
+            //   .attr("stroke", function(d) { return color(d["data_set"]);})  // Change color
+            //   .attr("stroke-width", 2)  // Change color
+            //   .attr("fill", "none")  // Change color
+
+            //console.log(graph_svg.selectAll(".police"));
 
 
               var totalLength = pth.node().getTotalLength();
@@ -1151,10 +1187,8 @@ function zoom() {
         return y(leastsq[0]*x_domain[1]+leastsq[1]); 
       })
 
-svg.selectAll("path.line")
+    graph_svg.selectAll("path.line")
           .attr("d", data_line);
-
-
 
     d3.selectAll('.tick')
       .filter(function(d){ 

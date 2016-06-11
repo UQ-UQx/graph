@@ -24,6 +24,10 @@ $("document").ready(function(){
         console.log($police_stationary_time);
         console.log($police_acceleration_time);
         $("#datasets").hide();
+        $(".scale_buttons").hide();
+        $(".carchase_value_inputs").show();
+
+        
 
         //carchase creates a csv based on initial values 
         carchase.generate($car_velocity, $final_police_velocity, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){

@@ -176,6 +176,15 @@ if(isset($ltivars{'custom_pre_load'})){
 
 <div id="graph_container"></div>
 
+
+
+        
+
+            <input type="number" class="form-control" name="number" />
+        
+
+</div>
+
 <div class="scale_buttons">
   <button class="btn btn-primary btn-sm" data-zoom="+1"><i class="fa fa-search-plus" aria-hidden="true"></i>
 &nbsp;&nbsp;&nbsp;Zoom In</button>

@@ -38,7 +38,7 @@ function complie(car_velocity, final_police_velocity, police_stationary_time, po
 
     var time = 0;
     var pol_temp_time = 1;
-    var num_of_extra_points = 50;
+    var num_of_extra_points = 0;
     var extra_points = 0;
 
     var police = [];
@@ -89,6 +89,9 @@ function complie(car_velocity, final_police_velocity, police_stationary_time, po
 
         var police_data_point = {};
         var car_data_point = {};
+
+        pol_dis = pol_dis.toFixed(2);
+        car_dis = car_dis.toFixed(2);
 
          police_data_point["Time"] = time;
          police_data_point["Distance"] = pol_dis;
