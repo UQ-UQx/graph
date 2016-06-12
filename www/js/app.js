@@ -25,14 +25,23 @@ $("document").ready(function(){
         console.log($police_acceleration_time);
         $("#datasets").hide();
         $(".scale_buttons").hide();
-        $(".carchase_value_inputs").show();
 
-        
+        //car_chase_buttons
 
+        $("#polsp, #carsp").keypress(function (e) {
+     //if the letter is not digit then display error and don't type anything
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            //display error message
+                $(".errmsg").html("Please Enter An Appropriate Value").show().fadeOut("slow");
+                       return false;
+                
+            }
+        });
         //carchase creates a csv based on initial values 
         carchase.generate($car_velocity, $final_police_velocity, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
             query_graph.init(files,files,function(){
                 console.log(files," Updated ", point_of_col);
+                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed(2)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed(2)+"</br>");
                 query_graph.setPointOfCollision(point_of_col);
             });
         });
@@ -40,6 +49,7 @@ $("document").ready(function(){
 
     }else{
 
+        $("#car_chase_buttons").hide();
 
 
         var check_loaded = setInterval(function(){
@@ -97,6 +107,35 @@ $("document").ready(function(){
         editable_table.init();
 
     });
+
+    $(document).on("click", ".carchase_button", function(){
+
+
+        var pol_vel = $("#polsp").val();
+        var car_vel = $("#carsp").val();
+
+
+        if((pol_vel >= 1) && (car_vel >=1)){
+
+ carchase.generate(car_vel, pol_vel, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
+            console.log(point_of_col);
+                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed(2)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed(2)+"</br>");
+
+            query_graph.init(files,files,function(){
+                console.log(files," Updated ", point_of_col);
+                query_graph.setPointOfCollision(point_of_col);
+            });
+        });
+        }
+
+       
+
+       
+
+        console.log("red");
+    });
+
+
 
 
     $(document).on("click", ".edit_button", function(){

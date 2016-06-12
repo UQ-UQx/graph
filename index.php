@@ -175,16 +175,16 @@ if(isset($ltivars{'custom_pre_load'})){
 
 
 <div id="graph_container"></div>
-
-
-
-        
-
-            <input type="number" class="form-control" name="number" />
-        
-
 </div>
 
+<div id="car_chase_buttons">
+        <span id="point_of_pass"></span></br>
+
+	Car Final Speed (km/h) : <input type="text" name="carsp" id="carsp" /></br></br>
+        Police Final Speed (km/h) : <input type="text" name="polsp" id="polsp" />&nbsp;<span class="errmsg"></span></br></br>
+        <button class="btn btn-primary btn-sm carchase_button" ><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Generate Graph</button>
+
+</div>
 <div class="scale_buttons">
   <button class="btn btn-primary btn-sm" data-zoom="+1"><i class="fa fa-search-plus" aria-hidden="true"></i>
 &nbsp;&nbsp;&nbsp;Zoom In</button>

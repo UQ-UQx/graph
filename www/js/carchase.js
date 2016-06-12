@@ -1,7 +1,7 @@
 
 module.exports = {
   generate:function(car_velocity, final_police_velocity, police_stationary_time, police_acceleration_time, callback){
-    //console.log("generating carchase");
+
     complie(car_velocity, final_police_velocity, police_stationary_time, police_acceleration_time, callback);
   }
 
@@ -11,11 +11,12 @@ module.exports = {
 
 var point_of_col = {};
 
-var loaded_files = [];
 
 
 function complie(car_velocity, final_police_velocity, police_stationary_time, police_acceleration_time, callback){
 
+
+var loaded_files = [];
     var num_of_datapoints = 0;
 
 
@@ -98,7 +99,6 @@ function complie(car_velocity, final_police_velocity, police_stationary_time, po
          car_data_point["Time"] = time;
          car_data_point["Distance"] = car_dis;
 
-        //console.log(time, car_dis, pol_dis, car_data_point, police_data_point);
 
 
         police.push(police_data_point);
@@ -112,6 +112,7 @@ function complie(car_velocity, final_police_velocity, police_stationary_time, po
     generateCSV("police", police, function(file){
 
         loaded_files.push(file);
+
 
         if(loaded_files.length == 2){
             callback(loaded_files, point_of_col);

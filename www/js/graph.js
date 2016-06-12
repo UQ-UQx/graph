@@ -107,6 +107,9 @@ module.exports = {
 
        console.log(point_of_col);
 
+       graph_svg.selectAll(".collission").remove();
+
+
 
         var delay = carchase_line_animation_time*(point_of_col["time"]/point_of_col["total_time"]);
         graph_svg.append("circle").datum(point_of_col)
@@ -687,8 +690,6 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
     var ids = function(){
       return name+"_"+id++;
     }
-
-
     graph_svg.selectAll("circle."+name).remove();
     graph_svg.selectAll("path."+name).remove();
 
