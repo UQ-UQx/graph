@@ -30,6 +30,7 @@
 ?>
 	
 <?php
+/*
 	$dev_message = '<p class="uqx-danger text-center">Dev Version - 
 					  DO NOT USE IN COURSES - contact UQx Technical Team</p>';
 
@@ -45,4 +46,5 @@
 		echo $invalid_message;
 		//die();
 	}
+*/
 ?>
