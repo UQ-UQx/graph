@@ -5,170 +5,171 @@ require_once('OAuth.php');
 
 class Lti {
 
-	protected $testing = true;
-	protected $config = array();
-	
-	protected $ltivars = array();
-	protected $valid = false;
-	protected $errors = '';
-	
-	function __construct($config, $display_errors=false) {
-		if($display_errors) {
-			$this->display_errors();
-		}
+    protected $testing = true;
+    protected $config = array();
+    
+    protected $ltivars = array();
+    protected $valid = false;
+    protected $errors = '';
+    
+    function __construct($config, $display_errors=false) {
+        if($display_errors) {
+            $this->display_errors();
+        }
 
-		$this->config = $config;
-		if(!empty($_POST)) {
-			$this->ltivars = $_POST;
-		}
+        $this->config = $config;
+        if(!empty($_POST)) {
+            $this->ltivars = $_POST;
+        }
         if($this->testing) {
-        	if(!isset($this->ltivars["oauth_consumer_key"])) {
-        		$this->valid = true;
-				$this->usedummydata();
-        	}
+            if(!isset($this->ltivars["oauth_consumer_key"])) {
+                $this->valid = true;
+                $this->usedummydata();
+            }
         }
         if(!$this->testing || isset($this->ltivars["oauth_consumer_key"])){
-        	$store = new TrivialOAuthDataStore();
-        	if(!isset($this->ltivars["oauth_consumer_key"])) {
-        		$this->ltivars["oauth_consumer_key"] = '';
-        	}
-        	if(isset($this->config['lti_keys'][$this->ltivars["oauth_consumer_key"]])) {
-	        	$lti_key = $this->config['lti_keys'][$this->ltivars["oauth_consumer_key"]];
-				$store->add_consumer($this->ltivars["oauth_consumer_key"], $lti_key);
-				$server = new OAuthServer($store);
-				$method = new OAuthSignatureMethod_HMAC_SHA1();
-				$server->add_signature_method($method);
-				$request = OAuthRequest::from_request(NULL,NULL,NULL,$this->ltivars);
-				$this->basestring = $request->get_signature_base_string();
-				try {
-    	        	$server->verify_request($request);
-					$this->valid = true;
-				} catch (Exception $e) {
-					$this->errors = 'Bad LTi Validation (possible incorrect secret) - '.$e->getMessage();
-				}
-			} else {
-				$this->errors = 'Invalid consumer key';
-			}
-		}
-	}
-	
-	
-	
-	function setltivars($vars) {
-		$this->ltivars = $vars;
-	}
-	
-	function resource_id(){
-				
-		if(isset($this->ltivars["resource_link_id"])) {
-			return $this->ltivars["resource_link_id"];
-		}
-		return 'Unknown resource_link_id';
+            $store = new TrivialOAuthDataStore();
+            if(!isset($this->ltivars["oauth_consumer_key"])) {
+                $this->ltivars["oauth_consumer_key"] = '';
+            }
+            if(isset($this->config['lti_keys'][$this->ltivars["oauth_consumer_key"]])) {
+                $lti_key = $this->config['lti_keys'][$this->ltivars["oauth_consumer_key"]];
+                $store->add_consumer($this->ltivars["oauth_consumer_key"], $lti_key);
+                $server = new OAuthServer($store);
+                $method = new OAuthSignatureMethod_HMAC_SHA1();
+                $server->add_signature_method($method);
+                $request = OAuthRequest::from_request(NULL,NULL,NULL,$this->ltivars);
+                $this->basestring = $request->get_signature_base_string();
+                try {
+                    $server->verify_request($request);
+                    $this->valid = true;
+                } catch (Exception $e) {
+                    $this->errors = 'Bad LTi Validation (possible incorrect secret) - '.$e->getMessage();
+                }
+            } else {
+                $this->errors = 'Invalid consumer key';
+            }
+        }
+    }
+    
+    
+    
+    function setltivars($vars) {
+        $this->ltivars = $vars;
+    }
+    
+    function resource_id(){
+                
+        if(isset($this->ltivars["resource_link_id"])) {
+            return $this->ltivars["resource_link_id"];
+        }
+        return 'Unknown resource_link_id';
 
-	}
+    }
 
-	function context_id(){
+    function context_id(){
 
-	if(isset($this->ltivars["context_id"])) {
-			return $this->ltivars["context_id"];
-		}
-		return 'Unknown context_id';
+    if(isset($this->ltivars["context_id"])) {
+            return $this->ltivars["context_id"];
+        }
+        return 'Unknown context_id';
 
-	}
-	
-	function display_errors() {
-		ini_set('display_errors',1);
-		ini_set('display_startup_errors',1);
-		error_reporting(-1);
-	}
-	
-	function get_errors() {
-		return $this->errors;
-	}
-	
-	function is_valid() {
-		return $this->valid;
-	}
-	
-	function user_id() {
-		if(isset($this->ltivars['user_id'])) {
-			return $this->ltivars['user_id'];
-		}
-		return 'Unknown user';
-	}
-	
-	function user_roles() {
-		if(isset($this->ltivars['roles'])) {
-			return $this->ltivars['roles'];
-		}
-		return 'Unknown roles';
-	}
-	
-	function grade_url(){
-		if(isset($this->ltivars["lis_outcome_service_url"])) {
-			return $this->ltivars["lis_outcome_service_url"];
-		}
-		return 'No Grade URL';
+    }
+    
+    function display_errors() {
+        ini_set('display_errors',1);
+        ini_set('display_startup_errors',1);
+        error_reporting(-1);
+    }
+    
+    function get_errors() {
+        return $this->errors;
+    }
+    
+    function is_valid() {
+        return $this->valid;
+    }
+    
+    function user_id() {
+        if(isset($this->ltivars['user_id'])) {
+            return $this->ltivars['user_id'];
+        }
+        return 'Unknown user';
+    }
+    
+    function user_roles() {
+        if(isset($this->ltivars['roles'])) {
+            return $this->ltivars['roles'];
+        }
+        return 'Unknown roles';
+    }
+    
+    function grade_url(){
+        if(isset($this->ltivars["lis_outcome_service_url"])) {
+            return $this->ltivars["lis_outcome_service_url"];
+        }
+        return 'No Grade URL';
 
-	}
-	
-	function result_sourcedid(){
-		if(isset($this->ltivars["lis_result_sourcedid"])) {
-			return $this->ltivars["lis_result_sourcedid"];
-		}
-		return 'No Result SourcedID';
+    }
+    
+    function result_sourcedid(){
+        if(isset($this->ltivars["lis_result_sourcedid"])) {
+            return $this->ltivars["lis_result_sourcedid"];
+        }
+        return 'No Result SourcedID';
 
-	}
-	
-	function lti_id() {
-		if(isset($this->ltivars["oauth_consumer_key"])) {
-			return $this->ltivars["oauth_consumer_key"];
-		}
-		return 'Unknown user';
-	}
-	
-	function requirevalid() {
-		if($this->valid) {
-			return;
-		} else {
-			echo $this->errors;
-			die();
-		}
-	}
-	
-	function calldata() {
-		return $this->ltivars;
-	}
-	
-	function usedummydata() {
-		$this->ltivars = array(
-		    'launch_presentation_return_url'=>'',
-		    'lti_version'=>'LTI-1p0',
-		    'user_id'=>'a4780b196c009891daa9f371417f5c4a',
-		    'roles'=>'Instructor',
-		    'oauth_nonce'=>'60581087546369126111399262942',
-		    'oauth_timestamp'=>'1399262942',
-		    'lis_result_sourcedid'=>'UQx/ceit1001/2014_1:-i4x-UQx-ceit1001-lti-35fd269993224010adbacd8cd05f0043:student',
-		    'context_id'=>'course-v1:UQx+UQx002+2015August',
-		    'oauth_consumer_key'=>'test',
-		    'resource_link_id'=>'edge.edx.org-a0a209fa908e4285b405e5f0a0d046bd',
-		    'oauth_signature_method'=>'HMAC-SHA1',
-		    'oauth_version'=>'1.0',
-		    'oauth_signature'=>'dSffHcwBbfyR01HQloYJIQRu9T0',
-		    'lti_message_type'=>'basic-lti-launch-request',
-		    'oauth_callback'=>'about:blank',
-            'custom_graph_type'=>'carchase',
-            'custom_y_axis'=>'Distance',
-            'custom_x_axis'=>"Time",
-            'custom_y_axis_display_text'=>'Distance (metres)',
-            'custom_x_axis_display_text'=>"Time (seconds)"
-            //'custom_upload'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@running_times.csv',
-		    //'custom_pre_load'=>'running_times.csv',
-		    // 'custom_upload'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv'
+    }
+    
+    function lti_id() {
+        if(isset($this->ltivars["oauth_consumer_key"])) {
+            return $this->ltivars["oauth_consumer_key"];
+        }
+        return 'Unknown user';
+    }
+    
+    function requirevalid() {
+        if($this->valid) {
+            return;
+        } else {
+            echo $this->errors;
+            die();
+        }
+    }
+    
+    function calldata() {
+        return $this->ltivars;
+    }
+    
+    function usedummydata() {
+        $this->ltivars = array(
+            'launch_presentation_return_url'=>'',
+            'lti_version'=>'LTI-1p0',
+            'user_id'=>'a4780b196c009891daa9f371417f5c4a',
+            'roles'=>'Instructor',
+            'oauth_nonce'=>'60581087546369126111399262942',
+            'oauth_timestamp'=>'1399262942',
+            'lis_result_sourcedid'=>'UQx/ceit1001/2014_1:-i4x-UQx-ceit1001-lti-35fd269993224010adbacd8cd05f0043:student',
+            'context_id'=>'course-v1:UQx+UQx002+2015August',
+            'oauth_consumer_key'=>'test',
+            'resource_link_id'=>'edge.edx.org-a0a209fa908e4285b405e5f0a0d046bd',
+            'oauth_signature_method'=>'HMAC-SHA1',
+            'oauth_version'=>'1.0',
+            'oauth_signature'=>'dSffHcwBbfyR01HQloYJIQRu9T0',
+            'lti_message_type'=>'basic-lti-launch-request',
+            'oauth_callback'=>'about:blank',
+            'custom_graph_header'=>'50cm Plot',
+           // 'custom_graph_type'=>'carchase',
+            'custom_y_axis'=>'Speed',
+            'custom_x_axis'=>'Time',
+            'custom_y_axis_display_text'=>'Speed (metres/s)',
+            'custom_x_axis_display_text'=>"Mid Interval Time (s)",
+            'custom_upload'=>'courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@gravity_50cm.csv',
+            'custom_pre_load'=>'gravity_50cm.csv'
+            // 'custom_upload'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv'
 
-		);
-	}
-	
+        );
+    }
+    
 }
 
 
@@ -204,7 +205,7 @@ class TrivialOAuthDataStore extends OAuthDataStore {
     function lookup_nonce($consumer, $token, $nonce, $timestamp) {
         // Should add some clever logic to keep nonces from
         // being reused - for no we are really trusting
-	// that the timestamp will save us
+    // that the timestamp will save us
         return NULL;
     }
 

@@ -187,6 +187,8 @@ var color = d3.scale.category10();
 var num_of_ticks = 10;
 
 var axis_tick_format = "d";
+var axis_tick_format_default = ".3r";
+
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -208,11 +210,17 @@ var yAxis = d3.svg.axis()
 var x_axis_name = $x_axis;
 if((x_axis_name.toLowerCase() == "years") || (x_axis_name.toLowerCase() == "year")){
   xAxis.tickFormat(d3.format(axis_tick_format));
+}else{
+//  xAxis.tickFormat(d3.format(axis_tick_format_default));
+
 }
 
 var y_axis_name = $y_axis;
 if((y_axis_name.toLowerCase() == "years") || (y_axis_name.toLowerCase() == "year")){
   yAxis.tickFormat(d3.format(axis_tick_format));
+}else{
+  //yAxis.tickFormat(d3.format(axis_tick_format_default));
+
 }
 
 var svg = d3.select("#graph_container")
@@ -450,9 +458,30 @@ function setCross(x_cross_val, y_cross_val, values){
 
 function setBoldGridLines(grid_number){
 
+
+   //  d3.selectAll(".x_axis_thick_line").remove();
+
+   // graph_svg.append("line")
+   //        .style("stroke", "black")  // colour the line
+
+   //    .attr("class", "solid_axis_line")
+   //    .attr("x1", 0)
+   //    .attr("y1", -300000 )
+   //    .attr("x2", 0 )
+   //    .attr("y2", 300000)
+   //      .style('stroke-width', 2)
+   //  .style('opacity', 1);
+
+
   d3.selectAll('.tick')
     .filter(function(d){ 
-        return d==grid_number;
+
+        console.log(d);
+        if((d > -0.0000000001) && (d < 0.0000000001)){
+
+
+          return true;
+        }
       })
     .select('line')
     .style('stroke-width', 2)
@@ -848,6 +877,7 @@ d3.select(".y path").attr("marker-start","url(#arrowhead_y)");
   });
 
 
+    setBoldGridLines(0);
 
 
  // console.log("AHHHHHH")
@@ -1191,13 +1221,17 @@ function zoom() {
     graph_svg.selectAll("path.line")
           .attr("d", data_line);
 
-    d3.selectAll('.tick')
-      .filter(function(d){ 
-        return d==0
-      })
-      .select('line') //grab the tick line
-      .style('stroke-width', 2) //or style directly with attributes or inline styles
-      .style('opacity', 1);
+              setBoldGridLines(0);
+
+
+    // d3.selectAll('.tick')
+    //   .filter(function(d){ 
+
+    //     return d==5
+    //   })
+    //   .select('line') //grab the tick line
+    //   .style('stroke-width', 2) //or style directly with attributes or inline styles
+    //   .style('opacity', 1);
 }
 
 // returns slope, intercept and r-square of the line
