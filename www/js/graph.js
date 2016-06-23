@@ -76,7 +76,7 @@ module.exports = {
 
     remove_data_from_graph(selected_data_set);
     setTimeout(function(){
-      resetView();
+    //  resetView();
     },2000);
 
   },
@@ -161,8 +161,15 @@ var axis_display_size = "15px";
 var axis_display_x_offset = 60;
 var axis_display_y_offset = 80;
 
-  var margin_of_point_max = 5;
-  var margin_of_point_min = 5;
+  // var margin_of_point_max = 5;
+  // var margin_of_point_min = 5;
+ var margin_offset_percentage = 0.1;
+
+
+var y_axis_min_margin = 5;
+var y_axis_max_margin = 5;
+var x_axis_min_margin = 5;
+var x_axis_max_margin = 5;
 
 var margin = {top: 100, right: 100, bottom: 100, left: 100},
     dim = Math.min(parseInt(d3.select("#graph_container").style("width")), parseInt(d3.select("#graph_container").style("height"))),
@@ -604,16 +611,33 @@ function add_data_to_graph(data_to_add, callback){
    setScales(data);
 
 
-  //console.log(x_min);
-  //console.log(y_min);
-
 
   if(_current_x_axis_min == 0){
-    margin_of_point_min = 0;
+    x_axis_min_margin = 0;
+  }else{
+    x_axis_min_margin = _current_y_axis_min*margin_offset_percentage
   }
 
-   x.domain([_current_x_axis_min-margin_of_point_min, _current_x_axis_max+margin_of_point_max]).nice();
-   y.domain([_current_y_axis_min-margin_of_point_min, _current_y_axis_max+margin_of_point_max]).nice();
+  if(_current_x_axis_max == 0){
+    x_axis_max_margin = 0;
+  }else{
+    x_axis_max_margin = _current_x_axis_max*margin_offset_percentage
+  }
+
+  if(_current_y_axis_min == 0){
+    y_axis_min_margin = 0;
+  }else{
+    y_axis_min_margin = _current_y_axis_min*margin_offset_percentage
+  }
+
+  if(_current_y_axis_max == 0){
+    y_axis_max_margin = 0;
+  }else{
+    y_axis_max_margin = _current_y_axis_max*margin_offset_percentage
+  }
+
+   x.domain([_current_x_axis_min-x_axis_min_margin, _current_x_axis_max+x_axis_max_margin]);
+   y.domain([_current_y_axis_min-y_axis_min_margin, _current_y_axis_max+y_axis_max_margin]);
   // 
   //GoToArea([_current_x_axis_min, _current_x_axis_max], [_current_y_axis_min, _current_y_axis_max]);
 
@@ -1314,7 +1338,9 @@ function resetView(){
   }); 
 
 
-  GoToArea([cached_min_x-margin_of_point_min, cached_max_x+margin_of_point_max], [cached_min_y-margin_of_point_min, cached_max_y+margin_of_point_max]);
+
+
+  GoToArea([cached_min_x-x_axis_min_margin, cached_max_x+x_axis_max_margin], [cached_min_y-y_axis_min_margin, cached_max_y+y_axis_max_margin]);
 
 
 
