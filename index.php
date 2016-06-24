@@ -342,7 +342,7 @@ if(isset($ltivars{'custom_pre_load'})){
         <div class="modal-footer">
          <div class="bg-danger error_span"></div><br>
 
-        	<button id="export-btn" id="export_button" class="btn btn-primary addexport_buttons"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Export Data</button>
+        	<a type="button" id="export-btn" id="export_button" href="#" class="btn btn-primary addexport_buttons" download><i class="fa fa-download" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Export Data</a>
 
           <button type="button" class="btn btn-success addexport_buttons add_button" data-dismiss="modal"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;<span></span></button>
 

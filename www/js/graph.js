@@ -37,7 +37,11 @@ module.exports = {
    // console.log("init called", uploaded, pre_load);
     add_data_to_cache(uploaded, function(added_data_names){
 
+      console.log(_cached_data);
         add_data_to_graph(pre_load, callback);
+        setTimeout(function(){
+      resetView();
+    },2000);
 
     });
 
@@ -76,7 +80,7 @@ module.exports = {
 
     remove_data_from_graph(selected_data_set);
     setTimeout(function(){
-    //  resetView();
+      resetView();
     },2000);
 
   },
@@ -166,10 +170,8 @@ var axis_display_y_offset = 80;
  var margin_offset_percentage = 0.1;
 
 
-var y_axis_min_margin = 5;
-var y_axis_max_margin = 5;
-var x_axis_min_margin = 5;
-var x_axis_max_margin = 5;
+ var x_margin = 5;
+ var y_margin = 5;
 
 var margin = {top: 100, right: 100, bottom: 100, left: 100},
     dim = Math.min(parseInt(d3.select("#graph_container").style("width")), parseInt(d3.select("#graph_container").style("height"))),
@@ -396,7 +398,7 @@ graph_svg.selectAll("path.line")
 
 }
 
-  var bisectDate = d3.bisector(function(d) { return d[0]; }).left;
+var bisectDate = d3.bisector(function(d) { return d[0]; }).left;
 
 var x_cross =  graph_svg.append("line")
       .attr("class", "crosshair_x crosshairline")      
@@ -483,7 +485,7 @@ function setBoldGridLines(grid_number){
   d3.selectAll('.tick')
     .filter(function(d){ 
 
-        console.log(d);
+        
         if((d > -0.0000000001) && (d < 0.0000000001)){
 
 
@@ -611,11 +613,15 @@ function add_data_to_graph(data_to_add, callback){
    setScales(data);
 
 
+  var y_axis_min_margin = 5;
+  var y_axis_max_margin = 5;
+  var x_axis_min_margin = 5;
+  var x_axis_max_margin = 5;
 
   if(_current_x_axis_min == 0){
     x_axis_min_margin = 0;
   }else{
-    x_axis_min_margin = _current_y_axis_min*margin_offset_percentage
+    x_axis_min_margin = _current_x_axis_min*margin_offset_percentage
   }
 
   if(_current_x_axis_max == 0){
@@ -636,10 +642,14 @@ function add_data_to_graph(data_to_add, callback){
     y_axis_max_margin = _current_y_axis_max*margin_offset_percentage
   }
 
-   x.domain([_current_x_axis_min-x_axis_min_margin, _current_x_axis_max+x_axis_max_margin]);
-   y.domain([_current_y_axis_min-y_axis_min_margin, _current_y_axis_max+y_axis_max_margin]);
-  // 
-  //GoToArea([_current_x_axis_min, _current_x_axis_max], [_current_y_axis_min, _current_y_axis_max]);
+  var x_margin_array = [x_axis_max_margin, x_axis_min_margin];
+  var y_margin_array = [y_axis_min_margin, y_axis_max_margin];
+
+  x_margin = d3.max(x_margin_array);
+  y_margin = d3.max(y_margin_array);
+
+  x.domain([_current_x_axis_min-x_margin, _current_x_axis_max+x_margin]);
+  y.domain([_current_y_axis_min-y_margin, _current_y_axis_max+y_margin]);
 
 
   svg.selectAll(".axis").remove();
@@ -932,9 +942,10 @@ function calculate_min_max(){
 
   var cached_max_x = 0;
   var cached_max_y = 0;
-
   var cached_min_x = 0;
   var cached_min_y = 0;
+
+  var data_in_use = [];
 
   //calculate max first and set min and max to the max value
   $.each(_cached_data, function(cached_data_name, cached_data){
@@ -951,7 +962,7 @@ function calculate_min_max(){
   });  
 
 
-    //calculate min and check if it's less than the cached min value which was set to the max value
+  //calculate min and check if it's less than the cached min value which was set to the max value
   $.each(_cached_data, function(cached_data_name, cached_data){
       var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
       var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
@@ -962,6 +973,11 @@ function calculate_min_max(){
         cached_min_y = y_min;
       }
   }); 
+
+
+
+
+
 
   _current_x_axis_max = cached_max_x;
   _current_y_axis_max = cached_max_y;
@@ -1340,7 +1356,7 @@ function resetView(){
 
 
 
-  GoToArea([cached_min_x-x_axis_min_margin, cached_max_x+x_axis_max_margin], [cached_min_y-y_axis_min_margin, cached_max_y+y_axis_max_margin]);
+  GoToArea([cached_min_x-x_margin, cached_max_x+x_margin], [cached_min_y-y_margin, cached_max_y+y_margin]);
 
 
 

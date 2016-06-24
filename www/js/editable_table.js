@@ -28,6 +28,7 @@ data['path'] = "../";
 
 
 
+
 setInterval(function () {
     if($(".data_name_input_modal") && (state == "added")){
 
@@ -238,39 +239,50 @@ jQuery.fn.shift = [].shift;
 
 
 
-$BTN.click(function () {
-  var $rows = $TABLE.find('tr:not(:hidden)');
-  var headers = [];
-  var data = [];
-  
-  // Get the headers (add special header logic here)
-  $($rows.shift()).find('th:not(:empty)').each(function () {
-    var header = "";
-    if($(this).text() == $x_axis_display_text){
-      header = $x_axis;
-    }
-    if($(this).text() == $y_axis_display_text){
-      header = $y_axis;
-    }
+$BTN.click(function (e) {
 
-    headers.push(header);
-  });
+
+//e.preventDefault();
+
+
+
+
+
+
+  // var $rows = $TABLE.find('tr:not(:hidden)');
+  // var headers = [];
+  // var data = [];
   
-  // Turn all existing rows into a loopable array
-  $rows.each(function () {
-    var $td = $(this).find('td');
-    var h = {};
-    
-    // Use the headers from earlier to name our hash keys
-    headers.forEach(function (header, i) {
-      h[header] = $td.eq(i).text();   
-    });
-    
-    data.push(h);
-  });
+  // // Get the headers (add special header logic here)
+  // $($rows.shift()).find('th:not(:empty)').each(function () {
+  //   var header = "";
+  //   if($(this).text() == $x_axis_display_text){
+  //     header = $x_axis;
+  //   }
+  //   if($(this).text() == $y_axis_display_text){
+  //     header = $y_axis;
+  //   }
+
+  //   headers.push(header);
+  // });
   
-  // Output the result
-  $EXPORT.text(JSON.stringify(data));
+  // // Turn all existing rows into a loopable array
+  // $rows.each(function () {
+  //   var $td = $(this).find('td');
+  //   var h = {};
+    
+  //   // Use the headers from earlier to name our hash keys
+  //   headers.forEach(function (header, i) {
+  //     h[header] = $td.eq(i).text();   
+  //   });
+    
+  //   data.push(h);
+  // });
+  // console.log("red");
+
+  // console.log(ConvertToCSV(data));
+  // // Output the result
+  // $EXPORT.text(JSON.stringify(data));
 });
 
 

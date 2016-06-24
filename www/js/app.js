@@ -232,6 +232,7 @@ $("document").ready(function(){
                 var data_set_name = response;
 
                 query_graph.hide_data([data_set_name]);
+                query_graph.remove_line([data_set_name]);
 
                 $("."+data_set_row_name).remove();
 
@@ -254,6 +255,13 @@ $("document").ready(function(){
     // do something…
     // 
              $('#myModaltrigger').one('focus', function(e){$(this).blur();});
+
+             var filename = $(".data_name_input_modal").val().split(' ').join('_')+".csv";
+
+
+            $('#export-btn').attr("href", "data/"+$lti_id+"/"+$user_id+"/user/"+filename);
+
+  
 
 
     });
