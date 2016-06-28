@@ -39,9 +39,7 @@ module.exports = {
 
       console.log(_cached_data);
         add_data_to_graph(pre_load, callback);
-        setTimeout(function(){
-      resetView();
-    },2000);
+        
 
     });
 
@@ -71,17 +69,13 @@ module.exports = {
 
    
     add_data_to_graph(selected_data_set);
-    setTimeout(function(){
-      resetView();
-    },2000);
+
 
   },
   hide_data: function(selected_data_set){
 
     remove_data_from_graph(selected_data_set);
-    setTimeout(function(){
-      resetView();
-    },2000);
+    
 
   },
   update: function(selected_data_set){
@@ -553,7 +547,6 @@ function add_data_to_cache(data_to_add, callback){
         _cached_data[data_name] = csvObjs;
 
 
-
         if(!--remaining){
           if(callback){
             callback(added_data_names);
@@ -609,47 +602,47 @@ function add_data_to_graph(data_to_add, callback){
   //
   
 
-   calculate_min_max();
+   setView();
    setScales(data);
 
 
-  var y_axis_min_margin = 5;
-  var y_axis_max_margin = 5;
-  var x_axis_min_margin = 5;
-  var x_axis_max_margin = 5;
+  // var y_axis_min_margin = 5;
+  // var y_axis_max_margin = 5;
+  // var x_axis_min_margin = 5;
+  // var x_axis_max_margin = 5;
 
-  if(_current_x_axis_min == 0){
-    x_axis_min_margin = 0;
-  }else{
-    x_axis_min_margin = _current_x_axis_min*margin_offset_percentage
-  }
+  // if(_current_x_axis_min == 0){
+  //   x_axis_min_margin = 0;
+  // }else{
+  //   x_axis_min_margin = _current_x_axis_min*margin_offset_percentage
+  // }
 
-  if(_current_x_axis_max == 0){
-    x_axis_max_margin = 0;
-  }else{
-    x_axis_max_margin = _current_x_axis_max*margin_offset_percentage
-  }
+  // if(_current_x_axis_max == 0){
+  //   x_axis_max_margin = 0;
+  // }else{
+  //   x_axis_max_margin = _current_x_axis_max*margin_offset_percentage
+  // }
 
-  if(_current_y_axis_min == 0){
-    y_axis_min_margin = 0;
-  }else{
-    y_axis_min_margin = _current_y_axis_min*margin_offset_percentage
-  }
+  // if(_current_y_axis_min == 0){
+  //   y_axis_min_margin = 0;
+  // }else{
+  //   y_axis_min_margin = _current_y_axis_min*margin_offset_percentage
+  // }
 
-  if(_current_y_axis_max == 0){
-    y_axis_max_margin = 0;
-  }else{
-    y_axis_max_margin = _current_y_axis_max*margin_offset_percentage
-  }
+  // if(_current_y_axis_max == 0){
+  //   y_axis_max_margin = 0;
+  // }else{
+  //   y_axis_max_margin = _current_y_axis_max*margin_offset_percentage
+  // }
 
-  var x_margin_array = [x_axis_max_margin, x_axis_min_margin];
-  var y_margin_array = [y_axis_min_margin, y_axis_max_margin];
+  // var x_margin_array = [x_axis_max_margin, x_axis_min_margin];
+  // var y_margin_array = [y_axis_min_margin, y_axis_max_margin];
 
-  x_margin = d3.max(x_margin_array);
-  y_margin = d3.max(y_margin_array);
+  // x_margin = d3.max(x_margin_array);
+  // y_margin = d3.max(y_margin_array);
 
-  x.domain([_current_x_axis_min-x_margin, _current_x_axis_max+x_margin]);
-  y.domain([_current_y_axis_min-y_margin, _current_y_axis_max+y_margin]);
+  // x.domain([_current_x_axis_min-x_margin, _current_x_axis_max+x_margin]);
+  // y.domain([_current_y_axis_min-y_margin, _current_y_axis_max+y_margin]);
 
 
   svg.selectAll(".axis").remove();
@@ -937,7 +930,9 @@ function getLeastSqCof(data_name){
     return leastSquaresCoeff;
 }
 
-function calculate_min_max(){
+
+
+function calculate_min_max_and_set(){
 
 
   var cached_max_x = 0;
@@ -947,15 +942,28 @@ function calculate_min_max(){
 
   var data_in_use = [];
 
-  //calculate max first and set min and max to the max value
+  console.log(_data_sets_in_use);
+
+
   $.each(_cached_data, function(cached_data_name, cached_data){
+    if($.inArray(cached_data_name, _data_sets_in_use) !== -1){
+      data_to_calculate[cached_data_name] = cached_data;
+    }
+  });
+
+  //calculate max first and set min and max to the max value
+  $.each(data_to_calculate, function(cached_data_name, cached_data){
       var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
       var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
-      if(x_max > cached_max_x){
+
+      console.log(x_max, y_max);
+      console.log(cached_max_x, cached_max_y, cached_min_x, cached_min_y)
+
+      if(x_max != cached_max_x){
         cached_max_x = x_max;
         cached_min_x = x_max;
       }
-      if(y_max > cached_max_y){
+      if(y_max != cached_max_y){
         cached_max_y = y_max;
         cached_min_y = y_max;
       }
@@ -963,16 +971,17 @@ function calculate_min_max(){
 
 
   //calculate min and check if it's less than the cached min value which was set to the max value
-  $.each(_cached_data, function(cached_data_name, cached_data){
+  $.each(data_to_calculate, function(cached_data_name, cached_data){
       var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
       var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
-      if(x_min < cached_min_x){
+      if(x_min != cached_min_x){
         cached_min_x = x_min;
       }
-      if(y_min < cached_min_y){
+      if(y_min != cached_min_y){
         cached_min_y = y_min;
       }
   }); 
+
 
 
 
@@ -1058,6 +1067,7 @@ function add_trendline_for_data(data_to_add, callback){
 
    });
 
+   setView();
   refresh_legend();
 }
 
@@ -1114,6 +1124,8 @@ function remove_data_from_graph(data_to_remove){
     });   
   });
 
+      setView();
+
   refresh_legend();
 }
 
@@ -1122,15 +1134,13 @@ function remove_trendline_for_data(data_name){
 
 
     d3.selectAll("#"+data_name+"_trend").remove();
-  //console.log(_data_sets_in_use)
 
    if((_data_sets_in_use.indexOf(data_name) > -1) && (!(d3.selectAll("#"+data_name+"_trend")[0].length >= 1) && !(d3.selectAll(".dot."+data_name)[0].length >= 1))){
         _data_sets_in_use.splice(_data_sets_in_use.indexOf(data_name),1);
 
     }
 
-
-  //console.log(_data_sets_in_use)
+    setView();
 
   refresh_legend();
 
@@ -1302,34 +1312,40 @@ d3.selectAll("button[data-zoom]")
     .on("click", clicked);
 
 d3.selectAll("button[reset-view]")
-    .on("click", resetView);
+    .on("click", setView);
 
-function resetView(){
+function setView(){
 
   //calculate in slected data max and min
  // console.log(_data_sets_in_use);
+ // 
+  
+  var data_to_calculate = {};
 
-  var data_to_check = {};
-
-  $.each(_data_sets_in_use, function(ind, data_set_name){
-
-
-   // console.log(data_set_name,_cached_data[data_set_name]);
-
-    data_to_check[data_set_name] = _cached_data[data_set_name];
-
-  });
-
-
-  var cached_max_x = 0;
+ var cached_max_x = 0;
   var cached_max_y = 0;
   var cached_min_x = 0;
   var cached_min_y = 0;
 
+  var data_in_use = [];
+
+  console.log(_data_sets_in_use);
+
+
+  $.each(_cached_data, function(cached_data_name, cached_data){
+    if($.inArray(cached_data_name, _data_sets_in_use) !== -1){
+      data_to_calculate[cached_data_name] = cached_data;
+    }
+  });
+
   //calculate max first and set min and max to the max value
-  $.each(data_to_check, function(cached_data_name, cached_data){
+  $.each(data_to_calculate, function(cached_data_name, cached_data){
       var x_max = d3.max(cached_data, function(d){return d[$x_axis]});
       var y_max = d3.max(cached_data, function(d){return d[$y_axis]});
+
+     // console.log("current", x_max, y_max);
+     // console.log(cached_max_x, cached_max_y, cached_min_x, cached_min_y)
+
       if(x_max > cached_max_x){
         cached_max_x = x_max;
         cached_min_x = x_max;
@@ -1341,8 +1357,8 @@ function resetView(){
   });  
 
 
-    //calculate min and check if it's less than the cached min value which was set to the max value
-  $.each(data_to_check, function(cached_data_name, cached_data){
+  //calculate min and check if it's less than the cached min value which was set to the max value
+  $.each(data_to_calculate, function(cached_data_name, cached_data){
       var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
       var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
       if(x_min < cached_min_x){
@@ -1354,11 +1370,57 @@ function resetView(){
   }); 
 
 
+  _current_x_axis_max = cached_max_x;
+  _current_y_axis_max = cached_max_y;
+  _current_x_axis_min = cached_min_x;
+  _current_y_axis_min = cached_min_y;
 
+  var y_axis_min_margin = 5;
+  var y_axis_max_margin = 5;
+  var x_axis_min_margin = 5;
+  var x_axis_max_margin = 5;
+
+  if(_current_x_axis_min == 0){
+    x_axis_min_margin = 0;
+  }else{
+    x_axis_min_margin = _current_x_axis_min*margin_offset_percentage
+  }
+
+  if(_current_x_axis_max == 0){
+    x_axis_max_margin = 1;
+  }else{
+    x_axis_max_margin = _current_x_axis_max*margin_offset_percentage
+  }
+
+  if(_current_y_axis_min == 0){
+    y_axis_min_margin = 0;
+  }else{
+    y_axis_min_margin = _current_y_axis_min*margin_offset_percentage
+  }
+
+  if(_current_y_axis_max == 0){
+    y_axis_max_margin = 1;
+  }else{
+    y_axis_max_margin = _current_y_axis_max*margin_offset_percentage
+  }
+
+  var x_margin_array = [x_axis_max_margin, x_axis_min_margin];
+  var y_margin_array = [y_axis_min_margin, y_axis_max_margin];
+
+  x_margin = d3.max(x_margin_array);
+  y_margin = d3.max(y_margin_array);
+
+  console.log(cached_max_x, cached_max_y, cached_min_x, cached_min_y, x_margin, y_margin);
+
+
+
+  x.domain([_current_x_axis_min-x_margin, _current_x_axis_max+x_margin]);
+  y.domain([_current_y_axis_min-y_margin, _current_y_axis_max+y_margin]);
+
+
+  
 
   GoToArea([cached_min_x-x_margin, cached_max_x+x_margin], [cached_min_y-y_margin, cached_max_y+y_margin]);
-
-
 
 }
 
@@ -1396,7 +1458,9 @@ function point(coordinates) {
  */
 function GoToArea(xrange, yrange){
 
-    d3.transition().duration(750).tween("zoom", function() {
+
+
+    d3.transition().duration(0).tween("zoom", function() {
       var ix = d3.interpolate(x.domain(), xrange),
         iy = d3.interpolate(y.domain(), yrange);
         return function(t) {
