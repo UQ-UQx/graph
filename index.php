@@ -19,6 +19,7 @@ require_once('scripts/download_csv.php');
  $final_police_velocity = "500";
  $police_stationary_time = "5";
  $police_acceleration_time = "20";
+ $edit_notes = "";
 
 
 
@@ -106,6 +107,10 @@ if(isset($ltivars{'custom_decimal_place'})){
     $decimal_place = $ltivars{'custom_decimal_place'};
 }
 
+if(isset($ltivars{'custom_edit_notes'})){
+    $edit_notes = $ltivars{'custom_edit_notes'};
+}
+
 if(isset($ltivars{'custom_upload'})){
 	$links = str_getcsv($ltivars{'custom_upload'});
 	//echo "<b>Upload: </b> ";
@@ -162,6 +167,7 @@ if(isset($ltivars{'custom_pre_load'})){
  $pre_load = JSON.parse('<?php echo json_encode($pre_load); ?>');
  $init_available_data_sets = JSON.parse('<?php echo json_encode($data_sets); ?>');
  $decimal_place = parseInt('<?php echo $decimal_place; ?>');
+ $edit_notes = '<?php echo $edit_notes; ?>';
 
 
 
@@ -309,7 +315,7 @@ if(isset($ltivars{'custom_pre_load'})){
           <h4 class="modal-title">Query101x Graph Data Editor</h4>
         </div>
         <div class="modal-body">
-          
+          <div class="modal-notes-container" hidden></div>
           	<div class="modal_data_name_container">
           		
 

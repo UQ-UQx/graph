@@ -166,7 +166,8 @@ class Lti {
             'custom_x_axis_display_text'=>"Year",
             'custom_upload'=>'courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@Olympic_Long_Jump.csv',
             'custom_pre_load'=>'Olympic_Long_Jump.csv',
-            'custom_decimal_place'=>'2'
+            'custom_decimal_place'=>'2',
+            'custom_edit_notes'=>'<h1>hello world</h1><span style="color:red;">hello graph</span>'
             
             
             // 'custom_graph_header'=>'50cm Plot',

@@ -322,6 +322,11 @@ $("document").ready(function(){
     }
 
 
+    if($edit_notes != ""){
+
+        $(".modal-notes-container").show();
+        $(".modal-notes-container").html($edit_notes);
+    }
 
 
 
