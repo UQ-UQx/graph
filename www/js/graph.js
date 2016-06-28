@@ -1314,22 +1314,30 @@ d3.selectAll("button[data-zoom]")
 d3.selectAll("button[reset-view]")
     .on("click", setView);
 
+
+
+
 function setView(){
 
   //calculate in slected data max and min
  // console.log(_data_sets_in_use);
  // 
+ // 
+ 
   
   var data_to_calculate = {};
 
- var cached_max_x = 0;
+  var cached_max_x = 0;
   var cached_max_y = 0;
   var cached_min_x = 0;
   var cached_min_y = 0;
 
-  var data_in_use = [];
+  var x_max_dataset = '';
+  var y_max_dataset = '';
+  var x_min_dataset = '';
+  var y_min_dataset = '';
 
-  console.log(_data_sets_in_use);
+
 
 
   $.each(_cached_data, function(cached_data_name, cached_data){
@@ -1337,6 +1345,9 @@ function setView(){
       data_to_calculate[cached_data_name] = cached_data;
     }
   });
+
+
+
 
   //calculate max first and set min and max to the max value
   $.each(data_to_calculate, function(cached_data_name, cached_data){
@@ -1347,10 +1358,12 @@ function setView(){
      // console.log(cached_max_x, cached_max_y, cached_min_x, cached_min_y)
 
       if(x_max > cached_max_x){
+        x_max_dataset = cached_data_name;
         cached_max_x = x_max;
         cached_min_x = x_max;
       }
       if(y_max > cached_max_y){
+        y_max_dataset = cached_data_name;
         cached_max_y = y_max;
         cached_min_y = y_max;
       }
@@ -1362,9 +1375,11 @@ function setView(){
       var x_min = d3.min(cached_data, function(d){return d[$x_axis]});
       var y_min = d3.min(cached_data, function(d){return d[$y_axis]});
       if(x_min < cached_min_x){
+        x_min_dataset = cached_data_name;
         cached_min_x = x_min;
       }
       if(y_min < cached_min_y){
+        y_min_dataset = cached_data_name;
         cached_min_y = y_min;
       }
   }); 
@@ -1375,42 +1390,19 @@ function setView(){
   _current_x_axis_min = cached_min_x;
   _current_y_axis_min = cached_min_y;
 
-  var y_axis_min_margin = 5;
-  var y_axis_max_margin = 5;
-  var x_axis_min_margin = 5;
-  var x_axis_max_margin = 5;
 
-  if(_current_x_axis_min == 0){
-    x_axis_min_margin = 0;
+  if(_data_sets_in_use.length > 0){
+    x_margin = (_current_x_axis_max - _current_x_axis_min)/data_to_calculate[x_max_dataset].length;
+    y_margin = (_current_y_axis_max - _current_y_axis_min)/data_to_calculate[y_min_dataset].length;
   }else{
-    x_axis_min_margin = _current_x_axis_min*margin_offset_percentage
+    x_margin = 1;
+    y_margin = 1;
   }
 
-  if(_current_x_axis_max == 0){
-    x_axis_max_margin = 1;
-  }else{
-    x_axis_max_margin = _current_x_axis_max*margin_offset_percentage
-  }
 
-  if(_current_y_axis_min == 0){
-    y_axis_min_margin = 0;
-  }else{
-    y_axis_min_margin = _current_y_axis_min*margin_offset_percentage
-  }
-
-  if(_current_y_axis_max == 0){
-    y_axis_max_margin = 1;
-  }else{
-    y_axis_max_margin = _current_y_axis_max*margin_offset_percentage
-  }
-
-  var x_margin_array = [x_axis_max_margin, x_axis_min_margin];
-  var y_margin_array = [y_axis_min_margin, y_axis_max_margin];
-
-  x_margin = d3.max(x_margin_array);
-  y_margin = d3.max(y_margin_array);
 
   console.log(cached_max_x, cached_max_y, cached_min_x, cached_min_y, x_margin, y_margin);
+
 
 
 
@@ -1421,6 +1413,37 @@ function setView(){
   
 
   GoToArea([cached_min_x-x_margin, cached_max_x+x_margin], [cached_min_y-y_margin, cached_max_y+y_margin]);
+
+}
+
+function calculate_margin(min_max_datasets, data_to_calculate){
+
+  var margin = {};
+
+  console.log("wa",min_max_datasets);
+
+  var x_axis_data_name = min_max_datasets["max_x"];
+
+
+  //calcualte margin for x
+  $.each(data_to_calculate[x_axis_data_name], function(ind, datapoint){
+
+
+      console.log(x_axis_data_name, datapoint);
+
+
+
+
+  });
+
+
+  
+
+
+  margin["x"] = 5;
+  margin["y"] = 10;
+
+  return margin;
 
 }
 

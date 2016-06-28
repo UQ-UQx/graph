@@ -157,14 +157,29 @@ class Lti {
             'oauth_signature'=>'dSffHcwBbfyR01HQloYJIQRu9T0',
             'lti_message_type'=>'basic-lti-launch-request',
             'oauth_callback'=>'about:blank',
-            'custom_graph_header'=>'Force Extension',
-           // 'custom_graph_type'=>'carchase',
-            'custom_y_axis'=>'Extension',
-            'custom_x_axis'=>'Force',
-            'custom_y_axis_display_text'=>'Extension (metres)',
-            'custom_x_axis_display_text'=>"Force (newtons)",
-            'custom_upload'=>'courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@Force_extension_1.csv',
-            'custom_pre_load'=>'Force_extension_1.csv'
+            //'custom_graph_type'=>'carchase',
+         
+            'custom_graph_header'=>'Olympic Long Jump Men',
+            'custom_y_axis'=>'Distance',
+            'custom_x_axis'=>'Year',
+            'custom_y_axis_display_text'=>'Distance (Metres)',
+            'custom_x_axis_display_text'=>"Year",
+            'custom_upload'=>'courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@Olympic_Long_Jump.csv',
+            'custom_pre_load'=>'Olympic_Long_Jump.csv',
+            'custom_decimal_place'=>'2'
+            
+            
+            // 'custom_graph_header'=>'50cm Plot',
+            // 'custom_y_axis'=>'Speed',
+            // 'custom_x_axis'=>'Time',
+            // 'custom_y_axis_display_text'=>'Speed (metres/s)',
+            // 'custom_x_axis_display_text'=>"Mid Interval Time (s)",
+            // 'custom_upload'=>'courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@gravity_50cm.csv',
+            // 'custom_pre_load'=>'gravity_50cm.csv',
+            // 'custom_decimal_place'=>'2'
+
+
+
             // 'custom_upload'=>'edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Sun_Yang.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2006.csv,edge.edx.org/asset-v1:UQx+UQx002+2015August+type@asset+block@Hacket_2004.csv'
 
 
