@@ -13,7 +13,7 @@ require_once('scripts/download_csv.php');
  $x_axis_format = "none";
  $y_axis_format = "none";
  $graph_header = "Query101x Graph";
- $decimal_place = "1";
+ $decimal_place = "2";
  $graph_type = "scatter";
  $car_velocity = "144";
  $final_police_velocity = "500";

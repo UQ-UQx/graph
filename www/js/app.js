@@ -41,7 +41,7 @@ $("document").ready(function(){
         carchase.generate($car_velocity, $final_police_velocity, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
             query_graph.init(files,files,function(){
                 console.log(files," Updated ", point_of_col);
-                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed(2)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed(2)+"</br>");
+                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed($decimal_place)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed($decimal_place)+"</br>");
                 query_graph.setPointOfCollision(point_of_col);
             });
         });
@@ -119,7 +119,7 @@ $("document").ready(function(){
 
  carchase.generate(car_vel, pol_vel, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
             console.log(point_of_col);
-                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed(2)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed(2)+"</br>");
+                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed($decimal_place)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed($decimal_place)+"</br>");
 
             query_graph.init(files,files,function(){
                 console.log(files," Updated ", point_of_col);
@@ -305,8 +305,8 @@ $("document").ready(function(){
 
            // console.log()
             if(formulas[data_name]){
-                var m = formulas[data_name][0].toFixed(2);
-                var c = formulas[data_name][1].toFixed(2);
+                var m = formulas[data_name][0].toFixed($decimal_place);
+                var c = formulas[data_name][1].toFixed($decimal_place);
                 $(".trendline_formula_container[data-dataname="+data_name+"]").html("&nbsp;&nbsp;<b>y</b> = "+m+" <b>x</b> + "+c);
                 $(".trendline_to_load[value="+data_name+"]").show();
             }else{

@@ -1175,7 +1175,7 @@ function refresh_legend(){
 
   // draw legend colored rectangles
   legend.append("rect")
-      .attr("x", width - 25)
+      .attr("x", 8)
        .attr("y", 7)
       .attr("width", 18)
       .attr("height", 18)
@@ -1183,10 +1183,10 @@ function refresh_legend(){
 
   // draw legend text
   legend.append("text")
-      .attr("x", width - 30)
+      .attr("x",  30)
       .attr("y",16)
       .attr("dy", ".35em")
-      .style("text-anchor", "end")
+      .style("text-anchor", "start")
       .text(function(d) { return d["data_name_pretty"];})
 
 
@@ -1303,6 +1303,8 @@ function leastSquares(xSeries, ySeries) {
   var slope = ssXY / ssXX;
   var intercept = yBar - (xBar * slope);
   var rSquare = Math.pow(ssXY, 2) / (ssXX * ssYY);
+
+  console.log(slope, intercept, rSquare);
   
   return [slope, intercept, rSquare];
 }
