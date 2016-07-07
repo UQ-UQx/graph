@@ -34,6 +34,7 @@
 module.exports = {
   init: function(uploaded, pre_load, callback){
 
+
    // console.log("init called", uploaded, pre_load);
     add_data_to_cache(uploaded, function(added_data_names){
 
@@ -100,6 +101,8 @@ module.exports = {
   },
   setPointOfCollision: function(point_of_col){
 
+
+
    //// console.log("red", point_of_col);
     if(point_of_col["time"]){
 
@@ -107,6 +110,11 @@ module.exports = {
 
        graph_svg.selectAll(".collission").remove();
 
+      var circle_color = "red";
+
+       if(point_of_col["car_distance"] < 8000){
+          circle_color = "green";
+       }
 
 
         var delay = carchase_line_animation_time*(point_of_col["time"]/point_of_col["total_time"]);
@@ -130,9 +138,13 @@ module.exports = {
             .transition()
             .duration(700)
             .attr("r", 10)
-            .attr("fill", "red")  // Change color
+            .attr("fill", circle_color)  // Change color
 
           });
+    }else{
+
+             graph_svg.selectAll(".collission").remove();
+
     }
 
 
@@ -141,7 +153,7 @@ module.exports = {
 
 }
 
-var carchase_line_animation_time = 10000;
+var carchase_line_animation_time = 3000;
 
 
 

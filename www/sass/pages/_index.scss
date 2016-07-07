@@ -298,3 +298,38 @@ border-radius: 10px;
 
 }
 
+$padding_car_chase_table_items: 10px;
+
+.car_chase_table{
+  width:100%;
+
+  th{
+    padding:$padding_car_chase_table_items;
+    background-color: #E7EDF0;
+  }
+
+  th:nth-child(1){
+    background-color:white;
+  }
+
+  tr{
+
+    
+    td{
+
+      padding:$padding_car_chase_table_items;
+    }
+
+    td:nth-child(2){
+      padding:0;
+    }
+
+  }
+}
+
+.car_chase_table_container{
+  width:70%;
+  margin:0 auto;
+  
+}
+

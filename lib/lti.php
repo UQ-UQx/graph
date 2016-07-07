@@ -157,7 +157,13 @@ class Lti {
             'oauth_signature'=>'dSffHcwBbfyR01HQloYJIQRu9T0',
             'lti_message_type'=>'basic-lti-launch-request',
             'oauth_callback'=>'about:blank',
-            //'custom_graph_type'=>'carchase',
+            
+            // 'custom_graph_type'=>'carchase',
+            // 'custom_graph_header'=>'Police Chase',
+            // 'custom_y_axis'=>'Distance',
+            // 'custom_x_axis'=>'Time',
+            // 'custom_y_axis_display_text'=>'Distance (Metres)',
+            // 'custom_x_axis_display_text'=>"Time (Seconds)",
          
             'custom_graph_header'=>'Olympic Long Jump Men',
             'custom_y_axis'=>'Distance',

@@ -25,6 +25,7 @@ $("document").ready(function(){
         console.log($police_acceleration_time);
         $("#datasets").hide();
         $(".scale_buttons").hide();
+        $("#car_chase_buttons").show();
 
         //car_chase_buttons
 
@@ -39,17 +40,29 @@ $("document").ready(function(){
         });
         //carchase creates a csv based on initial values 
         carchase.generate($car_velocity, $final_police_velocity, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
-            query_graph.init(files,files,function(){
-                console.log(files," Updated ", point_of_col);
-                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed($decimal_place)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed($decimal_place)+"</br>");
-                query_graph.setPointOfCollision(point_of_col);
-            });
+
+            
+
+                query_graph.init(files,files,function(){
+                    if(point_of_col["car_distance"]){
+                        console.log(files," Updated ", point_of_col);
+                        $(".speeding_car_time").html(point_of_col["time"]);
+                        $(".police_car_time").html(point_of_col["time"]);
+                        $(".speeding_car_distance").html(point_of_col["car_distance"].toFixed($decimal_place));
+                        $(".police_car_distance").html(point_of_col["police_distance"].toFixed($decimal_place));
+                        query_graph.setPointOfCollision(point_of_col);
+                    }
+
+                });
+
+
+            
         });
 
 
     }else{
 
-        $("#car_chase_buttons").hide();
+       // $("#car_chase_buttons").hide();
 
 
         var check_loaded = setInterval(function(){
@@ -117,15 +130,33 @@ $("document").ready(function(){
 
         if((pol_vel >= 1) && (car_vel >=1)){
 
- carchase.generate(car_vel, pol_vel, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
-            console.log(point_of_col);
-                            $("#point_of_pass").html("CAR: time = "+point_of_col["time"]+", distance = "+ point_of_col["car_distance"].toFixed($decimal_place)+"<br>"+"POLICE: time = "+point_of_col["time"]+", distance = "+ point_of_col["police_distance"].toFixed($decimal_place)+"</br>");
+            var empty = {};
+            query_graph.setPointOfCollision(empty);
 
-            query_graph.init(files,files,function(){
-                console.log(files," Updated ", point_of_col);
-                query_graph.setPointOfCollision(point_of_col);
+            carchase.generate(car_vel, pol_vel, $police_stationary_time, $police_acceleration_time, function(files, point_of_col){
+                    query_graph.init(files,files,function(){
+                        if(point_of_col["car_distance"]){
+                            console.log(files," Updated ", point_of_col);
+
+
+                            $(".speeding_car_time").html(point_of_col["time"]);
+                            $(".police_car_time").html(point_of_col["time"]);
+                            $(".speeding_car_distance").html(point_of_col["car_distance"].toFixed($decimal_place));
+                            $(".police_car_distance").html(point_of_col["police_distance"].toFixed($decimal_place));
+
+                            query_graph.setPointOfCollision(point_of_col);
+                        }else{
+
+                            $(".speeding_car_time").html("Speeding Car escaped");
+                            $(".police_car_time").html("Police Car will never catch up");
+                            $(".speeding_car_distance").html("Speeding Car escaped");
+                            $(".police_car_distance").html("Police Car will never catch up");
+
+
+                        }
+
+                    });
             });
-        });
         }
 
        

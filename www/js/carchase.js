@@ -14,6 +14,7 @@ var point_of_col = {};
 
 
 function complie(car_velocity, final_police_velocity, police_stationary_time, police_acceleration_time, callback){
+    point_of_col = {};
 
 
 var loaded_files = [];
@@ -47,8 +48,10 @@ var loaded_files = [];
 
     while(did_not_meet){
 
+
         var car_dis = car_vel_ms*time;
         var pol_dis = 0;
+
 
         if(time > 5 && time < police_acceleration_time+5){
 
@@ -64,7 +67,7 @@ var loaded_files = [];
 
         }
 
-        if((car_vel_ms > pol_vel_ms) && time > 250){
+        if((car_vel_ms >= pol_vel_ms) && time >= 250){
             did_not_meet = false;
         }
 
@@ -88,6 +91,7 @@ var loaded_files = [];
         }
 
 
+
         var police_data_point = {};
         var car_data_point = {};
 
@@ -108,8 +112,11 @@ var loaded_files = [];
     }
 
 
+    console.log("BLAAAAAA", point_of_col);
+
+
     //console.log(police);
-    generateCSV("police", police, function(file){
+    generateCSV("police_car", police, function(file){
 
         loaded_files.push(file);
 
@@ -119,7 +126,7 @@ var loaded_files = [];
         }
 
     });
-    generateCSV("car", car, function(file){
+    generateCSV("speeding_car", car, function(file){
 
         loaded_files.push(file);
 

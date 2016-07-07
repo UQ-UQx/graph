@@ -15,8 +15,8 @@ require_once('scripts/download_csv.php');
  $graph_header = "Query101x Graph";
  $decimal_place = "2";
  $graph_type = "scatter";
- $car_velocity = "144";
- $final_police_velocity = "500";
+ $car_velocity = "150";
+ $final_police_velocity = "160";
  $police_stationary_time = "5";
  $police_acceleration_time = "20";
  $edit_notes = "";
@@ -183,12 +183,68 @@ if(isset($ltivars{'custom_pre_load'})){
 <div id="graph_container"></div>
 </div>
 
-<div id="car_chase_buttons">
-        <span id="point_of_pass"></span></br>
+<div id="car_chase_buttons" hidden>
 
-	Car Final Speed (km/h) : <input type="text" name="carsp" id="carsp" /></br></br>
+
+    <div class="car_chase_table_container">
+        
+        <table class="car_chase_table">
+            
+
+            <thead>
+                <th></th>
+                <th>Final Speed (Km/h)</th>
+                <th><?php echo $y_axis_display_text;  ?></th>
+                <th><?php echo $x_axis_display_text;  ?></th>
+            </thead>
+
+            <tbody>
+                <tr>
+
+                    <td>Speeding Car</td>
+                    <td><input type="text" name="carsp" id="carsp" value="<?php echo $car_velocity; ?>"/></td>
+                    <td><span class="speeding_car_distance"></span></td>
+                    <td><span class="speeding_car_time"></span></td>
+
+                    
+
+                </tr>
+                <tr>
+                    
+                    <td>Police Car</td>
+                    <td><input type="text" name="polsp" id="polsp" value="<?php echo $final_police_velocity; ?>"/></td>
+                    <td><span class="police_car_distance"></span></td>
+                    <td><span class="police_car_time"></span></td>
+                </tr>
+
+                
+            </tbody>
+            
+
+
+        </table>
+        <hr>
+
+        <div class="carchase_button_container">
+         <button class="btn btn-primary btn-sm carchase_button" ><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Generate Graph</button>
+         </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+	<!-- Car Final Speed (km/h) : <input type="text" name="carsp" id="carsp" /></br></br>
         Police Final Speed (km/h) : <input type="text" name="polsp" id="polsp" />&nbsp;<span class="errmsg"></span></br></br>
-        <button class="btn btn-primary btn-sm carchase_button" ><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Generate Graph</button>
+        <button class="btn btn-primary btn-sm carchase_button" ><i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Generate Graph</button> -->
 
 </div>
 <div class="scale_buttons">
