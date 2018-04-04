@@ -65,7 +65,7 @@ That's it! you're done with the setup :)
 ## Important Vaiables 
 
 **LTI ID** : graph  
-**LTI URL** : https://tools.ceit.uq.edu.au/graph  
+**LTI URL** : https://tools.ceit.uq.edu.au/graph/  
 **LTI Passports** : "graph:graph:****< PLEASE SEE UQx Tech team for this last bit >****"  
 
 ## Step 1:
