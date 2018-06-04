@@ -71,7 +71,7 @@ That's it! you're done with the setup :)
 ## Step 1:
 Create you csv file that you wish to load for the student when they see the activity
 
-[ your data file ].csv 
+[ your data file ].csv (remove any spaces in the filename)
 
 e.g.
 
