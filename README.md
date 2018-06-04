@@ -101,6 +101,7 @@ courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@Olympic_Swimming_
 
 ***B:*** In Advanced Settings, please add the lti passport details (see top of this page under "Important Variables") into LTI Passports
 
+***C:*** Save Changes
 
 ## Step 4:
 
@@ -109,6 +110,17 @@ create an LTI xBlock and using the Important Variables shown above, enter in the
 
 ## Step 5:
 #### important custom parameters:
+
+### Example Combination of these custom paramerters will look like this -
+
+`["upload=courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@My_Data.csv,  courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@My_Data_B.csv","pre_load=My_Data.csv,My_Data_B.csv",
+"graph_header=My Awesome Graph",
+"x_axis=Year",
+"y_axis=Time",
+"x_axis_display=x_axis_display",
+"y_axis_display=y_axis_display"]`
+
+### Breakdown :
 
 ### upload 
 This is used to specify which csv file/s the graph should use  
@@ -173,15 +185,6 @@ This variable is used to define the label for the y_axis
 
 `y_axis_display=y_axis_display`
 
-
-### Combination of these custom paramerters will look like this -
-
-`["upload=courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@My_Data.csv,  courses.edx.org/asset-v1:UQx+QUERY101x+1T2016+type@asset+block@My_Data_B.csv","pre_load=My_Data.csv,My_Data_B.csv",
-"graph_header=My Awesome Graph",
-"x_axis=Year",
-"y_axis=Time",
-"x_axis_display=x_axis_display",
-"y_axis_display=y_axis_display"]`
 
 ## Step 6
 Add the custom parameters to the custom paramertes input. 
